@@ -1232,6 +1232,14 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
   .nav-item span:not(.ico), .nav-item .badge,
   .logo-slogan { display: none !important; }
   .admin-section, .mod-section { display: none !important; }
+  /* Restore for logged-in admin/moderator — show icon-only collapsed sections */
+  body.role-admin .admin-section { display: block !important; }
+  body.role-moderator .mod-section { display: block !important; }
+  /* Hide text labels inside those sections on collapsed sidebar */
+  body.role-admin .admin-section .nav-item span:not(.ico),
+  body.role-admin .admin-section .nav-item .badge,
+  body.role-moderator .mod-section .nav-item span:not(.ico),
+  body.role-moderator .mod-section .nav-item .badge { display: none !important; }
   .nav-item { justify-content: center; }
   .sidebar-logo { padding: 14px 10px; justify-content: center; }
 
@@ -1596,14 +1604,14 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
       <button class="pb-action" data-i18n="pitch_submit">+ Подать питч</button>
     </div>
     <div class="pitch-filters">
-      <button class="pf active" data-i18n="filter_all">Все</button>
-      <button class="pf" data-i18n="pf_film">🎬 Кино</button>
-      <button class="pf" data-i18n="pf_music">🎵 Музыка</button>
-      <button class="pf" data-i18n="pf_doc">📺 Документальное</button>
-      <button class="pf" data-i18n="pf_podcast">🎙 Подкаст</button>
-      <button class="pf" data-i18n="pf_social">📱 Соц. проект</button>
-      <button class="pf" data-i18n="pf_animation">🎨 Анимация</button>
-      <button class="pf" data-i18n="pf_almost">🔥 Почти собрано</button>
+      <button class="pf active" data-i18n="filter_all" onclick="filterPitch('all',this)">Все</button>
+      <button class="pf" data-i18n="pf_film" onclick="filterPitch('ct-film',this)">🎬 Кино</button>
+      <button class="pf" data-i18n="pf_music" onclick="filterPitch('ct-music',this)">🎵 Музыка</button>
+      <button class="pf" data-i18n="pf_doc" onclick="filterPitch('ct-doc',this)">📺 Документальное</button>
+      <button class="pf" data-i18n="pf_podcast" onclick="filterPitch('ct-podcast',this)">🎙 Подкаст</button>
+      <button class="pf" data-i18n="pf_social" onclick="filterPitch('ct-social',this)">📱 Соц. проект</button>
+      <button class="pf" data-i18n="pf_animation" onclick="filterPitch('ct-animation',this)">🎨 Анимация</button>
+      <button class="pf" data-i18n="pf_almost" onclick="filterPitch('almost',this)">🔥 Почти собрано</button>
     </div>
     <div class="pitch-grid">
 
@@ -1615,7 +1623,7 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
       <div class="pc"><div class="pc-thumb p5"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>20</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-social" data-i18n="pc_type_social">📱 Соц. проект</div><div class="pc-title">Тіл — наш язык</div><div class="pc-author">Zarina Жунусова</div><p class="pc-desc" data-i18n="pc4_desc">20 коротких документальных роликов о людях, возрождающих казахский язык в повседневной жизни.</p><div class="prog-labels"><span class="prog-raised">1 200 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 3 500 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:34%"></div></div><div class="pc-foot"><span class="pc-backers">👥 104 <span data-i18n="backers">бэкера</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
-      <div class="pc"><div class="pc-thumb p6"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>9</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type" style="color:#a0d47a" data-i18n="pf_animation">🎨 Анимация</div><div class="pc-title">Аяз би туралы аңыз</div><div class="pc-author">Zerde Animation</div><p class="pc-desc" data-i18n="pc5_desc">Анимационный фильм об Аяз би. Ручная покадровая анимация, вдохновлённая казахским орнаментом.</p><div class="prog-labels"><span class="prog-raised">3 900 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 5 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:78%"></div></div><div class="pc-foot"><span class="pc-backers">👥 187 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+      <div class="pc"><div class="pc-thumb p6"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>9</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-animation" style="color:#a0d47a" data-i18n="pf_animation">🎨 Анимация</div><div class="pc-title">Аяз би туралы аңыз</div><div class="pc-author">Zerde Animation</div><p class="pc-desc" data-i18n="pc5_desc">Анимационный фильм об Аяз би. Ручная покадровая анимация, вдохновлённая казахским орнаментом.</p><div class="prog-labels"><span class="prog-raised">3 900 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 5 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:78%"></div></div><div class="pc-foot"><span class="pc-backers">👥 187 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
       <div class="pc"><div class="pc-thumb p3"><div class="pc-badge pb-new" data-i18n="badge_new">✦ Новый</div><span class="pc-days"><span>30</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-doc" data-i18n="pc_type_doc">📺 Документальный</div><div class="pc-title">Шекара / La Frontera</div><div class="pc-author">Айгерим Бекова</div><p class="pc-desc" data-i18n="pc6_desc">О казахско-китайской границе: жизни семей, разлучённых по обе стороны.</p><div class="prog-labels"><span class="prog-raised">880 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 12 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:7%"></div></div><div class="pc-foot"><span class="pc-backers">👥 29 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
@@ -2033,6 +2041,25 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
     document.querySelectorAll('.nav-item')[0].classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+  function filterPitch(type, el) {
+    // Update active filter button
+    document.querySelectorAll('.pf').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    // Show/hide pitch cards
+    document.querySelectorAll('.pc').forEach(card => {
+      if (type === 'all') {
+        card.style.display = '';
+      } else if (type === 'almost') {
+        // Show cards where progress fill is >= 75%
+        const fill = card.querySelector('.prog-fill');
+        const w = fill ? parseFloat(fill.style.width) : 0;
+        card.style.display = w >= 75 ? '' : 'none';
+      } else {
+        const hasType = card.querySelector('.' + type);
+        card.style.display = hasType ? '' : 'none';
+      }
+    });
+  }
   function filterType(type, el) {
     document.querySelectorAll('.type-pill, .cat-item').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.type-pill, .cat-item').forEach(p => {
@@ -2164,6 +2191,8 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
         applyLang(document.querySelector('.lang-btn.active')?.dataset?.lang || 'ru');
       }
       updateProfilePage(null);
+      applyRoleToBody(null);
+      updateSidebarForRole(null);
     }
   }
 
