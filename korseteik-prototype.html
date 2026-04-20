@@ -1,0 +1,3135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AYA — Art Yearns Action</title>
+<style>
+/* ============================================================
+   DESIGN TOKENS — AYA identity
+   Palette: earthy olive-dark surfaces, sage green primary,
+            warm cream secondary — inspired by the AYA logo.
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Surfaces — deep olive-black stack */
+  --bg:       #0F1209;   /* page base */
+  --bg2:      #161A0E;   /* sidebar, cards */
+  --bg3:      #1E2514;   /* elevated surfaces */
+  --bg4:      #27311A;   /* hover states */
+  --bg5:      #374424;   /* subtle borders */
+
+  /* Brand — sage green (primary) + warm cream (secondary) */
+  --gold:     #7D9158;   /* sage green — primary accent */
+  --gold2:    #9DB472;   /* lighter sage */
+  --gold-dim: rgba(125,145,88,.15);
+  --teal:     #D4C9A0;   /* warm cream — secondary accent */
+  --teal-dim: rgba(212,201,160,.12);
+
+  /* Text */
+  --text:     #EDE5CC;   /* warm cream — softer than pure white */
+  --text2:    #96A878;   /* muted sage */
+  --text3:    #536045;   /* dark muted olive */
+
+  /* Shadows — Spotify's "floating in darkness" */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.5);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.5);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,.6);
+
+  /* Shape */
+  --r-pill: 9999px;   /* pill buttons — key Spotify shape */
+  --r-lg:   12px;
+  --r-md:   8px;
+  --r-sm:   4px;
+
+  --sidebar: 197px;
+  --topbar:  56px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg5); border-radius: 3px; }
+
+/* ============================================================
+   SIDEBAR — Spotify-style: black, dense, icon+label
+============================================================ */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: var(--sidebar);
+  background: #090C06;   /* deep olive-black sidebar */
+  display: flex; flex-direction: column;
+  z-index: 200; overflow-y: auto;
+  padding-bottom: 20px;
+  transition: width .25s ease;
+}
+
+.sidebar-logo {
+  padding: 18px 16px 20px;
+  display: flex; align-items: center; gap: 11px;
+  flex-shrink: 0; cursor: pointer;
+}
+.logo-badge {
+  width: 40px; height: 40px; border-radius: 11px;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900; font-style: italic;
+  color: #0F1209; letter-spacing: -.5px; flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(125,145,88,.35);
+  transition: transform .15s, box-shadow .15s;
+}
+.logo-badge:hover { transform: scale(1.08); box-shadow: 0 5px 16px rgba(125,145,88,.5); }
+.logo-slogan {
+  display: flex; flex-direction: column; gap: 0px;
+}
+.logo-slogan span {
+  font-size: 9px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1.4px;
+  line-height: 1.55;
+}
+
+.sidebar-block {
+  background: var(--bg2);
+  border-radius: var(--r-lg);
+  margin: 8px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 12px; border-radius: var(--r-md);
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  cursor: pointer; transition: all .15s;
+  white-space: nowrap;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,.07); }
+.nav-item.active { color: var(--text); }
+.nav-item .ico { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
+.nav-item .badge {
+  margin-left: auto;
+  background: var(--gold); color: #000;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 6px; border-radius: var(--r-pill);
+}
+
+.sidebar-label {
+  padding: 16px 12px 6px;
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.sidebar-block2 {
+  background: var(--bg2);
+  border-radius: var(--r-lg);
+  margin: 4px 8px;
+  padding: 8px;
+  flex: 1;
+}
+.cat-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: var(--r-md);
+  font-size: 12px; color: var(--text2);
+  cursor: pointer; transition: all .15s;
+}
+.cat-item:hover { color: var(--text); background: rgba(255,255,255,.07); }
+.cat-item.active { color: var(--gold); }
+.cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.sidebar-upgrade {
+  margin: 8px;
+  background: linear-gradient(135deg, rgba(212,168,67,.15), rgba(62,207,178,.08));
+  border: 1px solid rgba(212,168,67,.2);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  flex-shrink: 0;
+}
+.upgrade-title { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.upgrade-desc { font-size: 11px; color: var(--text2); margin-bottom: 10px; line-height: 1.5; }
+.upgrade-btn {
+  width: 100%; padding: 8px;
+  background: var(--gold); color: #000;
+  font-size: 11px; font-weight: 800;
+  border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: 1px;
+  transition: all .15s;
+}
+.upgrade-btn:hover { background: var(--gold2); }
+
+/* ============================================================
+   TOPBAR
+============================================================ */
+.topbar {
+  position: fixed; top: 0; left: var(--sidebar); right: 0;
+  height: var(--topbar);
+  background: rgba(18,18,18,.95);
+  backdrop-filter: blur(16px);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 24px; z-index: 100;
+  transition: left .25s ease;
+}
+.search-wrap { flex: 1; max-width: 440px; position: relative; }
+.search-ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text3); }
+.search-input {
+  width: 100%;
+  background: var(--bg3); border: none;
+  color: var(--text); font-size: 13px;
+  padding: 9px 16px 9px 40px;
+  border-radius: var(--r-pill);   /* Spotify uses pill search */
+  outline: none; transition: background .2s;
+}
+.search-input:focus { background: var(--bg4); outline: 2px solid rgba(255,255,255,.15); }
+.search-input::placeholder { color: var(--text3); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.tb-ico {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2); font-size: 16px;
+  transition: all .15s; position: relative; cursor: pointer;
+}
+.tb-ico:hover { background: rgba(255,255,255,.1); color: var(--text); }
+.notif { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; background: #e5534b; border-radius: 50%; border: 1.5px solid var(--bg); }
+/* Spotify-style pill CTA button */
+.tb-upload {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gold); color: #000;
+  font-size: 12px; font-weight: 800;
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .8px;
+  transition: all .15s;
+}
+.tb-upload:hover { background: var(--gold2); transform: scale(1.03); }
+.tb-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: #000;
+  cursor: pointer; transition: transform .15s;
+}
+.tb-avatar:hover { transform: scale(1.05); }
+
+/* ============================================================
+   MAIN WRAPPER
+============================================================ */
+.main {
+  margin-left: var(--sidebar);
+  margin-top: var(--topbar);
+  width: calc(100% - var(--sidebar));
+  min-height: calc(100vh - var(--topbar));
+  transition: margin-left .25s ease, width .25s ease;
+}
+
+/* ============================================================
+   PAGES
+============================================================ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   HOME — HERO
+============================================================ */
+.hero {
+  position: relative; height: 400px; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #0C1808 0%, #111F0A 45%, #0A1A0C 100%);
+}
+/* Film-strip mosaic */
+.hero-mosaic {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 56%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 3px; padding: 3px; opacity: .55;
+}
+.hm { border-radius: 3px; }
+.hm1 { background: linear-gradient(145deg,#1e3518,#0f2009); grid-row:span 2; }
+.hm2 { background: linear-gradient(145deg,#2a3a1a,#182208); }
+.hm3 { background: linear-gradient(145deg,#2e3a10,#1e2808); }
+.hm4 { background: linear-gradient(145deg,#163520,#0a2212); grid-row:span 2; }
+.hm5 { background: linear-gradient(145deg,#324018,#202808); grid-column:span 2; }
+.hm6 { background: linear-gradient(145deg,#1a2e12,#0e1e08); }
+.hm7 { background: linear-gradient(145deg,#283818,#182208); grid-column:span 2; }
+.hm8 { background: linear-gradient(145deg,#1c3020,#0e1e10); }
+.hm9 { background: linear-gradient(145deg,#2e3c14,#1c2808); }
+.hm10 { background: linear-gradient(145deg,#163a1e,#0a2212); grid-column:span 2; }
+.hm11 { background: linear-gradient(145deg,#283818,#162208); }
+.hm12 { background: linear-gradient(145deg,#223014,#141e08); }
+
+.hero-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(18,18,18,1) 35%, rgba(18,18,18,.1) 75%, rgba(18,18,18,0) 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 56px 36px; max-width: 480px;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(212,168,67,.1); border: 1px solid rgba(212,168,67,.25);
+  color: var(--gold); font-size: 10px; font-weight: 800;
+  padding: 5px 12px; border-radius: var(--r-pill);
+  margin-bottom: 16px;
+  text-transform: uppercase; letter-spacing: 1.2px;
+}
+.hero-title {
+  font-size: 38px; font-weight: 900; line-height: 1.06;
+  letter-spacing: -1px; margin-bottom: 14px;
+}
+.hero-title em { color: var(--gold); font-style: normal; }
+.hero-desc {
+  font-size: 14px; color: var(--text2); line-height: 1.65;
+  margin-bottom: 24px; max-width: 380px;
+}
+.hero-actions { display: flex; gap: 10px; flex-wrap: nowrap; align-items: center; }
+
+/* Spotify-style pill buttons */
+.btn-pill-gold {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold); color: #000;
+  font-size: 13px; font-weight: 800;
+  padding: 12px 28px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .8px; white-space: nowrap;
+  transition: all .15s; border: none; cursor: pointer;
+}
+.btn-pill-gold:hover { background: var(--gold2); transform: scale(1.04); }
+.btn-pill-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; color: var(--text);
+  font-size: 13px; font-weight: 700;
+  padding: 12px 28px; border-radius: var(--r-pill);
+  border: 1px solid rgba(255,255,255,.3);
+  text-transform: uppercase; letter-spacing: .8px; white-space: nowrap;
+  transition: all .15s; cursor: pointer;
+}
+.btn-pill-ghost:hover { border-color: rgba(255,255,255,.7); transform: scale(1.02); }
+
+/* Type strip */
+.type-strip {
+  display: flex; gap: 8px;
+  padding: 20px 28px 4px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.type-strip::-webkit-scrollbar { display: none; }
+.type-pill {
+  flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+  background: var(--bg2); color: var(--text2);
+  font-size: 12px; font-weight: 600;
+  padding: 7px 16px; border-radius: var(--r-pill);
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  /* Spotify's pill filter chip */
+}
+.type-pill:hover { background: var(--bg4); color: var(--text); }
+.type-pill.active { background: var(--text); color: #000; font-weight: 700; }
+
+/* Constructor */
+.constructor-bar {
+  margin: 16px 28px;
+  background: var(--bg2); border-radius: var(--r-lg);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+}
+.constructor-label {
+  font-size: 11px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.constructor-label em { color: var(--gold); font-style: normal; }
+.constructor-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.csel {
+  flex: 1; min-width: 140px;
+  background: var(--bg3); border: none;
+  color: var(--text); font-size: 13px;
+  padding: 10px 14px; border-radius: var(--r-pill);
+  outline: none; appearance: none;
+  transition: background .15s; cursor: pointer;
+}
+.csel:focus { background: var(--bg4); outline: 2px solid rgba(255,255,255,.12); }
+.csel option { background: var(--bg3); }
+.c-find-btn {
+  background: var(--gold); color: #000;
+  font-size: 12px; font-weight: 800;
+  padding: 10px 24px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .8px;
+  white-space: nowrap; transition: all .15s;
+}
+.c-find-btn:hover { background: var(--gold2); transform: scale(1.03); }
+.c-result {
+  margin-top: 12px; padding: 10px 14px;
+  background: var(--teal-dim); border: 1px solid rgba(62,207,178,.2);
+  border-radius: var(--r-md); font-size: 12px; color: var(--teal);
+  display: none; align-items: center; gap: 8px;
+}
+.c-result.show { display: flex; }
+
+/* Feed */
+.feed { padding: 8px 28px 60px; }
+.row { margin-bottom: 36px; }
+.row-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.row-title { font-size: 22px; font-weight: 800; letter-spacing: -.5px; }
+.row-more {
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; transition: color .15s;
+}
+.row-more:hover { color: var(--text); }
+.cards-h {
+  display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+/* ============================================================
+   CARDS — Spotify's dark card with heavy shadow on hover
+============================================================ */
+.card {
+  flex-shrink: 0; cursor: pointer;
+  background: var(--bg2);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+.card:hover {
+  background: var(--bg4);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.card.w-170 { width: 170px; }
+.card.w-200 { width: 200px; }
+.card.w-220 { width: 220px; }
+.card.w-240 { width: 240px; }
+
+.thumb {
+  width: 100%; border-radius: var(--r-md);
+  overflow: hidden; position: relative; margin-bottom: 12px;
+}
+.thumb.r-film { aspect-ratio: 2/3; }
+.thumb.r-wide { aspect-ratio: 16/9; }
+.thumb.r-sq { aspect-ratio: 1/1; border-radius: 50%; } /* Spotify circles for podcasts/music */
+
+.thumb-inner {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+/* Spotify's floating play button — appears on card hover */
+.thumb-play-wrap {
+  position: absolute; bottom: 8px; right: 8px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .2s, transform .2s;
+}
+.card:hover .thumb-play-wrap { opacity: 1; transform: translateY(0); }
+.thumb-play {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--gold); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #000;
+  box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  transition: transform .1s;
+}
+.thumb-play:hover { transform: scale(1.06); }
+
+.ct-badge {
+  position: absolute; top: 8px; left: 8px;
+  font-size: 9px; font-weight: 800;
+  padding: 3px 8px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .5px;
+  background: rgba(0,0,0,.7);
+}
+.ct-film   { color: #d4a843; }
+.ct-music  { color: #e07ad4; }
+.ct-doc    { color: #7ad4e0; }
+.ct-podcast{ color: #a0d47a; }
+.ct-social { color: #d4907a; }
+.ct-short  { color: #7aaed4; }
+
+.card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; line-height: 1.35; }
+.card-sub { font-size: 11px; color: var(--text2); }
+.card-rating { font-size: 11px; color: var(--gold); margin-top: 4px; font-weight: 600; }
+
+/* Palettes */
+.p1  { background: linear-gradient(145deg,#1a3824,#0a2014); }
+.p2  { background: linear-gradient(145deg,#2a1535,#150828); }
+.p3  { background: linear-gradient(145deg,#35280a,#221508); }
+.p4  { background: linear-gradient(145deg,#0a2535,#081528); }
+.p5  { background: linear-gradient(145deg,#35150a,#220808); }
+.p6  { background: linear-gradient(145deg,#151a35,#080a22); }
+.p7  { background: linear-gradient(145deg,#352a15,#22180a); }
+.p8  { background: linear-gradient(145deg,#153530,#08221e); }
+.p9  { background: linear-gradient(145deg,#351520,#220810); }
+.p10 { background: linear-gradient(145deg,#1a3535,#0a2222); }
+
+/* ============================================================
+   WATCH PAGE
+============================================================ */
+.watch-layout { display: flex; gap: 24px; padding: 24px 28px; align-items: flex-start; }
+.watch-main { flex: 1; min-width: 0; }
+.watch-side { width: 320px; flex-shrink: 0; }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--text2); font-size: 13px; font-weight: 600;
+  margin-bottom: 16px; cursor: pointer;
+  transition: color .15s;
+  background: var(--bg2); padding: 7px 16px; border-radius: var(--r-pill);
+}
+.back-btn:hover { color: var(--text); background: var(--bg4); }
+
+/* Player */
+.player-wrap {
+  background: #000; border-radius: var(--r-lg);
+  overflow: hidden; aspect-ratio: 16/9; position: relative;
+  box-shadow: var(--shadow-lg);
+}
+.player-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #0C1208, #111A0C, #0A1A0A);
+}
+.player-center {
+  position: relative; z-index: 2;
+  height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.play-big {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--gold); display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #000; margin-bottom: 14px;
+  box-shadow: 0 8px 32px rgba(212,168,67,.4);
+  transition: transform .15s, box-shadow .15s;
+}
+.play-big:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(212,168,67,.5); }
+.player-title-over { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.player-meta-over { font-size: 12px; color: var(--text2); }
+
+.player-controls {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  padding: 12px 16px;
+  background: linear-gradient(0deg, rgba(0,0,0,.9) 0%, transparent 100%);
+}
+.progress {
+  height: 4px; background: rgba(255,255,255,.2); border-radius: 2px;
+  margin-bottom: 10px; cursor: pointer; position: relative;
+}
+.progress:hover { height: 6px; }
+.progress-fill { height: 100%; background: var(--gold); border-radius: 2px; width: 28%; }
+.progress-thumb {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  left: 28%; width: 12px; height: 12px; background: #fff; border-radius: 50%;
+  margin-left: -6px; opacity: 0; transition: opacity .15s;
+}
+.progress:hover .progress-thumb { opacity: 1; }
+.ctrl-bar { display: flex; align-items: center; gap: 10px; }
+.ctrl-ico { color: rgba(255,255,255,.7); font-size: 14px; padding: 3px; transition: color .15s; }
+.ctrl-ico:hover { color: #fff; }
+.ctrl-time { font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: .3px; }
+.ctrl-r { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.ctrl-q {
+  background: rgba(255,255,255,.1); color: rgba(255,255,255,.7);
+  font-size: 10px; font-weight: 800; padding: 3px 8px;
+  border-radius: var(--r-sm); letter-spacing: .5px;
+}
+
+/* Video info */
+.video-title { font-size: 22px; font-weight: 900; letter-spacing: -.5px; margin: 18px 0 10px; }
+.video-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.vtag {
+  background: var(--bg2); color: var(--text2);
+  font-size: 11px; padding: 5px 12px; border-radius: var(--r-pill);
+}
+.vtag.gold { background: var(--gold-dim); color: var(--gold); }
+.action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.action-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg2); color: var(--text);
+  font-size: 12px; font-weight: 600;
+  padding: 9px 18px; border-radius: var(--r-pill);
+  transition: all .15s;
+}
+.action-btn:hover { background: var(--bg4); }
+.action-btn.primary { background: var(--gold); color: #000; font-weight: 800; }
+.action-btn.primary:hover { background: var(--gold2); }
+
+/* Description */
+.desc-box {
+  background: var(--bg2); border-radius: var(--r-lg);
+  padding: 18px 20px; margin-bottom: 20px;
+  font-size: 13px; color: var(--text2); line-height: 1.7;
+}
+.desc-box strong { color: var(--text); }
+
+/* Crew */
+.panel {
+  background: var(--bg2); border-radius: var(--r-lg);
+  overflow: hidden; margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.panel-head {
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.panel-title { font-size: 13px; font-weight: 800; letter-spacing: .2px; }
+.teal-pill {
+  background: var(--teal-dim); color: var(--teal);
+  font-size: 9px; font-weight: 800;
+  padding: 3px 10px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .6px;
+  border: 1px solid rgba(62,207,178,.2);
+}
+
+.crew-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 18px; cursor: pointer; transition: background .15s;
+}
+.crew-item:hover { background: rgba(255,255,255,.05); }
+.cav {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: #000;
+}
+.cinfo { flex: 1; min-width: 0; }
+.cname {
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.crew-item:hover .cname { text-decoration: underline; }
+.crole { font-size: 10px; color: var(--text2); margin-top: 1px; }
+.carrow { font-size: 11px; color: var(--text3); }
+
+/* Comments */
+.comments-section { margin-bottom: 24px; }
+.cs-head { font-size: 16px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 18px; }
+.comment-input-row { display: flex; gap: 10px; margin-bottom: 22px; align-items: flex-start; }
+.comment-av {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--teal), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #000;
+}
+.comment-input {
+  flex: 1; background: var(--bg2);
+  color: var(--text); font-size: 13px;
+  padding: 10px 16px; border-radius: var(--r-md);
+  outline: none; resize: none; min-height: 40px;
+  font-family: inherit; transition: background .15s;
+  border: 1px solid transparent;
+}
+.comment-input:focus { background: var(--bg3); border-color: rgba(255,255,255,.1); }
+.comment { display: flex; gap: 12px; margin-bottom: 18px; }
+.comment-body { flex: 1; }
+.comment-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.comment-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.comment-acts { display: flex; gap: 14px; margin-top: 6px; }
+.comment-act { font-size: 11px; color: var(--text3); cursor: pointer; font-weight: 600; transition: color .15s; }
+.comment-act:hover { color: var(--text); }
+
+/* Watch side — recommendations */
+.watch-side-label {
+  font-size: 11px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.rec-card {
+  display: flex; gap: 10px; margin-bottom: 10px;
+  padding: 8px; border-radius: var(--r-md);
+  cursor: pointer; transition: background .15s;
+}
+.rec-card:hover { background: var(--bg2); }
+.rec-thumb {
+  width: 120px; height: 68px; border-radius: var(--r-sm);
+  overflow: hidden; flex-shrink: 0; position: relative;
+}
+.rec-thumb-inner { width: 100%; height: 100%; }
+.rec-play-wrap {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.4); opacity: 0; transition: opacity .15s; font-size: 18px;
+}
+.rec-card:hover .rec-play-wrap { opacity: 1; }
+.rec-info { flex: 1; min-width: 0; }
+.rec-title { font-size: 12px; font-weight: 700; line-height: 1.4; margin-bottom: 4px; }
+.rec-meta { font-size: 11px; color: var(--text2); }
+.rec-tag {
+  display: inline-block; margin-top: 4px;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 7px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .4px;
+}
+
+/* ============================================================
+   PITCH PAGE
+============================================================ */
+.pitch-page { padding: 28px 28px 60px; }
+
+.pitch-banner {
+  background: linear-gradient(135deg, #1a0828, #0d1535, #081810);
+  border-radius: var(--r-lg); padding: 36px 40px; margin-bottom: 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  box-shadow: var(--shadow-md);
+}
+.pb-title { font-size: 26px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 10px; }
+.pb-title em { color: var(--gold); font-style: normal; }
+.pb-desc { font-size: 13px; color: var(--text2); max-width: 420px; line-height: 1.65; }
+.pb-action {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold); color: #000;
+  font-size: 13px; font-weight: 800;
+  padding: 14px 32px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .8px;
+  flex-shrink: 0; transition: all .15s;
+}
+.pb-action:hover { background: var(--gold2); transform: scale(1.03); }
+
+.pitch-filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.pf {
+  background: var(--bg2); color: var(--text2);
+  font-size: 12px; font-weight: 600;
+  padding: 7px 16px; border-radius: var(--r-pill);
+  transition: all .15s; cursor: pointer;
+}
+.pf:hover { background: var(--bg4); color: var(--text); }
+.pf.active { background: var(--text); color: #000; font-weight: 700; }
+
+.pitch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.pc {
+  background: var(--bg2); border-radius: var(--r-lg);
+  overflow: hidden; cursor: pointer;
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+.pc:hover {
+  background: var(--bg4);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+.pc-thumb {
+  height: 155px; position: relative;
+  display: flex; align-items: flex-end; padding: 0 16px 12px;
+}
+.pc-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 9px; font-weight: 800; padding: 4px 10px;
+  border-radius: var(--r-pill); text-transform: uppercase; letter-spacing: .5px;
+}
+.pb-live { background: rgba(76,175,80,.15); color: #4caf50; }
+.pb-new  { background: var(--gold-dim); color: var(--gold); }
+.pb-hot  { background: rgba(224,82,82,.12); color: #e05252; }
+.pc-days { font-size: 11px; color: var(--text2); }
+.pc-body { padding: 16px 18px 18px; }
+.pc-type { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+.pc-title { font-size: 16px; font-weight: 900; margin-bottom: 5px; letter-spacing: -.3px; }
+.pc-author {
+  font-size: 11px; color: var(--text2); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.pc-desc { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+.prog-labels { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
+.prog-raised { font-weight: 800; }
+.prog-goal { color: var(--text2); }
+.prog-track {
+  height: 4px; background: var(--bg5); border-radius: 2px;
+  overflow: hidden; margin-bottom: 14px;
+}
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  border-radius: 2px; transition: width .5s;
+}
+.pc-foot { display: flex; align-items: center; justify-content: space-between; }
+.pc-backers { font-size: 11px; color: var(--text2); }
+.qoldau {
+  background: var(--teal); color: #000;
+  font-size: 11px; font-weight: 800;
+  padding: 8px 18px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .6px;
+  transition: all .15s;
+}
+.qoldau:hover { background: #5de0ca; transform: scale(1.04); }
+
+/* ============================================================
+   PROFILE PAGE
+============================================================ */
+.profile-page { padding: 0 0 60px; }
+.profile-cover {
+  height: 200px; overflow: hidden; position: relative;
+  background: linear-gradient(135deg, #0C1A08, #111F0C, #0A1A0A);
+}
+.profile-cover::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 100px;
+  background: linear-gradient(0deg, var(--bg), transparent);
+}
+.profile-body { padding: 0 28px 0; }
+.profile-top { display: flex; gap: 22px; align-items: flex-start; margin-top: -48px; margin-bottom: 24px; }
+.prof-av {
+  width: 96px; height: 96px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--teal), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; font-weight: 900; color: #000;
+  border: 4px solid var(--bg);
+  box-shadow: var(--shadow-md);
+  position: relative; z-index: 1;
+  margin-top: 0;
+}
+.prof-main { flex: 1; padding-top: 54px; position: relative; }
+.prof-verified {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px;
+}
+.prof-name { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 3px; }
+.prof-handle { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
+.prof-bio { font-size: 13px; color: var(--text2); line-height: 1.6; max-width: 480px; margin-bottom: 14px; }
+.prof-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.skill-pill {
+  background: var(--bg2); color: var(--text);
+  font-size: 11px; font-weight: 600;
+  padding: 5px 12px; border-radius: var(--r-pill);
+}
+.prof-links { display: flex; gap: 8px; }
+.prof-link {
+  background: var(--bg2); color: var(--text2);
+  font-size: 11px; font-weight: 600;
+  padding: 6px 14px; border-radius: var(--r-pill);
+  cursor: pointer; transition: all .15s;
+}
+.prof-link:hover { background: var(--bg4); color: var(--text); }
+.prof-stats { display: flex; gap: 28px; padding: 0; margin-left: auto; padding-top: 54px; align-self: flex-start; }
+.pstat-v { font-size: 20px; font-weight: 900; letter-spacing: -.5px; }
+.pstat-l { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
+
+.profile-tabs {
+  display: flex; gap: 2px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.ptab {
+  padding: 12px 18px; font-size: 13px; font-weight: 700;
+  color: var(--text2); border-bottom: 2px solid transparent;
+  transition: all .15s; cursor: pointer;
+}
+.ptab.active { color: var(--text); border-bottom-color: var(--gold); }
+.ptab:hover:not(.active) { color: var(--text); }
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px; padding-bottom: 20px;
+}
+.pgcard {
+  background: var(--bg2); border-radius: var(--r-lg); overflow: hidden;
+  cursor: pointer; transition: background .2s, box-shadow .2s, transform .2s;
+  padding: 12px;
+}
+.pgcard:hover { background: var(--bg4); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.pgcard-thumb { height: 100px; border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
+.pgcard-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+.pgcard-meta { font-size: 10px; color: var(--text2); }
+.pgcard-role {
+  display: inline-block; margin-top: 5px;
+  font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .4px;
+  background: var(--teal-dim); color: var(--teal);
+}
+.pgcard-role.dir { background: var(--gold-dim); color: var(--gold); }
+
+/* ============================================================
+   LANGUAGE SWITCHER
+============================================================ */
+.lang-switcher { display: flex; gap: 2px; }
+.lang-btn {
+  background: none; color: var(--text2);
+  font-size: 11px; font-weight: 800;
+  padding: 5px 9px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .5px;
+  transition: all .15s;
+}
+.lang-btn:hover { background: rgba(255,255,255,.08); color: var(--text); }
+.lang-btn.active { background: rgba(255,255,255,.12); color: var(--text); }
+
+/* ============================================================
+   AUTH PAGE (Login / Register)
+============================================================ */
+.auth-page {
+  min-height: calc(100vh - var(--topbar));
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 24px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(125,145,88,.08) 0%, transparent 65%);
+}
+.auth-card {
+  background: var(--bg2); border-radius: 20px;
+  padding: 36px 36px 32px; width: 100%; max-width: 420px;
+  box-shadow: var(--shadow-lg);
+}
+.auth-logo {
+  font-size: 20px; font-weight: 900;
+  background: linear-gradient(120deg, var(--gold), var(--gold2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+.auth-subtitle { font-size: 12px; color: var(--text3); margin-bottom: 24px; }
+.auth-tabs {
+  display: flex; gap: 0; margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.auth-tab {
+  flex: 1; padding: 10px 0; text-align: center;
+  font-size: 14px; font-weight: 700; color: var(--text2);
+  border-bottom: 2px solid transparent; transition: all .15s; cursor: pointer;
+}
+.auth-tab.active { color: var(--text); border-bottom-color: var(--gold); }
+.auth-tab:hover:not(.active) { color: var(--text); }
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label {
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: .8px;
+}
+.form-input {
+  width: 100%;
+  background: var(--bg3); border: 1.5px solid transparent;
+  color: var(--text); font-size: 14px; font-family: inherit;
+  padding: 11px 14px; border-radius: var(--r-md);
+  outline: none; transition: all .2s;
+}
+.form-input:focus { border-color: rgba(212,168,67,.45); background: var(--bg4); }
+.form-input::placeholder { color: var(--text3); }
+/* Two-column row: both fields equal width */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-submit {
+  width: 100%; padding: 13px;
+  background: var(--gold); color: #000;
+  font-size: 13px; font-weight: 800;
+  border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: 1px;
+  transition: all .15s; margin-top: 6px;
+}
+.form-submit:hover { background: var(--gold2); transform: scale(1.02); }
+.form-divider {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; color: var(--text3); margin: 2px 0;
+}
+.form-divider::before, .form-divider::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.07);
+}
+.oauth-btn {
+  width: 100%; padding: 11px;
+  background: var(--bg3); color: var(--text);
+  font-size: 13px; font-weight: 600;
+  border-radius: var(--r-pill);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all .15s; border: 1.5px solid transparent;
+}
+.oauth-btn:hover { background: var(--bg4); border-color: rgba(255,255,255,.1); }
+.form-note { font-size: 11px; color: var(--text3); text-align: center; line-height: 1.7; margin-top: 2px; }
+.form-note a { color: var(--gold); cursor: pointer; }
+.form-error {
+  background: rgba(220,53,53,.15);
+  border: 1px solid rgba(220,53,53,.4);
+  color: #ff6b6b;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.form-success {
+  background: rgba(62,207,178,.1);
+  border: 1px solid rgba(62,207,178,.35);
+  color: var(--teal);
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+}
+.form-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+/* Role selector */
+.role-label-sm {
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px;
+}
+.role-select-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.role-opt {
+  background: var(--bg3); border: 1.5px solid rgba(255,255,255,.06);
+  color: var(--text2); font-size: 12px; font-weight: 700;
+  padding: 14px 8px 12px; border-radius: var(--r-md);
+  text-align: center; cursor: pointer; transition: all .15s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.role-opt:hover { border-color: rgba(255,255,255,.2); color: var(--text); background: var(--bg4); }
+.role-opt.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.role-icon-box {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; background: rgba(255,255,255,.06);
+}
+
+/* ============================================================
+   SETTINGS PAGE
+============================================================ */
+.settings-page { padding: 32px 28px 60px; max-width: 720px; }
+.settings-title { font-size: 26px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 28px; }
+.settings-block {
+  background: var(--bg2); border-radius: var(--r-lg);
+  margin-bottom: 16px; overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.settings-block-title {
+  padding: 16px 20px;
+  font-size: 11px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row-info { }
+.settings-row-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.settings-row-desc { font-size: 11px; color: var(--text2); }
+.toggle {
+  width: 42px; height: 24px; border-radius: var(--r-pill);
+  background: var(--bg5); position: relative; cursor: pointer;
+  transition: background .2s; flex-shrink: 0;
+}
+.toggle.on { background: var(--gold); }
+.toggle::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%; background: #fff;
+  transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+.toggle.on::after { transform: translateX(18px); }
+.lang-group { display: flex; gap: 6px; }
+.lang-opt {
+  background: var(--bg3); color: var(--text2);
+  font-size: 12px; font-weight: 700;
+  padding: 6px 14px; border-radius: var(--r-pill);
+  cursor: pointer; transition: all .15s;
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.lang-opt:hover { background: var(--bg4); color: var(--text); }
+.lang-opt.active { background: var(--text); color: #000; }
+
+/* Role badge */
+.role-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: var(--r-pill);
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px;
+}
+.role-user     { background: var(--bg3); color: var(--text2); }
+.role-creator  { background: var(--gold-dim); color: var(--gold); }
+.role-badge.role-moderator { background: var(--teal-dim); color: var(--teal); }
+.role-badge.role-admin    { background: rgba(224,82,82,.12); color: #e05252; }
+.role-switcher { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ============================================================
+   ABOUT PAGE
+============================================================ */
+.about-page { padding: 32px 28px 60px; max-width: 860px; }
+.about-hero {
+  background: linear-gradient(135deg, #1a0828, #0d1535, #081810);
+  border-radius: var(--r-lg); padding: 40px 44px; margin-bottom: 32px;
+  box-shadow: var(--shadow-md);
+}
+.about-uni {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+}
+.uni-logo {
+  width: 52px; height: 52px; border-radius: var(--r-md);
+  background: linear-gradient(135deg, #1a3a8f, #0d2060);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 900; color: #fff;
+  flex-shrink: 0;
+}
+.uni-name { font-size: 12px; font-weight: 700; color: var(--text2); line-height: 1.5; }
+.uni-name strong { display: block; font-size: 14px; color: var(--text); }
+.about-project-title {
+  font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px;
+  background: linear-gradient(120deg, var(--gold), var(--gold2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.about-tagline { font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 560px; }
+.about-research {
+  background: var(--bg2); border-radius: var(--r-lg); padding: 24px 28px; margin-bottom: 24px;
+}
+.about-research-title { font-size: 14px; font-weight: 800; margin-bottom: 8px; }
+.about-research-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.about-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+.about-stat {
+  background: var(--bg2); border-radius: var(--r-lg); padding: 20px 24px; flex: 1; min-width: 140px;
+}
+.about-stat-num { font-size: 28px; font-weight: 900; color: var(--gold); letter-spacing: -1px; }
+.about-stat-label { font-size: 11px; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: .6px; }
+.about-section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; letter-spacing: -.3px; }
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 32px; }
+.team-card {
+  background: var(--bg2); border-radius: var(--r-lg); padding: 20px;
+  transition: background .2s, transform .2s;
+}
+.team-card:hover { background: var(--bg4); transform: translateY(-2px); }
+.team-av {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #000;
+  margin-bottom: 12px;
+}
+.team-name { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+.team-role { font-size: 11px; color: var(--text2); margin-bottom: 8px; }
+.team-role-badge {
+  display: inline-flex; font-size: 9px; font-weight: 800;
+  padding: 3px 8px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.tech-stack { display: flex; gap: 8px; flex-wrap: wrap; }
+.tech-tag {
+  background: var(--bg2); color: var(--text2);
+  font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: var(--r-pill);
+}
+
+/* ── Collapsible Sidebar ── */
+body.sidebar-collapsed aside.sidebar { width: 60px; }
+body.sidebar-collapsed .logo-slogan { display: none; }
+body.sidebar-collapsed .sidebar-label,
+body.sidebar-collapsed .sidebar-block2,
+body.sidebar-collapsed .sidebar-upgrade,
+body.sidebar-collapsed .admin-section,
+body.sidebar-collapsed .mod-section { display: none !important; }
+body.sidebar-collapsed .nav-item .badge,
+body.sidebar-collapsed .nav-item span:not(.ico) { display: none; }
+body.sidebar-collapsed .nav-item { justify-content: center; }
+body.sidebar-collapsed .sidebar-logo { padding: 18px 10px 20px; justify-content: center; }
+body.sidebar-collapsed .main { margin-left: 60px; width: calc(100% - 60px); }
+body.sidebar-collapsed .topbar { left: 60px; }
+
+/* ── Moderation three-dots ── */
+.card-dots { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: rgba(0,0,0,.6); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--text2); z-index: 10; backdrop-filter: blur(4px); }
+.card-dots:hover { background: var(--bg4); color: var(--text); }
+body.role-admin .card-dots, body.role-moderator .card-dots { display: flex; }
+.card { position: relative; }
+.crew-dots { margin-left: auto; width: 28px; height: 28px; background: var(--bg3); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--text2); flex-shrink: 0; }
+.crew-dots:hover { background: var(--bg4); color: var(--text); }
+body.role-admin .crew-dots, body.role-moderator .crew-dots { display: flex; }
+.prof-dots { position: absolute; top: 54px; right: 0; width: 32px; height: 32px; background: var(--bg3); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--text2); }
+.prof-dots:hover { background: var(--bg4); color: var(--text); }
+body.role-admin .prof-dots, body.role-moderator .prof-dots { display: flex; }
+
+/* ── Dots menu items ── */
+.dots-item { padding: 9px 14px; border-radius: 7px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.dots-item:hover { background: var(--bg4); }
+.dots-item.danger { color: #ff6b6b; }
+.dots-item.warn { color: var(--gold); }
+
+/* ── Request cards ── */
+.req-card { background: var(--bg2); border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--bg4); }
+.req-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.req-card-title { font-weight: 700; font-size: 14px; flex: 1; }
+.req-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.req-status.pending { background: rgba(212,168,67,.15); color: var(--gold); }
+.req-status.approved { background: rgba(76,175,80,.15); color: #4caf50; }
+.req-status.declined { background: rgba(255,107,107,.15); color: #ff6b6b; }
+.req-reason { font-size: 12px; color: var(--text2); margin-bottom: 12px; line-height: 1.5; }
+.req-meta { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+.req-actions { display: flex; gap: 8px; }
+.req-btn { padding: 7px 16px; border-radius: var(--r-pill); font-size: 12px; font-weight: 700; cursor: pointer; }
+.req-btn-approve { background: rgba(76,175,80,.15); color: #4caf50; border: 1px solid rgba(76,175,80,.3); }
+.req-btn-approve:hover { background: rgba(76,175,80,.25); }
+.req-btn-decline { background: rgba(255,107,107,.12); color: #ff6b6b; border: 1px solid rgba(255,107,107,.25); }
+.req-btn-decline:hover { background: rgba(255,107,107,.22); }
+.req-empty { text-align: center; padding: 48px 0; color: var(--text3); font-size: 13px; }
+
+/* ── Theme toggle button ── */
+.theme-toggle {
+  display: flex; align-items: center; gap: 0;
+  background: var(--bg3); border-radius: var(--r-pill);
+  padding: 3px; border: 1px solid var(--bg5);
+}
+.theme-btn {
+  padding: 7px 18px; border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  color: var(--text3); transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.theme-btn.active {
+  background: var(--gold); color: #0F1209;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+
+/* ══════════════════════════════════════════════════════════
+   LIGHT THEME  — warm parchment + sage green
+══════════════════════════════════════════════════════════ */
+body.light-theme {
+  --bg:       #F0E9D6;
+  --bg2:      #E6DBC4;
+  --bg3:      #D9CEB4;
+  --bg4:      #CABFA0;
+  --bg5:      #AFA588;
+  --gold:     #5C7840;
+  --gold2:    #7A9A58;
+  --gold-dim: rgba(92,120,64,.15);
+  --teal:     #3E5428;
+  --teal-dim: rgba(62,84,40,.12);
+  --text:     #18200E;
+  --text2:    #445228;
+  --text3:    #748058;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.10);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.12);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,.15);
+}
+body.light-theme .sidebar           { background: #DDD3B8; }
+body.light-theme .topbar            { background: rgba(240,233,214,.96); border-bottom: 1px solid var(--bg5); }
+body.light-theme .hero-bg           { background: linear-gradient(135deg, #B8C9A0 0%, #C8D4A8 45%, #B0C498 100%); }
+body.light-theme .hm1  { background: linear-gradient(145deg,#8CAE78,#6A9050); }
+body.light-theme .hm2  { background: linear-gradient(145deg,#9ABE82,#78A060); }
+body.light-theme .hm3  { background: linear-gradient(145deg,#A8C888,#86AA68); }
+body.light-theme .hm4  { background: linear-gradient(145deg,#82A870,#608A50); }
+body.light-theme .hm5  { background: linear-gradient(145deg,#B0CE90,#8EB070); }
+body.light-theme .hm6  { background: linear-gradient(145deg,#90B87A,#6E9A58); }
+body.light-theme .hm7  { background: linear-gradient(145deg,#A0C084,#7EA264); }
+body.light-theme .hm8  { background: linear-gradient(145deg,#88B274,#669254); }
+body.light-theme .hm9  { background: linear-gradient(145deg,#ACCC8C,#8AAE6C); }
+body.light-theme .hm10 { background: linear-gradient(145deg,#7EA66C,#5C884C); }
+body.light-theme .hm11 { background: linear-gradient(145deg,#98BA80,#769C60); }
+body.light-theme .hm12 { background: linear-gradient(145deg,#86AE72,#649052); }
+body.light-theme .hero-gradient     { background: linear-gradient(90deg,rgba(240,233,214,.85) 35%,rgba(240,233,214,.2) 75%,transparent 100%); }
+body.light-theme .hero-title        { color: var(--text); }
+body.light-theme .profile-cover     { background: linear-gradient(135deg,#B8C9A0,#C8D4A8,#B0C498); }
+body.light-theme .auth-page         { background: radial-gradient(ellipse at 50% 0%,rgba(92,120,64,.10) 0%,transparent 65%); }
+body.light-theme .card              { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+body.light-theme .logo-badge        { box-shadow: 0 3px 10px rgba(0,0,0,.15); color: #EDE5CC; }
+body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
+
+/* ── Role badge in profile ── */
+.role-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.role-tag.admin { background: rgba(125,145,88,.18); color: var(--gold2); }
+.role-tag.moderator { background: rgba(212,201,160,.12); color: var(--teal); }
+.role-tag.creator { background: rgba(125,145,88,.12); color: var(--gold); }
+.role-tag.viewer { background: var(--bg3); color: var(--text2); }
+</style>
+</head>
+<body>
+
+<!-- ======================================================  SIDEBAR  -->
+<aside class="sidebar">
+
+  <div class="sidebar-logo" onclick="goPage('home',null)">
+    <div class="logo-badge" onclick="event.stopPropagation(); toggleSidebar()" title="Свернуть / развернуть">AYA</div>
+    <div class="logo-slogan">
+      <span>Art</span>
+      <span>Yearns</span>
+      <span>Action</span>
+    </div>
+  </div>
+
+  <div class="sidebar-block">
+    <div class="nav-item active" onclick="goPage('home',this)"><span class="ico">🏠</span><span data-i18n="nav_home">Главная</span></div>
+    <div class="nav-item" onclick="goPage('pitch',this)"><span class="ico">💡</span><span data-i18n="nav_pitch">Pitching</span><span class="badge">18</span></div>
+    <div class="nav-item" onclick="goPage('profile',this)"><span class="ico">👤</span><span data-i18n="nav_profile">Профиль</span></div>
+    <div class="nav-item" onclick="goPage('home',null)"><span class="ico">🔖</span><span data-i18n="saved">Сохранённое</span></div>
+    <div id="nav-auth-btn" class="nav-item" onclick="navAuthClick()"><span class="ico">🔑</span><span id="nav-auth-label" data-i18n="login">Войти</span></div>
+    <div class="nav-item" onclick="goPage('settings',this)"><span class="ico">⚙️</span><span data-i18n="settings">Настройки</span></div>
+    <div class="nav-item" onclick="goPage('about',this)"><span class="ico">ℹ️</span><span data-i18n="about">О проекте</span></div>
+  </div>
+
+  <div class="sidebar-label" data-i18n="sidebar_content">Контент</div>
+  <div class="sidebar-block2">
+    <div class="cat-item active" onclick="filterType('all',this)"><div class="cat-dot" style="background:#fff"></div><span data-i18n="filter_all">Все</span></div>
+    <div class="cat-item" onclick="filterType('film',this)"><div class="cat-dot" style="background:#d4a843"></div><span data-i18n="cat_films">Фильмы</span></div>
+    <div class="cat-item" onclick="filterType('music',this)"><div class="cat-dot" style="background:#e07ad4"></div><span data-i18n="cat_clips">Клипы</span></div>
+    <div class="cat-item" onclick="filterType('doc',this)"><div class="cat-dot" style="background:#7ad4e0"></div><span data-i18n="cat_doc">Документальное</span></div>
+    <div class="cat-item" onclick="filterType('podcast',this)"><div class="cat-dot" style="background:#a0d47a"></div><span data-i18n="cat_podcasts">Подкасты</span></div>
+    <div class="cat-item" onclick="filterType('social',this)"><div class="cat-dot" style="background:#d4907a"></div><span data-i18n="cat_social">Соц. ролики</span></div>
+    <div class="cat-item" onclick="filterType('short',this)"><div class="cat-dot" style="background:#7aaed4"></div><span data-i18n="cat_short">Короткий метр</span></div>
+  </div>
+
+  <!-- ADMIN SECTIONS (hidden by default, shown via JS) -->
+  <div class="admin-section" id="admin-sidebar" style="display:none">
+    <div class="sidebar-label" style="color:var(--gold)" data-i18n="admin_section">⚡ Администрирование</div>
+    <div class="sidebar-block">
+      <div class="nav-item" onclick="goPage('admin-content',this)"><span class="ico">🗑</span><span data-i18n="admin_content_req">Заявки на удаление</span><span class="badge" id="badge-content-req">0</span></div>
+      <div class="nav-item" onclick="goPage('admin-bans',this)"><span class="ico">🚫</span><span data-i18n="admin_ban_req">Заявки на бан</span><span class="badge" id="badge-ban-req">0</span></div>
+    </div>
+  </div>
+
+  <!-- MODERATOR SECTION (hidden by default) -->
+  <div class="mod-section" id="mod-sidebar" style="display:none">
+    <div class="sidebar-label" style="color:var(--teal)" data-i18n="mod_section">🛡 Модерация</div>
+    <div class="sidebar-block">
+      <div class="nav-item" onclick="goPage('mod-requests',this)"><span class="ico">📋</span><span data-i18n="mod_my_req">Мои заявки</span><span class="badge" id="badge-mod-req">0</span></div>
+    </div>
+  </div>
+
+  <div style="height:12px;flex-shrink:0"></div>
+  <div class="sidebar-upgrade">
+    <div class="upgrade-title" data-i18n="membership_title">Creator Membership</div>
+    <div class="upgrade-desc" data-i18n="membership_desc">Поддержи авторов напрямую и получи эксклюзивный контент</div>
+    <button class="upgrade-btn" data-i18n="membership_btn">Подробнее</button>
+  </div>
+</aside>
+
+<!-- ======================================================  TOPBAR  -->
+<header class="topbar">
+  <div class="search-wrap">
+    <span class="search-ico">🔍</span>
+    <input class="search-input" type="text" data-i18n-placeholder="search_ph" placeholder="Что ищешь? Фильм, клип, подкаст, автор…"/>
+  </div>
+  <div class="topbar-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('ru',this)" data-lang="ru">RU</button>
+      <button class="lang-btn" onclick="setLang('kz',this)" data-lang="kz">KZ</button>
+      <button class="lang-btn" onclick="setLang('en',this)" data-lang="en">EN</button>
+    </div>
+    <div class="tb-ico"><span>🔔</span><div class="notif"></div></div>
+    <button class="tb-upload" onclick="goPage('pitch',null)" data-i18n="upload">+ Загрузить</button>
+    <div id="tb-avatar" class="tb-avatar" onclick="tbAvatarClick()">?</div>
+  </div>
+</header>
+
+<!-- ======================================================  MAIN  -->
+<main class="main">
+
+<!-- ============ HOME ============ -->
+<div id="page-home" class="page active">
+
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-mosaic">
+      <div class="hm hm1"></div><div class="hm hm2"></div><div class="hm hm3"></div>
+      <div class="hm hm4"></div><div class="hm hm5"></div>
+      <div class="hm hm6"></div><div class="hm hm7"></div><div class="hm hm8"></div>
+      <div class="hm hm9"></div><div class="hm hm10"></div>
+      <div class="hm hm11"></div><div class="hm hm12"></div>
+    </div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow" data-i18n="hero_eyebrow">✦ Казахстанский независимый контент</div>
+      <h1 class="hero-title" data-i18n="hero_title">Кино, музыка, подкасты — всё своё</h1>
+      <p class="hero-desc" data-i18n="hero_desc">Единая платформа для независимого казахстанского контента. Смотри, слушай, поддерживай авторов и находи команду.</p>
+      <div class="hero-actions">
+        <button class="btn-pill-gold" onclick="openWatch()" data-i18n="btn_watch_now">▶ Смотреть сейчас</button>
+        <button class="btn-pill-ghost" onclick="goPage('pitch',null)" data-i18n="btn_support">💡 Поддержать проект</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="type-strip">
+    <div class="type-pill active" onclick="filterType('all',this)" data-i18n="filter_all">Все</div>
+    <div class="type-pill" onclick="filterType('film',this)" data-i18n="filter_films">🎞 Фильмы</div>
+    <div class="type-pill" onclick="filterType('music',this)" data-i18n="filter_music">🎵 Музыкальные клипы</div>
+    <div class="type-pill" onclick="filterType('doc',this)" data-i18n="filter_doc">📺 Документальное</div>
+    <div class="type-pill" onclick="filterType('podcast',this)" data-i18n="filter_podcast">🎙 Подкасты</div>
+    <div class="type-pill" onclick="filterType('social',this)" data-i18n="filter_social">📱 Соц. ролики</div>
+    <div class="type-pill" onclick="filterType('short',this)" data-i18n="filter_short">⚡ Короткий метр</div>
+  </div>
+
+  <div class="constructor-bar">
+    <div class="constructor-label" data-i18n="constructor_label">✦ Конструктор поиска — найди контент под своё настроение</div>
+    <div class="constructor-row">
+      <select class="csel" id="cs-type"><option value="">Тип контента…</option><option>Фильм</option><option>Музыкальный клип</option><option>Документальный</option><option>Подкаст</option><option>Соц. ролик</option><option>Короткий метр</option></select>
+      <select class="csel" id="cs-loc"><option value="">Локация / атмосфера…</option><option>Алматы</option><option>Степь / Аул</option><option>Горы</option><option>Нур-Султан</option><option>Ностальгия 90-х</option></select>
+      <select class="csel" id="cs-feat"><option value="">Особенности…</option><option>Дебют</option><option>Женский взгляд</option><option>Фест. победитель</option><option>Социальная тема</option><option>Молодые авторы</option></select>
+      <button class="c-find-btn" onclick="runConstructor()" data-i18n="cs_find">Найти →</button>
+    </div>
+    <div class="c-result" id="c-res">🔍 <span>Найдено <strong id="c-count"></strong> работ по запросу <em id="c-query"></em></span></div>
+  </div>
+
+  <div class="feed">
+
+    <div class="row">
+      <div class="row-head"><span class="row-title" data-i18n="row_trending">🔥 Трендовое сейчас</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="cards-h">
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p1"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Боз жел</div><div class="card-sub">Асель Нурланова · 2023</div><div class="card-rating">★★★★☆ 4.2</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p2"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жер — Ninety One</div><div class="card-sub">Ninety One · 2024</div><div class="card-rating">★★★★★ 4.9</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p3"></div><span class="ct-badge ct-doc">Доку</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жетісу. Эпизод I</div><div class="card-sub">Данияр Смаков · 2024</div><div class="card-rating">★★★★★ 4.8</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p6"></div><span class="ct-badge ct-short">Короткий</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Дала толқыны</div><div class="card-sub">Айгерим Бекова · 2022</div><div class="card-rating">★★★★☆ 4.0</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p8"></div><span class="ct-badge ct-podcast">Подкаст</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Dala FM — Кино #12</div><div class="card-sub">Dala FM · 2024</div><div class="card-rating">★★★★☆ 4.4</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p5"></div><span class="ct-badge ct-social">Соц. ролик</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Тіл туралы / О языке</div><div class="card-sub">QazMedia · 2023</div><div class="card-rating">★★★★☆ 4.1</div></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-head"><span class="row-title" data-i18n="row_music">🎵 Музыкальные клипы</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="cards-h">
+        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p2"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">BATYR — Ана</div><div class="card-sub">BATYR · 24М просм.</div></div>
+        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p7"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Moldanazar — Мен</div><div class="card-sub">Moldanazar · 11М просм.</div></div>
+        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p9"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Skryptonite — Горы</div><div class="card-sub">Skryptonite · 8М просм.</div></div>
+        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p4"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Айгерим — Сені сағындым</div><div class="card-sub">Aigerim · 5М просм.</div></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-head"><span class="row-title" data-i18n="row_podcasts">🎙 Подкасты</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="cards-h">
+        <!-- Podcasts use circle thumbs like Spotify -->
+        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p10"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Qazaq Talk #47</div><div class="card-sub">Qazaq Talk · 2ч 10м</div></div>
+        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p3"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Dala FM #12</div><div class="card-sub">Dala FM · 1ч 34м</div></div>
+        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p6"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Kinoshka #29</div><div class="card-sub">Kinoshka KZ · 58м</div></div>
+        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p2"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Insight Almaty #88</div><div class="card-sub">Insight · 1ч 12м</div></div>
+        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p8"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Film Lab KZ #3</div><div class="card-sub">Film Lab · 45м</div></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-head"><span class="row-title" data-i18n="row_festival">🏆 Фестивальные победители</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="cards-h">
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p4"></div><span class="ct-badge ct-doc">Доку</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Арал. Реквием</div><div class="card-sub">Медеу Тоқаев · 2020</div><div class="card-rating">★★★★★ 4.8</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p9"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Байланыс</div><div class="card-sub">Сания Алимова · 2022</div><div class="card-rating">★★★★★ 4.9</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p5"></div><span class="ct-badge ct-short">Короткий</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жоғалған үн</div><div class="card-sub">Асель Нурланова · 2020</div><div class="card-rating">★★★★☆ 4.3</div></div>
+        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p7"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жер иесі</div><div class="card-sub">Болат Омаров · 2021</div><div class="card-rating">★★★★☆ 4.3</div></div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /home -->
+
+
+<!-- ============ WATCH ============ -->
+<div id="page-watch" class="page">
+  <div class="watch-layout">
+    <div class="watch-main">
+      <button class="back-btn" onclick="goBack()" data-i18n="back_btn">← Назад</button>
+      <div class="player-wrap">
+        <div class="player-bg"></div>
+        <div class="player-center">
+          <button class="play-big">▶</button>
+          <div class="player-title-over">Боз жел</div>
+          <div class="player-meta-over">Казахстан · 2023 · 84 мин</div>
+        </div>
+        <div class="player-controls">
+          <div class="progress"><div class="progress-fill"></div><div class="progress-thumb"></div></div>
+          <div class="ctrl-bar">
+            <button class="ctrl-ico">⏮</button>
+            <button class="ctrl-ico">▶</button>
+            <button class="ctrl-ico">⏭</button>
+            <button class="ctrl-ico">🔊</button>
+            <span class="ctrl-time">29:24 / 84:00</span>
+            <div class="ctrl-r"><button class="ctrl-q">HD</button><button class="ctrl-ico">CC</button><button class="ctrl-ico">⛶</button></div>
+          </div>
+        </div>
+      </div>
+
+      <h1 class="video-title">Боз жел <span style="color:var(--text2);font-weight:400;font-size:16px">/ Pale Wind</span></h1>
+      <div class="video-tags">
+        <span class="vtag gold">★ 4.2</span>
+        <span class="vtag">Драма</span><span class="vtag">Аул / Степь</span>
+        <span class="vtag">84 мин</span><span class="vtag">Каз / Рус</span>
+        <span class="vtag">2023</span>
+      </div>
+      <div class="action-row">
+        <button class="action-btn primary" data-i18n="btn_watch">▶ Смотреть</button>
+        <button class="action-btn">👍 1.4K</button>
+        <button class="action-btn" data-i18n="btn_review">💬 Рецензия</button>
+        <button class="action-btn" data-i18n="btn_save">🔖 Сохранить</button>
+        <button class="action-btn" data-i18n="btn_share">↗ Поделиться</button>
+      </div>
+      <div class="desc-box">
+        История молодого фотографа, вернувшегося в родное село после десяти лет в городе. Встреча с прошлым, забытыми лицами и бескрайней степью заставляет переосмыслить всё, чем он жил.<br/><br/>
+        Дебютная работа Асель Нурлановой. <strong>Победитель программы «Открытие»</strong> Eurasia IFF 2023. Снято полностью на натуре в Жетысуской области.
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title" data-i18n="crew_title">Съёмочная группа</span>
+          <span class="teal-pill">Networking Player</span>
+        </div>
+        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#3ecfb2,#d4a843)">АН</div><div class="cinfo"><div class="cname">Асель Нурланова</div><div class="crole">Режиссёр · Сценарист</div></div><span class="carrow">→</span></div>
+        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#d44343,#7b2fd4)">ДС</div><div class="cinfo"><div class="cname">Данияр Сейткали</div><div class="crole">Оператор-постановщик</div></div><span class="carrow">→</span></div>
+        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#4380d4,#43d48e)">МА</div><div class="cinfo"><div class="cname">Медина Ахметова</div><div class="crole">Монтажёр</div></div><span class="carrow">→</span></div>
+        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#d4a843,#d46343)">ТБ</div><div class="cinfo"><div class="cname">Тимур Бекжанов</div><div class="crole">Звукорежиссёр</div></div><span class="carrow">→</span></div>
+        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#7b43d4,#d443a8)">АК</div><div class="cinfo"><div class="cname">Айжан Қалиева</div><div class="crole">Художник-постановщик</div></div><span class="carrow">→</span></div>
+        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#43d4c2,#4380d4)">НО</div><div class="cinfo"><div class="cname">Нуржан Оразов</div><div class="crole">Продюсер</div></div><span class="carrow">→</span></div>
+      </div>
+
+      <div class="comments-section">
+        <div class="cs-head"><span data-i18n="comments_title">Рецензии и комментарии</span> <span style="color:var(--text2);font-weight:400;font-size:13px">(47)</span></div>
+        <div class="comment-input-row">
+          <div class="comment-av">Е</div>
+          <textarea class="comment-input" rows="1" data-i18n-placeholder="comment_ph" placeholder="Напиши рецензию или комментарий…"></textarea>
+        </div>
+        <div class="comment">
+          <div class="comment-av" style="background:linear-gradient(135deg,#d44343,#7b2fd4)">АБ</div>
+          <div class="comment-body">
+            <div class="comment-name">Алия Берекова <span style="color:var(--text3);font-weight:400;font-size:10px">· 2 дня назад</span></div>
+            <div class="comment-text">Поразительная работа для дебюта. Оператор — отдельный разговор, эти планы степи с золотым часом просто невероятные. Ждём следующей работы Асель.</div>
+            <div class="comment-acts"><span class="comment-act">👍 34</span><span class="comment-act">Ответить</span></div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="comment-av" style="background:linear-gradient(135deg,#4380d4,#43d48e)">НС</div>
+          <div class="comment-body">
+            <div class="comment-name">Нурлан Серіков <span style="color:var(--text3);font-weight:400;font-size:10px">· 5 дней назад</span></div>
+            <div class="comment-text">Хочу связаться с Данияром (оператор) — нашёл его через Crew List, уже написал в профиле. Вот за что люблю эту платформу!</div>
+            <div class="comment-acts"><span class="comment-act">👍 12</span><span class="comment-act">Ответить</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="watch-side">
+      <div class="watch-side-label" data-i18n="also_rec">Также рекомендуем</div>
+      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p4"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Байланыс</div><div class="rec-meta">Сания Алимова</div><span class="rec-tag" style="background:rgba(212,168,67,.1);color:var(--gold)">ФИЛЬМ</span></div></div>
+      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p1"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Дала толқыны</div><div class="rec-meta">Айгерим Бекова</div><span class="rec-tag" style="background:rgba(122,174,212,.1);color:#7aaed4">КОРОТКИЙ</span></div></div>
+      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p3"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Жетісу. Эпизод I</div><div class="rec-meta">Данияр Смаков</div><span class="rec-tag" style="background:rgba(122,212,224,.1);color:#7ad4e0">ДОКУ</span></div></div>
+      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p2"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">BATYR — Ана</div><div class="rec-meta">BATYR · 24М просм.</div><span class="rec-tag" style="background:rgba(224,122,212,.1);color:#e07ad4">КЛИП</span></div></div>
+      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p8" style="border-radius:6px"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Kinoshka #29</div><div class="rec-meta">Kinoshka KZ · 58м</div><span class="rec-tag" style="background:rgba(160,212,122,.1);color:#a0d47a">ПОДКАСТ</span></div></div>
+      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p7"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Арал. Реквием</div><div class="rec-meta">Медеу Тоқаев</div><span class="rec-tag" style="background:rgba(122,212,224,.1);color:#7ad4e0">ДОКУ</span></div></div>
+    </div>
+  </div>
+</div><!-- /watch -->
+
+
+<!-- ============ PITCH ============ -->
+<div id="page-pitch" class="page">
+  <div class="pitch-page">
+    <div class="pitch-banner">
+      <div>
+        <div class="pb-title">Pitching — <em>инкубатор идей</em></div>
+        <p class="pb-desc" data-i18n="pitch_desc">Фильмы, клипы, подкасты, соц. проекты — любая идея может найти поддержку. Каждый вклад приближает историю к экрану.</p>
+      </div>
+      <button class="pb-action" data-i18n="pitch_submit">+ Подать питч</button>
+    </div>
+    <div class="pitch-filters">
+      <button class="pf active" data-i18n="filter_all">Все</button>
+      <button class="pf" data-i18n="pf_film">🎬 Кино</button>
+      <button class="pf" data-i18n="pf_music">🎵 Музыка</button>
+      <button class="pf" data-i18n="pf_doc">📺 Документальное</button>
+      <button class="pf" data-i18n="pf_podcast">🎙 Подкаст</button>
+      <button class="pf" data-i18n="pf_social">📱 Соц. проект</button>
+      <button class="pf" data-i18n="pf_animation">🎨 Анимация</button>
+      <button class="pf" data-i18n="pf_almost">🔥 Почти собрано</button>
+    </div>
+    <div class="pitch-grid">
+
+      <div class="pc"><div class="pc-thumb p1"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>14</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-film" data-i18n="pc_type_feature">🎬 Полный метр</div><div class="pc-title">Теміртау. 1991</div><div class="pc-author">Нурлан Ахметов</div><p class="pc-desc" data-i18n="pc1_desc">Исторический полный метр о распаде СССР глазами молодого рабочего металлургического комбината.</p><div class="prog-labels"><span class="prog-raised">4 200 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 8 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:52%"></div></div><div class="pc-foot"><span class="pc-backers">👥 83 <span data-i18n="backers">бэкера</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+
+      <div class="pc"><div class="pc-thumb p2"><div class="pc-badge pb-hot" data-i18n="badge_hot">🔥 Горячий</div><span class="pc-days"><span>5</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-music" data-i18n="pc_type_album">🎵 Музыкальный альбом</div><div class="pc-title">Dala Sounds Vol. II</div><div class="pc-author">Dala Collective</div><p class="pc-desc" data-i18n="pc2_desc">Второй альбом коллектива — фьюжн казахского домбра с электронной музыкой. 12 треков, клип на каждый.</p><div class="prog-labels"><span class="prog-raised">5 800 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 6 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:97%"></div></div><div class="pc-foot"><span class="pc-backers">👥 312 <span data-i18n="backers">бэкеров</span></span><button class="qoldau" style="background:#4caf50">🔥 Qoldau</button></div></div></div>
+
+      <div class="pc"><div class="pc-thumb p8"><div class="pc-badge pb-new" data-i18n="badge_new">✦ Новый</div><span class="pc-days"><span>28</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-podcast" data-i18n="pc_type_podcast_series">🎙 Подкаст-серия</div><div class="pc-title">Тарих дыбыстары</div><div class="pc-author">Айдос Мәмбет</div><p class="pc-desc" data-i18n="pc3_desc">10-серийный подкаст с историками — устная история страны через личные архивы.</p><div class="prog-labels"><span class="prog-raised">750 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 2 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:37%"></div></div><div class="pc-foot"><span class="pc-backers">👥 55 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+
+      <div class="pc"><div class="pc-thumb p5"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>20</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-social" data-i18n="pc_type_social">📱 Соц. проект</div><div class="pc-title">Тіл — наш язык</div><div class="pc-author">Zarina Жунусова</div><p class="pc-desc" data-i18n="pc4_desc">20 коротких документальных роликов о людях, возрождающих казахский язык в повседневной жизни.</p><div class="prog-labels"><span class="prog-raised">1 200 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 3 500 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:34%"></div></div><div class="pc-foot"><span class="pc-backers">👥 104 <span data-i18n="backers">бэкера</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+
+      <div class="pc"><div class="pc-thumb p6"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>9</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type" style="color:#a0d47a" data-i18n="pf_animation">🎨 Анимация</div><div class="pc-title">Аяз би туралы аңыз</div><div class="pc-author">Zerde Animation</div><p class="pc-desc" data-i18n="pc5_desc">Анимационный фильм об Аяз би. Ручная покадровая анимация, вдохновлённая казахским орнаментом.</p><div class="prog-labels"><span class="prog-raised">3 900 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 5 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:78%"></div></div><div class="pc-foot"><span class="pc-backers">👥 187 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+
+      <div class="pc"><div class="pc-thumb p3"><div class="pc-badge pb-new" data-i18n="badge_new">✦ Новый</div><span class="pc-days"><span>30</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-doc" data-i18n="pc_type_doc">📺 Документальный</div><div class="pc-title">Шекара / La Frontera</div><div class="pc-author">Айгерим Бекова</div><p class="pc-desc" data-i18n="pc6_desc">О казахско-китайской границе: жизни семей, разлучённых по обе стороны.</p><div class="prog-labels"><span class="prog-raised">880 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 12 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:7%"></div></div><div class="pc-foot"><span class="pc-backers">👥 29 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+
+    </div>
+  </div>
+</div><!-- /pitch -->
+
+
+<!-- ============ PROFILE ============ -->
+<div id="page-profile" class="page">
+  <div class="profile-page">
+    <div class="profile-cover" id="prof-cover"></div>
+    <div class="profile-body">
+      <div class="profile-top">
+        <div class="prof-av" id="prof-av">G</div>
+        <div class="prof-main">
+          <div class="prof-verified" id="prof-verified" style="display:none">✦ Верифицированный автор</div>
+          <div class="prof-name" id="prof-name">Гость</div>
+          <div class="prof-handle" id="prof-handle" style="color:var(--text3)">Вы не вошли в аккаунт</div>
+          <p class="prof-bio" id="prof-bio" style="color:var(--text3)">Войдите или создайте аккаунт, чтобы загружать контент, поддерживать питч-кампании и общаться с другими авторами.</p>
+          <div class="prof-skills" id="prof-skills"></div>
+          <div class="prof-links" id="prof-links">
+            <span class="prof-link" onclick="goPage('auth',null)" style="background:var(--gold);color:#121212;font-weight:700" id="prof-cta-btn">🔑 Войти / Регистрация</span>
+          </div>
+        </div>
+        <div class="prof-stats" id="prof-stats" style="display:none">
+          <div><div class="pstat-v" id="prof-stat-works">0</div><div class="pstat-l" data-i18n="works">Работ</div></div>
+          <div><div class="pstat-v" id="prof-stat-subs">0</div><div class="pstat-l" data-i18n="followers">Подписчиков</div></div>
+          <div><div class="pstat-v" id="prof-stat-pitch">0</div><div class="pstat-l" data-i18n="pitches">Питч-кампании</div></div>
+        </div>
+      </div>
+      <div class="profile-tabs" id="prof-tabs" style="display:none">
+        <button class="ptab active" data-i18n="tab_works">Мои работы</button>
+        <button class="ptab" data-i18n="tab_collab">Участие в проектах</button>
+        <button class="ptab" data-i18n="tab_reviews">Рецензии</button>
+      </div>
+      <div class="profile-grid" id="prof-grid"></div>
+
+      <!-- Guest CTA card -->
+      <div id="prof-guest-cta" style="padding:40px 0;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
+        <div style="font-size:56px;opacity:.15">👤</div>
+        <div style="font-size:20px;font-weight:800;letter-spacing:-.5px" data-i18n="guest_title">Войдите в аккаунт</div>
+        <div style="font-size:13px;color:var(--text2);max-width:340px;line-height:1.6" data-i18n="guest_sub">Зарегистрируйтесь бесплатно, чтобы загружать контент, участвовать в питч-кампаниях и строить свою команду.</div>
+        <button onclick="goPage('auth',null)" style="background:var(--gold);color:#121212;font-weight:800;font-size:13px;padding:11px 28px;border-radius:var(--r-pill);letter-spacing:.5px;cursor:pointer" data-i18n="guest_btn">ВОЙТИ / РЕГИСТРАЦИЯ</button>
+
+      </div>
+    </div>
+  </div>
+</div><!-- /profile -->
+
+
+<!-- ============ AUTH ============ -->
+<div id="page-auth" class="page">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">AYA</div>
+      <div class="auth-subtitle" data-i18n="auth_sub">Казахстанский независимый контент</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login',this)" data-i18n="login_tab">Войти</button>
+        <button class="auth-tab" onclick="switchAuthTab('register',this)" data-i18n="register_tab">Регистрация</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="auth-login" class="auth-form">
+        <div id="login-error" class="form-error" style="display:none"></div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="email_label">Email</label>
+          <input id="login-email" class="form-input" type="email" placeholder="example@mail.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="password_label">Пароль</label>
+          <input id="login-password" class="form-input" type="password" placeholder="••••••••"/>
+        </div>
+        <button id="login-btn" class="form-submit" onclick="handleLogin()" data-i18n="login_btn">Войти</button>
+        <p class="form-note">
+          <span data-i18n="no_account">Нет аккаунта?</span>
+          <a onclick="switchAuthTab('register', document.querySelectorAll('.auth-tab')[1])" data-i18n="register_link"> Зарегистрироваться</a>
+        </p>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="auth-register" class="auth-form" style="display:none">
+        <div id="register-error" class="form-error" style="display:none"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" data-i18n="firstname_label">Имя</label>
+            <input id="reg-first" class="form-input" type="text" placeholder="Ерканат"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="lastname_label">Фамилия</label>
+            <input id="reg-last" class="form-input" type="text" placeholder="Малаев"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="email_label">Email</label>
+          <input id="reg-email" class="form-input" type="email" placeholder="example@mail.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="password_label">Пароль</label>
+          <input id="reg-password" class="form-input" type="password" placeholder="Минимум 6 символов"/>
+        </div>
+        <div class="form-group">
+          <div class="role-label-sm" data-i18n="role_label">Я на платформе как…</div>
+          <div class="role-select-row">
+            <div class="role-opt active" onclick="selectRole(this)" data-role="viewer">
+              <div class="role-icon-box">▶</div>
+              <span data-i18n="role_viewer">Зритель</span>
+            </div>
+            <div class="role-opt" onclick="selectRole(this)" data-role="creator">
+              <div class="role-icon-box">✦</div>
+              <span data-i18n="role_creator">Автор</span>
+            </div>
+            <div class="role-opt" onclick="selectRole(this)" data-role="studio">
+              <div class="role-icon-box">⬡</div>
+              <span data-i18n="role_studio">Студия</span>
+            </div>
+          </div>
+        </div>
+        <button id="register-btn" class="form-submit" onclick="handleRegister()" data-i18n="register_btn">Создать аккаунт</button>
+        <p class="form-note" data-i18n="terms_note">
+          Регистрируясь, вы соглашаетесь с <a>Условиями использования</a> и <a>Политикой конфиденциальности</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div><!-- /auth -->
+
+
+<!-- ============ SETTINGS ============ -->
+<div id="page-settings" class="page">
+  <div class="settings-page">
+    <div class="settings-title" data-i18n="settings_title">Настройки</div>
+
+    <!-- Account & Role -->
+    <div class="settings-block">
+      <div class="settings-block-title" data-i18n="account_block">Аккаунт и роль</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="current_role">Текущая роль</div>
+          <div class="settings-row-desc" data-i18n="role_desc">Определяет уровень доступа на платформе</div>
+        </div>
+        <div class="role-switcher">
+          <span class="role-badge role-user" onclick="demoRole(this,'role-user')" style="cursor:pointer">👤 Зритель</span>
+          <span class="role-badge role-creator" onclick="demoRole(this,'role-creator')" style="cursor:pointer">🎬 Автор</span>
+          <span class="role-badge role-moderator" onclick="demoRole(this,'role-moderator')" style="cursor:pointer">🛡 Модератор</span>
+          <span class="role-badge role-admin" onclick="demoRole(this,'role-admin')" style="cursor:pointer">⚡ Админ</span>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Email</div>
+          <div class="settings-row-desc">malayevyerkanat@gmail.com</div>
+        </div>
+        <button style="background:var(--bg3);color:var(--text2);font-size:12px;font-weight:700;padding:7px 16px;border-radius:var(--r-pill)" data-i18n="change_btn">Изменить</button>
+      </div>
+    </div>
+
+    <!-- Language -->
+    <div class="settings-block">
+      <div class="settings-block-title" data-i18n="lang_block">Язык интерфейса</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="lang_label">Язык / Тіл / Language</div>
+          <div class="settings-row-desc" data-i18n="lang_desc">Изменит весь текст платформы</div>
+        </div>
+        <div class="lang-group">
+          <div class="lang-opt active" onclick="setLangFromSettings('ru',this)">RU</div>
+          <div class="lang-opt" onclick="setLangFromSettings('kz',this)">KZ</div>
+          <div class="lang-opt" onclick="setLangFromSettings('en',this)">EN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appearance -->
+    <div class="settings-block">
+      <div class="settings-block-title" data-i18n="appearance_block">Оформление</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="theme_label">Тема</div>
+          <div class="settings-row-desc" data-i18n="theme_desc">Выберите тёмную или светлую тему</div>
+        </div>
+        <div class="theme-toggle">
+          <div class="theme-btn active" id="theme-btn-dark" onclick="setTheme('dark')">🌙 <span data-i18n="theme_dark">Тёмная</span></div>
+          <div class="theme-btn" id="theme-btn-light" onclick="setTheme('light')">☀️ <span data-i18n="theme_light">Светлая</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="settings-block">
+      <div class="settings-block-title" data-i18n="notif_block">Уведомления</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="notif_new">Новые работы подписок</div>
+          <div class="settings-row-desc" data-i18n="notif_new_desc">Когда автор загружает новый контент</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="notif_pitch">Обновления питч-кампаний</div>
+          <div class="settings-row-desc" data-i18n="notif_pitch_desc">Новые бэкеры, достижение цели</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="notif_comments">Ответы на рецензии</div>
+          <div class="settings-row-desc" data-i18n="notif_comments_desc">Когда кто-то отвечает на ваш комментарий</div>
+        </div>
+        <div class="toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="notif_email">Email-рассылка</div>
+          <div class="settings-row-desc" data-i18n="notif_email_desc">Еженедельный дайджест платформы</div>
+        </div>
+        <div class="toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+
+    <!-- Playback -->
+    <div class="settings-block">
+      <div class="settings-block-title" data-i18n="playback_block">Воспроизведение</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="autoplay_label">Автовоспроизведение</div>
+          <div class="settings-row-desc" data-i18n="autoplay_desc">Следующий контент запускается автоматически</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="subtitles_label">Субтитры по умолчанию</div>
+          <div class="settings-row-desc" data-i18n="subtitles_desc">Автоматически включать субтитры</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" data-i18n="quality_label">Качество видео</div>
+          <div class="settings-row-desc" data-i18n="quality_desc">По умолчанию при загрузке</div>
+        </div>
+        <div class="lang-group">
+          <div class="lang-opt" style="font-size:11px">Auto</div>
+          <div class="lang-opt active" style="font-size:11px">720p</div>
+          <div class="lang-opt" style="font-size:11px">1080p</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Access Rights info -->
+    <div class="settings-block">
+      <div class="settings-block-title" data-i18n="access_block">Уровни доступа</div>
+      <div class="settings-row">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <span class="role-badge role-user">👤 Зритель</span>
+          <div style="font-size:12px;color:var(--text2)" data-i18n="access_user">Просмотр контента, комментарии, поддержка питчей</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <span class="role-badge role-creator">🎬 Автор</span>
+          <div style="font-size:12px;color:var(--text2)" data-i18n="access_creator">+ Загрузка контента, создание питч-кампаний, Creator Membership</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <span class="role-badge role-moderator">🛡 Модератор</span>
+          <div style="font-size:12px;color:var(--text2)" data-i18n="access_mod">+ Модерация контента и комментариев, верификация авторов</div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div style="display:flex;align-items:center;gap:12px;flex:1">
+          <span class="role-badge role-admin">⚡ Администратор</span>
+          <div style="font-size:12px;color:var(--text2)" data-i18n="access_admin">Полный доступ: управление платформой, пользователями, аналитика</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout block — only shown when logged in -->
+    <div id="logout-block" class="settings-block" style="display:none">
+      <div class="settings-block-title" data-i18n="logout_section">Аккаунт</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" id="settings-user-name">—</div>
+          <div class="settings-row-desc" id="settings-user-email">—</div>
+        </div>
+        <button onclick="handleLogout()" style="background:rgba(220,53,53,.15);color:#ff6b6b;border:1px solid rgba(220,53,53,.3);font-size:12px;font-weight:700;padding:7px 18px;border-radius:var(--r-pill);cursor:pointer" data-i18n="logout_btn">Выйти</button>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /settings -->
+
+
+<!-- ============ ABOUT ============ -->
+<div id="page-about" class="page">
+  <div class="about-page">
+
+    <div class="about-hero">
+      <div class="about-uni">
+        <div class="uni-logo">AI</div>
+        <div class="uni-name">
+          <strong>Astana IT University</strong>
+          School of Creative Industries · Media Technologies
+        </div>
+      </div>
+      <div class="about-project-title">AYA</div>
+      <p class="about-tagline" data-i18n="about_tagline">
+        Гибридная цифровая экосистема для независимого казахстанского контента. Практический продукт дипломного исследования на тему «Государственное и независимое кино Казахстана 2020–2025: проблемы рентабельности, дистрибуции и вовлечённости аудитории».
+      </p>
+    </div>
+
+    <div class="about-research">
+      <div class="about-research-title" data-i18n="research_title">Тема дипломной работы</div>
+      <div class="about-research-text" data-i18n="research_desc">
+        «State-sponsored vs independent cinema in Kazakhstan distributed in 2020–2025: challenges of profitability, distribution, and audience engagement» — исследование проблем казахстанской независимой киноиндустрии и практическое решение в виде платформы, объединяющей VOD-стриминг, профессиональный нетворкинг и краудфандинг.
+      </div>
+    </div>
+
+    <div class="about-stats">
+      <div class="about-stat"><div class="about-stat-num">3</div><div class="about-stat-label" data-i18n="stat_modules">Модуля платформы</div></div>
+      <div class="about-stat"><div class="about-stat-num">340+</div><div class="about-stat-label" data-i18n="stat_content">Единиц контента</div></div>
+      <div class="about-stat"><div class="about-stat-num">4</div><div class="about-stat-label" data-i18n="stat_roles">Уровня доступа</div></div>
+      <div class="about-stat"><div class="about-stat-num">3</div><div class="about-stat-label" data-i18n="stat_langs">Языка интерфейса</div></div>
+    </div>
+
+    <div class="about-section-title" data-i18n="team_title">Команда разработки</div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-av" style="background:linear-gradient(135deg,#3ecfb2,#d4a843)">ЕМ</div>
+        <div class="team-name">Ерканат Малаев</div>
+        <div class="team-role" data-i18n="role_lead_dev">Ведущий разработчик · Исследователь</div>
+        <span class="team-role-badge" style="background:var(--gold-dim);color:var(--gold)">Lead Developer</span>
+      </div>
+      <div class="team-card">
+        <div class="team-av" style="background:linear-gradient(135deg,#4380d4,#43d48e)">НА</div>
+        <div class="team-name">Научный руководитель</div>
+        <div class="team-role" data-i18n="role_supervisor">Astana IT University</div>
+        <span class="team-role-badge" style="background:var(--teal-dim);color:var(--teal)">Supervisor</span>
+      </div>
+      <div class="team-card">
+        <div class="team-av" style="background:linear-gradient(135deg,#d44343,#7b2fd4)">UX</div>
+        <div class="team-name">UI/UX Design</div>
+        <div class="team-role" data-i18n="role_design">Концепция интерфейса</div>
+        <span class="team-role-badge" style="background:rgba(224,122,212,.1);color:#e07ad4">Designer</span>
+      </div>
+    </div>
+
+    <div class="about-section-title" data-i18n="tech_title">Технологический стек</div>
+    <div class="tech-stack">
+      <span class="tech-tag">React / Next.js</span>
+      <span class="tech-tag">Node.js</span>
+      <span class="tech-tag">PostgreSQL</span>
+      <span class="tech-tag">Redis</span>
+      <span class="tech-tag">AWS S3</span>
+      <span class="tech-tag">Docker</span>
+      <span class="tech-tag">REST API</span>
+      <span class="tech-tag">JWT Auth</span>
+      <span class="tech-tag">SSL / HTTPS</span>
+      <span class="tech-tag">CDN</span>
+    </div>
+
+  </div>
+</div><!-- /about -->
+
+<!-- ADMIN PAGES -->
+<div id="page-admin-content" class="page">
+  <div class="settings-page">
+    <div class="settings-title" data-i18n="admin_content_title">🗑 Заявки на удаление контента</div>
+    <div id="admin-content-list"></div>
+  </div>
+</div>
+
+<div id="page-admin-bans" class="page">
+  <div class="settings-page">
+    <div class="settings-title" data-i18n="admin_ban_title">🚫 Заявки на бан пользователей</div>
+    <div id="admin-bans-list"></div>
+  </div>
+</div>
+
+<!-- MODERATOR PAGE -->
+<div id="page-mod-requests" class="page">
+  <div class="settings-page">
+    <div class="settings-title" data-i18n="mod_my_req_title">📋 Мои заявки</div>
+    <div id="mod-requests-list"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  function goPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (el) el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Refresh profile page every time it's opened so it reflects latest auth state
+    if (id === 'profile')       updateProfilePage(getUser());
+    if (id === 'settings')      highlightActiveRoleBadge();
+    if (id==='admin-content')   renderAdminContentReqs();
+    if (id==='admin-bans')      renderAdminBanReqs();
+    if (id==='mod-requests')    renderModReqs();
+  }
+  function openWatch() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-watch').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function goBack() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-home').classList.add('active');
+    document.querySelectorAll('.nav-item')[0].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function filterType(type, el) {
+    document.querySelectorAll('.type-pill, .cat-item').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.type-pill, .cat-item').forEach(p => {
+      if (p.textContent.trim().replace(/^[^\s]+\s/,'').trim() === el.textContent.trim().replace(/^[^\s]+\s/,'').trim() || p === el) p.classList.add('active');
+    });
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-home').classList.add('active');
+  }
+  function runConstructor() {
+    const parts = [document.getElementById('cs-type').value, document.getElementById('cs-loc').value, document.getElementById('cs-feat').value].filter(Boolean);
+    if (!parts.length) return;
+    document.getElementById('c-count').textContent = Math.floor(Math.random()*9)+2;
+    document.getElementById('c-query').textContent = '«' + parts.join(' + ') + '»';
+    document.getElementById('c-res').classList.add('show');
+  }
+  document.querySelectorAll('.pf').forEach(b => b.addEventListener('click', function() {
+    document.querySelectorAll('.pf').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  }));
+  document.querySelectorAll('.ptab').forEach(b => b.addEventListener('click', function() {
+    document.querySelectorAll('.ptab').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  }));
+
+  /* ============================================================
+     AUTH TAB SWITCH
+  ============================================================ */
+  function switchAuthTab(tab, el) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('auth-login').style.display    = tab === 'login'    ? 'flex' : 'none';
+    document.getElementById('auth-register').style.display = tab === 'register' ? 'flex' : 'none';
+    // clear errors when switching tabs
+    ['login-error','register-error'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.display='none'; el.textContent=''; }
+    });
+  }
+  function selectRole(el) {
+    document.querySelectorAll('.role-opt').forEach(r => r.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  /* ============================================================
+     AUTH — localStorage + Web Crypto (PBKDF2-SHA256)
+     Works standalone in any browser, no server needed.
+     Users DB stored in localStorage['korseteik_users']
+  ============================================================ */
+
+  // ── Crypto helpers (Web Crypto API — built into every browser) ──
+  async function hashPassword(password) {
+    const enc  = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const key  = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 100000 }, key, 256
+    );
+    const hashArr = Array.from(new Uint8Array(bits));
+    const saltArr = Array.from(salt);
+    const toHex   = arr => arr.map(b => b.toString(16).padStart(2,'0')).join('');
+    return toHex(saltArr) + ':' + toHex(hashArr);
+  }
+
+  async function verifyPassword(password, stored) {
+    const [saltHex, hashHex] = stored.split(':');
+    const saltBytes = new Uint8Array(saltHex.match(/.{2}/g).map(h => parseInt(h,16)));
+    const enc  = new TextEncoder();
+    const key  = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', hash: 'SHA-256', salt: saltBytes, iterations: 100000 }, key, 256
+    );
+    const attempt = Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2,'0')).join('');
+    return attempt === hashHex;
+  }
+
+  // ── localStorage DB ──────────────────────────────────────────
+  function getUsers() {
+    try { return JSON.parse(localStorage.getItem('korseteik_users')) || []; }
+    catch { return []; }
+  }
+  function saveUsers(users) {
+    localStorage.setItem('korseteik_users', JSON.stringify(users));
+  }
+  function findUserByEmail(email) {
+    return getUsers().find(u => u.email === email.trim().toLowerCase());
+  }
+
+  // ── Session helpers ──────────────────────────────────────────
+  function getUser() {
+    try { return JSON.parse(localStorage.getItem('korseteik_user')); } catch { return null; }
+  }
+  function saveSession(user) {
+    // Store a clean copy (no password hash)
+    const { password_hash, ...safe } = user;
+    localStorage.setItem('korseteik_user', JSON.stringify(safe));
+    updateAuthUI(safe);
+  }
+  function clearSession() {
+    localStorage.removeItem('korseteik_user');
+    updateAuthUI(null);
+  }
+
+  // ── Update ALL UI based on auth state ───────────────────────
+  function updateAuthUI(user) {
+    const avatar   = document.getElementById('tb-avatar');
+    const navLabel = document.getElementById('nav-auth-label');
+    if (user) {
+      const initials = (user.first_name || '?')[0].toUpperCase();
+      if (avatar) {
+        avatar.textContent = initials;
+        avatar.style.background = 'linear-gradient(135deg, var(--gold), var(--gold2))';
+        avatar.style.color = '#121212';
+        avatar.title = `${user.first_name} ${user.last_name} · ${user.role}`;
+      }
+      if (navLabel) navLabel.textContent = user.first_name || 'Профиль';
+      updateSettingsUser(user);
+      updateProfilePage(user);
+      initModerationUI(user);
+    } else {
+      if (avatar) {
+        avatar.textContent = 'G';
+        avatar.style.background = '';
+        avatar.style.color = '';
+        avatar.title = 'Войти';
+      }
+      if (navLabel) {
+        navLabel.textContent = '';
+        navLabel.setAttribute('data-i18n','login');
+        applyLang(document.querySelector('.lang-btn.active')?.dataset?.lang || 'ru');
+      }
+      updateProfilePage(null);
+    }
+  }
+
+  // ── Profile page: logged-in vs guest ─────────────────────────
+  const ROLE_LABELS = { viewer: 'Зритель', creator: 'Автор', studio: 'Студия', moderator: 'Модератор', admin: 'Администратор' };
+  const ROLE_ICONS  = { viewer: '▶', creator: '✦', studio: '⬡', moderator: '🛡', admin: '⚡' };
+
+  function updateProfilePage(user) {
+    const av        = document.getElementById('prof-av');
+    const name      = document.getElementById('prof-name');
+    const handle    = document.getElementById('prof-handle');
+    const bio       = document.getElementById('prof-bio');
+    const verified  = document.getElementById('prof-verified');
+    const skills    = document.getElementById('prof-skills');
+    const links     = document.getElementById('prof-links');
+    const stats     = document.getElementById('prof-stats');
+    const tabs      = document.getElementById('prof-tabs');
+    const grid      = document.getElementById('prof-grid');
+    const guestCta  = document.getElementById('prof-guest-cta');
+    const ctaBtn    = document.getElementById('prof-cta-btn');
+
+    if (!av) return; // page not yet in DOM
+
+    if (user) {
+      // ── LOGGED IN ──────────────────────────────────────────
+      const initials = (user.first_name[0] + user.last_name[0]).toUpperCase();
+      av.textContent = initials;
+      av.style.background = 'linear-gradient(135deg, var(--gold), var(--gold2))';
+      av.style.color = '#121212';
+
+      name.textContent    = `${user.first_name} ${user.last_name}`;
+      handle.textContent  = `@${user.first_name.toLowerCase()}${user.last_name.toLowerCase()} · ${ROLE_ICONS[user.role] || ''} ${ROLE_LABELS[user.role] || user.role}`;
+      handle.style.color  = '';
+      bio.textContent     = t('prof_welcome');
+      bio.style.color     = '';
+
+      verified.style.display = (user.role === 'creator' || user.role === 'studio') ? 'block' : 'none';
+      if (verified.style.display !== 'none') {
+        verified.textContent = user.role === 'studio' ? '⬡ Студия' : '✦ Автор';
+      }
+
+      // Skills pills based on role
+      const rolePills = {
+        viewer:    [],
+        creator:   ['Загрузка контента', 'Питч-кампании', 'Creator Membership'],
+        studio:    ['Студийный аккаунт', 'Питч-кампании', 'Дистрибуция'],
+        moderator: ['Модерация', 'Верификация авторов'],
+        admin:     ['Полный доступ', 'Аналитика', 'Управление']
+      };
+      const pills = rolePills[user.role] || [];
+      skills.innerHTML = pills.map(p => `<span class="skill-pill">${p}</span>`).join('');
+
+      links.innerHTML = `
+        <span class="prof-link" onclick="goPage('settings',null)">${t('prof_settings_lnk')}</span>
+        <span class="prof-link" onclick="handleLogout()" style="color:var(--text3)">${t('prof_logout_lnk')}</span>
+      `;
+
+      stats.style.display     = 'flex';
+      tabs.style.display      = 'flex';
+      guestCta.style.display  = 'none';
+
+      // Empty state for grid (new user has no uploads yet)
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;padding:40px 0;text-align:center;opacity:.5">
+          <div style="font-size:36px;margin-bottom:10px">🎬</div>
+          <div style="font-size:13px;color:var(--text2)">${t('prof_empty')}</div>
+        </div>
+      `;
+
+    } else {
+      // ── GUEST ──────────────────────────────────────────────
+      av.textContent          = 'G';
+      av.style.background     = '';
+      av.style.color          = '';
+      name.textContent        = 'G';
+      handle.textContent      = t('prof_guest_handle');
+      handle.style.color      = 'var(--text3)';
+      bio.textContent         = t('prof_guest_bio');
+      bio.style.color         = 'var(--text3)';
+      verified.style.display  = 'none';
+      skills.innerHTML        = '';
+      links.innerHTML         = `<span class="prof-link" onclick="goPage('auth',null)" style="background:var(--gold);color:#121212;font-weight:700">${t('guest_btn')}</span>`;
+      stats.style.display     = 'none';
+      tabs.style.display      = 'none';
+      grid.innerHTML          = '';
+      guestCta.style.display  = 'flex';
+    }
+  }
+
+  function updateSettingsUser(user) {
+    const logoutBlock = document.getElementById('logout-block');
+    const nameEl      = document.getElementById('settings-user-name');
+    const emailEl     = document.getElementById('settings-user-email');
+    if (user) {
+      if (logoutBlock) logoutBlock.style.display = 'block';
+      if (nameEl)      nameEl.textContent  = `${user.first_name} ${user.last_name}`;
+      if (emailEl)     emailEl.textContent = user.email;
+    } else {
+      if (logoutBlock) logoutBlock.style.display = 'none';
+    }
+  }
+
+  function tbAvatarClick() {
+    getUser() ? goPage('profile', null) : goPage('auth', null);
+  }
+  function navAuthClick() {
+    getUser() ? goPage('profile', null) : goPage('auth', null);
+  }
+
+  // ── REGISTER ─────────────────────────────────────────────────
+  async function handleRegister() {
+    const errEl   = document.getElementById('register-error');
+    const btn     = document.getElementById('register-btn');
+    const errShow = (msg) => { errEl.textContent = msg; errEl.style.display = 'block'; };
+    errEl.style.display = 'none';
+
+    const first_name = document.getElementById('reg-first').value.trim();
+    const last_name  = document.getElementById('reg-last').value.trim();
+    const email      = document.getElementById('reg-email').value.trim().toLowerCase();
+    const password   = document.getElementById('reg-password').value;
+    const roleOpt    = document.querySelector('#auth-register .role-opt.active');
+    const role       = roleOpt?.dataset?.role || 'viewer';
+
+    if (!first_name || !last_name) return errShow('Введите имя и фамилию');
+    if (!email || !email.includes('@')) return errShow('Введите корректный email');
+    if (password.length < 6) return errShow('Пароль — минимум 6 символов');
+    if (findUserByEmail(email)) return errShow('Этот email уже зарегистрирован');
+
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    try {
+      const password_hash = await hashPassword(password);
+      const users = getUsers();
+      const user  = {
+        id:           Date.now(),
+        first_name,
+        last_name,
+        email,
+        password_hash,
+        role,
+        avatar_url:   null,
+        created_at:   new Date().toISOString()
+      };
+      users.push(user);
+      saveUsers(users);
+
+      // Clear form
+      ['reg-first','reg-last','reg-email','reg-password'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+
+      saveSession(user);
+      goPage('home', null);
+    } catch (e) {
+      errShow('Ошибка при создании аккаунта: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.setAttribute('data-i18n','register_btn');
+      applyLang(document.querySelector('.lang-btn.active')?.dataset?.lang || 'ru');
+    }
+  }
+
+  // ── LOGIN ─────────────────────────────────────────────────────
+  async function handleLogin() {
+    const errEl   = document.getElementById('login-error');
+    const btn     = document.getElementById('login-btn');
+    const errShow = (msg) => { errEl.textContent = msg; errEl.style.display = 'block'; };
+    errEl.style.display = 'none';
+
+    const email    = document.getElementById('login-email').value.trim().toLowerCase();
+    const password = document.getElementById('login-password').value;
+
+    if (!email)    return errShow('Введите email');
+    if (!password) return errShow('Введите пароль');
+
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    try {
+      const user = findUserByEmail(email);
+      if (!user) return errShow('Неверный email или пароль');
+
+      const valid = await verifyPassword(password, user.password_hash);
+      if (!valid) return errShow('Неверный email или пароль');
+
+      if (user.banned) return errShow('Аккаунт заблокирован администратором');
+
+      document.getElementById('login-email').value    = '';
+      document.getElementById('login-password').value = '';
+
+      saveSession(user);
+      goPage('home', null);
+    } catch (e) {
+      errShow('Ошибка входа: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.setAttribute('data-i18n','login_btn');
+      applyLang(document.querySelector('.lang-btn.active')?.dataset?.lang || 'ru');
+    }
+  }
+
+  // ── LOGOUT ────────────────────────────────────────────────────
+  function handleLogout() {
+    clearSession();
+    goPage('home', null);
+  }
+
+  async function demoRole(el, cls) {
+    const map = {
+      'role-admin':     'admin@korseteik.kz',
+      'role-moderator': 'moderator@korseteik.kz',
+      'role-user':      'user123@korseteik.kz',
+      'role-creator':   'user123@korseteik.kz',
+    };
+    const email = map[cls];
+    if (!email) return;
+
+    const users = getUsers();
+    const user  = users.find(u => u.email === email);
+    if (!user) return;
+
+    saveSession(user);
+    updateAuthUI(user);
+
+    // Highlight active badge
+    document.querySelectorAll('.role-badge').forEach(b => b.style.outline = 'none');
+    el.style.outline = '2px solid white';
+
+    goPage('home', null);
+  }
+  function highlightActiveRoleBadge() {
+    const user = getUser();
+    const roleMap = { admin: 'role-admin', moderator: 'role-moderator', viewer: 'role-user', creator: 'role-creator' };
+    const activeCls = user ? roleMap[user.role] : null;
+    document.querySelectorAll('.role-badge').forEach(b => {
+      b.style.outline = activeCls && b.classList.contains(activeCls) ? '2px solid white' : 'none';
+    });
+  }
+  function setTheme(theme) {
+    document.body.classList.toggle('light-theme', theme === 'light');
+    localStorage.setItem('aya_theme', theme);
+    document.getElementById('theme-btn-dark').classList.toggle('active', theme === 'dark');
+    document.getElementById('theme-btn-light').classList.toggle('active', theme === 'light');
+  }
+
+  function setLangFromSettings(lang, el) {
+    document.querySelectorAll('.lang-opt').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    applyLang(lang);
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+  }
+
+  /* ============================================================
+     I18N — Multilingual support: RU / KZ / EN
+  ============================================================ */
+  const i18n = {
+    ru: {
+      // NAV / TOPBAR
+      upload: '+ Загрузить', saved: 'Сохранённое', login: 'Войти',
+      settings: 'Настройки', about: 'О проекте',
+      // HOME HERO
+      hero_eyebrow: '✦ Казахстанский независимый контент',
+      hero_title: 'Кино, музыка, подкасты — всё своё',
+      hero_desc: 'Единая платформа для независимого казахстанского контента. Смотри, слушай, поддерживай авторов и находи команду.',
+      btn_watch_now: '▶ Смотреть сейчас', btn_support: '💡 Поддержать проект',
+      // FILTERS
+      filter_all: 'Все', filter_films: '🎞 Фильмы', filter_music: '🎵 Музыкальные клипы',
+      filter_doc: '📺 Документальное', filter_podcast: '🎙 Подкасты',
+      filter_social: '📱 Соц. ролики', filter_short: '⚡ Короткий метр',
+      // CONSTRUCTOR
+      constructor_label: '✦ Конструктор поиска — найди контент под своё настроение',
+      cs_find: 'Найти →',
+      // ROW TITLES
+      row_trending: '🔥 Трендовое сейчас', row_music: '🎵 Музыкальные клипы',
+      row_podcasts: '🎙 Подкасты', row_festival: '🏆 Фестивальные победители',
+      row_see_all: 'Показать всё →',
+      // WATCH PAGE
+      back_btn: '← Назад', btn_watch: '▶ Смотреть', btn_review: '💬 Рецензия',
+      btn_save: '🔖 Сохранить', btn_share: '↗ Поделиться',
+      crew_title: 'Съёмочная группа', comments_title: 'Рецензии и комментарии',
+      comment_ph: 'Напиши рецензию или комментарий…', also_rec: 'Также рекомендуем',
+      // PITCH PAGE
+      pitch_desc: 'Фильмы, клипы, подкасты, соц. проекты — любая идея может найти поддержку. Каждый вклад приближает историю к экрану.',
+      pitch_submit: '+ Подать питч',
+      pf_film: '🎬 Кино', pf_music: '🎵 Музыка', pf_doc: '📺 Документальное',
+      pf_podcast: '🎙 Подкаст', pf_social: '📱 Соц. проект',
+      pf_animation: '🎨 Анимация', pf_almost: '🔥 Почти собрано',
+      // PROFILE PAGE
+      works: 'Работ', followers: 'Подписчиков', pitches: 'Питч-кампании',
+      tab_works: 'Мои работы', tab_collab: 'Участие в проектах', tab_reviews: 'Рецензии',
+      guest_title: 'Войдите в аккаунт',
+      guest_sub: 'Зарегистрируйтесь бесплатно, чтобы загружать контент, участвовать в питч-кампаниях и строить свою команду.',
+      guest_btn: 'ВОЙТИ / РЕГИСТРАЦИЯ',
+      // PROFILE DYNAMIC (used in updateProfilePage)
+      prof_welcome: 'Добро пожаловать на AYA! Заполните информацию о себе в настройках.',
+      prof_empty: 'Здесь появятся ваши работы после загрузки',
+      prof_settings_lnk: '⚙ Настройки', prof_logout_lnk: '↩ Выйти',
+      prof_guest_handle: 'Вы не вошли в аккаунт',
+      prof_guest_bio: 'Войдите или создайте аккаунт, чтобы загружать контент, поддерживать питч-кампании и общаться с другими авторами.',
+      // AUTH
+      auth_sub: 'Art Yearns Action',
+      login_tab: 'Войти', register_tab: 'Регистрация',
+      email_label: 'Email', password_label: 'Пароль',
+      firstname_label: 'Имя', lastname_label: 'Фамилия',
+      login_btn: 'Войти', register_btn: 'Создать аккаунт',
+      or_divider: 'или',
+      continue_google: 'Продолжить через Google', continue_vk: 'Продолжить через ВКонтакте',
+      no_account: 'Нет аккаунта?', register_link: ' Зарегистрироваться',
+      role_label: 'Я на платформе как…',
+      role_viewer: 'Зритель', role_creator: 'Автор', role_studio: 'Студия',
+      terms_note: 'Регистрируясь, вы соглашаетесь с Условиями использования и Политикой конфиденциальности',
+      // SETTINGS
+      settings_title: 'Настройки', account_block: 'Аккаунт и роль', logout_section: 'Аккаунт',
+      current_role: 'Текущая роль', role_desc: 'Определяет уровень доступа на платформе',
+      change_btn: 'Изменить', lang_block: 'Язык интерфейса',
+      appearance_block: 'Оформление', theme_label: 'Тема', theme_desc: 'Выберите тёмную или светлую тему', theme_dark: 'Тёмная', theme_light: 'Светлая',
+      lang_label: 'Язык / Тіл / Language', lang_desc: 'Изменит весь текст платформы',
+      notif_block: 'Уведомления', notif_new: 'Новые работы подписок',
+      notif_new_desc: 'Когда автор загружает новый контент',
+      notif_pitch: 'Обновления питч-кампаний', notif_pitch_desc: 'Новые бэкеры, достижение цели',
+      notif_comments: 'Ответы на рецензии', notif_comments_desc: 'Когда кто-то отвечает на ваш комментарий',
+      notif_email: 'Email-рассылка', notif_email_desc: 'Еженедельный дайджест платформы',
+      playback_block: 'Воспроизведение', autoplay_label: 'Автовоспроизведение',
+      autoplay_desc: 'Следующий контент запускается автоматически',
+      subtitles_label: 'Субтитры по умолчанию', subtitles_desc: 'Автоматически включать субтитры',
+      quality_label: 'Качество видео', quality_desc: 'По умолчанию при загрузке',
+      access_block: 'Уровни доступа',
+      access_user: 'Просмотр контента, комментарии, поддержка питчей',
+      access_creator: '+ Загрузка контента, создание питч-кампаний, Creator Membership',
+      access_mod: '+ Модерация контента и комментариев, верификация авторов',
+      access_admin: 'Полный доступ: управление платформой, пользователями, аналитика',
+      logout_btn: 'Выйти',
+      // SIDEBAR
+      nav_home: 'Главная', nav_pitch: 'Питчинг', nav_profile: 'Профиль',
+      admin_section: '⚡ Администрирование',
+      admin_content_req: 'Заявки на удаление', admin_ban_req: 'Заявки на бан',
+      admin_content_title: '🗑 Заявки на удаление контента',
+      admin_ban_title: '🚫 Заявки на бан пользователей',
+      mod_section: '🛡 Модерация',
+      mod_my_req: 'Мои заявки', mod_my_req_title: '📋 Мои заявки',
+      sidebar_content: 'Контент',
+      cat_films: 'Фильмы', cat_clips: 'Клипы', cat_doc: 'Документальное',
+      cat_podcasts: 'Подкасты', cat_social: 'Соц. ролики', cat_short: 'Короткий метр',
+      membership_title: 'Creator Membership',
+      membership_desc: 'Поддержи авторов напрямую и получи эксклюзивный контент',
+      membership_btn: 'Подробнее',
+      // SEARCH
+      search_ph: 'Что ищешь? Фильм, клип, подкаст, автор…',
+      // PITCH CARDS
+      badge_live: '● Live', badge_hot: '🔥 Горячий', badge_new: '✦ Новый',
+      days_left: 'дней', of_goal: 'из', backers: 'бэкеров',
+      pc_type_feature: '🎬 Полный метр', pc_type_album: '🎵 Музыкальный альбом',
+      pc_type_podcast_series: '🎙 Подкаст-серия', pc_type_social: '📱 Соц. проект',
+      pc_type_doc: '📺 Документальный',
+      pc1_desc: 'Исторический полный метр о распаде СССР глазами молодого рабочего металлургического комбината.',
+      pc2_desc: 'Второй альбом коллектива — фьюжн казахского домбра с электронной музыкой. 12 треков, клип на каждый.',
+      pc3_desc: '10-серийный подкаст с историками — устная история страны через личные архивы.',
+      pc4_desc: '20 коротких документальных роликов о людях, возрождающих казахский язык в повседневной жизни.',
+      pc5_desc: 'Анимационный фильм об Аяз би. Ручная покадровая анимация, вдохновлённая казахским орнаментом.',
+      pc6_desc: 'О казахско-китайской границе: жизни семей, разлучённых по обе стороны.',
+      // ABOUT
+      about_tagline: 'Гибридная цифровая экосистема для независимого казахстанского контента. Практический продукт дипломного исследования.',
+      research_title: 'Тема дипломной работы',
+      research_desc: '«State-sponsored vs independent cinema in Kazakhstan distributed in 2020–2025: challenges of profitability, distribution, and audience engagement» — исследование проблем казахстанской независимой киноиндустрии и практическое решение в виде платформы, объединяющей VOD-стриминг, профессиональный нетворкинг и краудфандинг.',
+      stat_modules: 'Модуля платформы', stat_content: 'Единиц контента',
+      stat_roles: 'Уровня доступа', stat_langs: 'Языка интерфейса',
+      team_title: 'Команда разработки', tech_title: 'Технологический стек',
+      role_lead_dev: 'Ведущий разработчик · Исследователь',
+      role_supervisor: 'Astana IT University', role_design: 'Концепция интерфейса',
+    },
+    kz: {
+      // NAV / TOPBAR
+      upload: '+ Жүктеу', saved: 'Сақталғандар', login: 'Кіру',
+      settings: 'Баптаулар', about: 'Жоба туралы',
+      // HOME HERO
+      hero_eyebrow: '✦ Қазақстандық тәуелсіз контент',
+      hero_title: 'Кино, музыка, подкасттар — бәрі өзіміздікі',
+      hero_desc: 'Тәуелсіз қазақстандық контентке арналған бірыңғай платформа. Қара, тыңда, авторларды қолда және команда тап.',
+      btn_watch_now: '▶ Қазір қарау', btn_support: '💡 Жобаны қолдау',
+      // FILTERS
+      filter_all: 'Барлығы', filter_films: '🎞 Фильмдер', filter_music: '🎵 Музыкалық клиптер',
+      filter_doc: '📺 Деректі фильм', filter_podcast: '🎙 Подкасттар',
+      filter_social: '📱 Әлеум. роликтер', filter_short: '⚡ Қысқаметражды',
+      // CONSTRUCTOR
+      constructor_label: '✦ Іздеу конструкторы — өз көңіл-күйіңізге контент тауып алыңыз',
+      cs_find: 'Табу →',
+      // ROW TITLES
+      row_trending: '🔥 Қазір трендте', row_music: '🎵 Музыкалық клиптер',
+      row_podcasts: '🎙 Подкасттар', row_festival: '🏆 Фестиваль жеңімпаздары',
+      row_see_all: 'Барлығын көру →',
+      // WATCH PAGE
+      back_btn: '← Артқа', btn_watch: '▶ Қарау', btn_review: '💬 Пікір',
+      btn_save: '🔖 Сақтау', btn_share: '↗ Бөлісу',
+      crew_title: 'Түсіру тобы', comments_title: 'Пікірлер мен түсіндірмелер',
+      comment_ph: 'Пікір немесе рецензия жазыңыз…', also_rec: 'Сондай-ақ ұсынамыз',
+      // PITCH PAGE
+      pitch_desc: 'Фильмдер, клиптер, подкасттар, әлеум. жобалар — кез келген идея қолдау таба алады. Әр үлес тарихты экранға жақындатады.',
+      pitch_submit: '+ Питч беру',
+      pf_film: '🎬 Кино', pf_music: '🎵 Музыка', pf_doc: '📺 Деректі фильм',
+      pf_podcast: '🎙 Подкаст', pf_social: '📱 Әлеум. жоба',
+      pf_animation: '🎨 Анимация', pf_almost: '🔥 Жиналып қалды',
+      // PROFILE PAGE
+      works: 'Жұмыс', followers: 'Жазылушы', pitches: 'Питч-науқандар',
+      tab_works: 'Менің жұмыстарым', tab_collab: 'Жобаларға қатысу', tab_reviews: 'Пікірлер',
+      guest_title: 'Аккаунтқа кіріңіз',
+      guest_sub: 'Контент жүктеу, питч-науқандарға қатысу және команда құру үшін тегін тіркеліңіз.',
+      guest_btn: 'КІРУ / ТІРКЕЛУ',
+      prof_welcome: 'AYA-ға қош келдіңіз! Баптауларда өзіңіз туралы ақпаратты толтырыңыз.',
+      prof_empty: 'Жүктегеннен кейін жұмыстарыңыз осында пайда болады',
+      prof_settings_lnk: '⚙ Баптаулар', prof_logout_lnk: '↩ Шығу',
+      prof_guest_handle: 'Аккаунтқа кірмедіңіз',
+      prof_guest_bio: 'Контент жүктеу, питч-науқандарды қолдау және басқа авторлармен сөйлесу үшін кіріңіз немесе аккаунт жасаңыз.',
+      // AUTH
+      auth_sub: 'Art Yearns Action',
+      login_tab: 'Кіру', register_tab: 'Тіркелу',
+      email_label: 'Email', password_label: 'Құпиясөз',
+      firstname_label: 'Аты', lastname_label: 'Тегі',
+      login_btn: 'Кіру', register_btn: 'Аккаунт ашу',
+      or_divider: 'немесе',
+      continue_google: 'Google арқылы жалғастыру', continue_vk: 'ВКонтакте арқылы жалғастыру',
+      no_account: 'Аккаунт жоқ па?', register_link: ' Тіркелу',
+      role_label: 'Мен платформада…',
+      role_viewer: 'Көрермен', role_creator: 'Автор', role_studio: 'Студия',
+      terms_note: 'Тіркеле отырып, Пайдалану шарттары мен Құпиялылық саясатына келісесіз',
+      // SETTINGS
+      settings_title: 'Баптаулар', account_block: 'Аккаунт және рөл', logout_section: 'Аккаунт',
+      current_role: 'Ағымдағы рөл', role_desc: 'Платформадағы қол жеткізу деңгейін анықтайды',
+      change_btn: 'Өзгерту', lang_block: 'Интерфейс тілі',
+      appearance_block: 'Безендіру', theme_label: 'Тақырып', theme_desc: 'Қараңғы немесе жарық тақырыпты таңдаңыз', theme_dark: 'Қараңғы', theme_light: 'Жарық',
+      lang_label: 'Язык / Тіл / Language', lang_desc: 'Платформадағы барлық мәтінді өзгертеді',
+      notif_block: 'Хабарландырулар', notif_new: 'Жазылымдардың жаңа жұмыстары',
+      notif_new_desc: 'Автор жаңа контент жүктегенде',
+      notif_pitch: 'Питч-науқандарының жаңалықтары', notif_pitch_desc: 'Жаңа бэкерлер, мақсатқа жету',
+      notif_comments: 'Пікірлерге жауаптар', notif_comments_desc: 'Біреу пікіріңізге жауап бергенде',
+      notif_email: 'Email-тарату', notif_email_desc: 'Апталық платформа дайджесті',
+      playback_block: 'Ойнату', autoplay_label: 'Автоойнату',
+      autoplay_desc: 'Келесі контент автоматты түрде басталады',
+      subtitles_label: 'Әдепкі субтитрлер', subtitles_desc: 'Субтитрлерді автоматты қосу',
+      quality_label: 'Бейне сапасы', quality_desc: 'Жүктеу кезіндегі әдепкі',
+      access_block: 'Қол жеткізу деңгейлері',
+      access_user: 'Контентті көру, пікірлер, питчтерді қолдау',
+      access_creator: '+ Контент жүктеу, питч-науқандар, Creator Membership',
+      access_mod: '+ Контент мен пікірлерді модерациялау, авторларды верификациялау',
+      access_admin: 'Толық қол жеткізу: платформаны, пайдаланушыларды басқару, аналитика',
+      logout_btn: 'Шығу',
+      // SIDEBAR
+      nav_home: 'Басты бет', nav_pitch: 'Питчинг', nav_profile: 'Профиль',
+      admin_section: '⚡ Әкімшілік',
+      admin_content_req: 'Жою өтінімдері', admin_ban_req: 'Бан өтінімдері',
+      admin_content_title: '🗑 Контентті жою өтінімдері',
+      admin_ban_title: '🚫 Пайдаланушыны бандау өтінімдері',
+      mod_section: '🛡 Модерация',
+      mod_my_req: 'Менің өтінімдерім', mod_my_req_title: '📋 Менің өтінімдерім',
+      sidebar_content: 'Контент',
+      cat_films: 'Фильмдер', cat_clips: 'Клиптер', cat_doc: 'Деректі фильм',
+      cat_podcasts: 'Подкасттар', cat_social: 'Әлеум. роликтер', cat_short: 'Қысқаметражды',
+      membership_title: 'Creator Membership',
+      membership_desc: 'Авторларды тікелей қолда және эксклюзивті контент ал',
+      membership_btn: 'Толығырақ',
+      // SEARCH
+      search_ph: 'Не іздейсіз? Фильм, клип, подкаст, автор…',
+      // PITCH CARDS
+      badge_live: '● Live', badge_hot: '🔥 Ыстық', badge_new: '✦ Жаңа',
+      days_left: 'күн', of_goal: '/', backers: 'бэкер',
+      pc_type_feature: '🎬 Толық метраж', pc_type_album: '🎵 Музыкалық альбом',
+      pc_type_podcast_series: '🎙 Подкаст-сериясы', pc_type_social: '📱 Әлеум. жоба',
+      pc_type_doc: '📺 Деректі фильм',
+      pc1_desc: 'Металлургиялық комбинат жас жұмысшысының көзімен КСРО ыдырауы туралы тарихи толық метраж.',
+      pc2_desc: 'Ұжымның екінші альбомы — электрондық музыкамен қазақ домбырасының фьюжні. 12 трек, әр біріне клип.',
+      pc3_desc: 'Тарихшылармен 10 сериялы подкаст — жеке мұрағаттар арқылы елдің ауызша тарихы.',
+      pc4_desc: 'Күнделікті өмірде қазақ тілін жаңғыртып жатқан адамдар туралы 20 қысқа деректі ролик.',
+      pc5_desc: 'Аяз би туралы анимациялық фильм. Қазақ өрнегінен шабыт алған кадрлық анимация.',
+      pc6_desc: 'Қазақ-қытай шекарасы: екі жағында бөлінген отбасылардың өмірі.',
+      // ABOUT
+      about_tagline: 'Қазақстандық тәуелсіз контентке арналған гибридті цифрлық экожүйе. Диплом жұмысының практикалық өнімі.',
+      research_title: 'Диплом жұмысының тақырыбы',
+      research_desc: '«State-sponsored vs independent cinema in Kazakhstan distributed in 2020–2025: challenges of profitability, distribution, and audience engagement» — қазақстандық тәуелсіз киноиндустрия мәселелерін зерттеу және VOD-стриминг, кәсіби нетворкинг және краудфандингті біріктіретін платформа түріндегі практикалық шешім.',
+      stat_modules: 'Платформа модулі', stat_content: 'Контент бірлігі',
+      stat_roles: 'Қол жеткізу деңгейі', stat_langs: 'Интерфейс тілі',
+      team_title: 'Әзірлеу тобы', tech_title: 'Технологиялық стек',
+      role_lead_dev: 'Жетекші әзірлеуші · Зерттеуші',
+      role_supervisor: 'Astana IT University', role_design: 'Интерфейс тұжырымдамасы',
+    },
+    en: {
+      // NAV / TOPBAR
+      upload: '+ Upload', saved: 'Saved', login: 'Sign In',
+      settings: 'Settings', about: 'About',
+      // HOME HERO
+      hero_eyebrow: '✦ Kazakh Independent Content',
+      hero_title: 'Films, music, podcasts — all our own',
+      hero_desc: 'A unified platform for independent Kazakh content. Watch, listen, support creators, and find your crew.',
+      btn_watch_now: '▶ Watch Now', btn_support: '💡 Support a Project',
+      // FILTERS
+      filter_all: 'All', filter_films: '🎞 Films', filter_music: '🎵 Music Videos',
+      filter_doc: '📺 Documentary', filter_podcast: '🎙 Podcasts',
+      filter_social: '📱 Social Videos', filter_short: '⚡ Short Films',
+      // CONSTRUCTOR
+      constructor_label: '✦ Search Constructor — find content that matches your mood',
+      cs_find: 'Find →',
+      // ROW TITLES
+      row_trending: '🔥 Trending Now', row_music: '🎵 Music Videos',
+      row_podcasts: '🎙 Podcasts', row_festival: '🏆 Festival Winners',
+      row_see_all: 'See all →',
+      // WATCH PAGE
+      back_btn: '← Back', btn_watch: '▶ Watch', btn_review: '💬 Review',
+      btn_save: '🔖 Save', btn_share: '↗ Share',
+      crew_title: 'Film Crew', comments_title: 'Reviews & Comments',
+      comment_ph: 'Write a review or comment…', also_rec: 'Also Recommended',
+      // PITCH PAGE
+      pitch_desc: 'Films, clips, podcasts, social projects — any idea can find support. Every contribution brings a story closer to the screen.',
+      pitch_submit: '+ Submit Pitch',
+      pf_film: '🎬 Film', pf_music: '🎵 Music', pf_doc: '📺 Documentary',
+      pf_podcast: '🎙 Podcast', pf_social: '📱 Social Project',
+      pf_animation: '🎨 Animation', pf_almost: '🔥 Almost Funded',
+      // PROFILE PAGE
+      works: 'Works', followers: 'Followers', pitches: 'Pitch Campaigns',
+      tab_works: 'My Works', tab_collab: 'Project Participation', tab_reviews: 'Reviews',
+      guest_title: 'Sign In',
+      guest_sub: 'Register for free to upload content, participate in pitch campaigns, and build your team.',
+      guest_btn: 'SIGN IN / REGISTER',
+      prof_welcome: 'Welcome to AYA! Fill in your info in Settings.',
+      prof_empty: 'Your works will appear here after uploading',
+      prof_settings_lnk: '⚙ Settings', prof_logout_lnk: '↩ Sign out',
+      prof_guest_handle: 'You are not signed in',
+      prof_guest_bio: 'Sign in or create an account to upload content, support pitch campaigns, and connect with other creators.',
+      // AUTH
+      auth_sub: 'Art Yearns Action',
+      login_tab: 'Sign In', register_tab: 'Sign Up',
+      email_label: 'Email', password_label: 'Password',
+      firstname_label: 'First Name', lastname_label: 'Last Name',
+      login_btn: 'Sign In', register_btn: 'Create Account',
+      or_divider: 'or',
+      continue_google: 'Continue with Google', continue_vk: 'Continue with VKontakte',
+      no_account: "Don't have an account?", register_link: ' Sign Up',
+      role_label: 'I am on the platform as…',
+      role_viewer: 'Viewer', role_creator: 'Creator', role_studio: 'Studio',
+      terms_note: 'By registering, you agree to the Terms of Service and Privacy Policy',
+      // SETTINGS
+      settings_title: 'Settings', account_block: 'Account & Role', logout_section: 'Account',
+      current_role: 'Current Role', role_desc: 'Determines your access level on the platform',
+      change_btn: 'Change', lang_block: 'Interface Language',
+      appearance_block: 'Appearance', theme_label: 'Theme', theme_desc: 'Choose dark or light theme', theme_dark: 'Dark', theme_light: 'Light',
+      lang_label: 'Язык / Тіл / Language', lang_desc: 'Changes all text on the platform',
+      notif_block: 'Notifications', notif_new: 'New content from subscriptions',
+      notif_new_desc: 'When a creator uploads new content',
+      notif_pitch: 'Pitch campaign updates', notif_pitch_desc: 'New backers, goal reached',
+      notif_comments: 'Replies to reviews', notif_comments_desc: 'When someone replies to your comment',
+      notif_email: 'Email newsletter', notif_email_desc: 'Weekly platform digest',
+      playback_block: 'Playback', autoplay_label: 'Autoplay',
+      autoplay_desc: 'Next content starts automatically',
+      subtitles_label: 'Default subtitles', subtitles_desc: 'Automatically enable subtitles',
+      quality_label: 'Video quality', quality_desc: 'Default on load',
+      access_block: 'Access Levels',
+      access_user: 'View content, comments, support pitches',
+      access_creator: '+ Upload content, create pitch campaigns, Creator Membership',
+      access_mod: '+ Moderate content and comments, verify creators',
+      access_admin: 'Full access: platform management, users, analytics',
+      logout_btn: 'Sign out',
+      // SIDEBAR
+      nav_home: 'Home', nav_pitch: 'Pitching', nav_profile: 'Profile',
+      admin_section: '⚡ Administration',
+      admin_content_req: 'Removal Requests', admin_ban_req: 'Ban Requests',
+      admin_content_title: '🗑 Content Removal Requests',
+      admin_ban_title: '🚫 User Ban Requests',
+      mod_section: '🛡 Moderation',
+      mod_my_req: 'My Requests', mod_my_req_title: '📋 My Requests',
+      sidebar_content: 'Content',
+      cat_films: 'Films', cat_clips: 'Music Videos', cat_doc: 'Documentary',
+      cat_podcasts: 'Podcasts', cat_social: 'Social Videos', cat_short: 'Short Films',
+      membership_title: 'Creator Membership',
+      membership_desc: 'Support creators directly and get exclusive content',
+      membership_btn: 'Learn More',
+      // SEARCH
+      search_ph: 'What are you looking for? Film, clip, podcast, creator…',
+      // PITCH CARDS
+      badge_live: '● Live', badge_hot: '🔥 Hot', badge_new: '✦ New',
+      days_left: 'days', of_goal: 'of', backers: 'backers',
+      pc_type_feature: '🎬 Feature Film', pc_type_album: '🎵 Music Album',
+      pc_type_podcast_series: '🎙 Podcast Series', pc_type_social: '📱 Social Project',
+      pc_type_doc: '📺 Documentary',
+      pc1_desc: 'A historical feature film about the collapse of the USSR through the eyes of a young steelworker.',
+      pc2_desc: 'The collective\'s second album — a fusion of Kazakh dombra and electronic music. 12 tracks, a music video for each.',
+      pc3_desc: 'A 10-episode podcast with historians — the country\'s oral history through personal archives.',
+      pc4_desc: '20 short documentary clips about people reviving the Kazakh language in everyday life.',
+      pc5_desc: 'An animated film about Ayaz Bi. Frame-by-frame hand animation inspired by Kazakh ornament.',
+      pc6_desc: 'About the Kazakh-Chinese border: the lives of families separated on both sides.',
+      // ABOUT
+      about_tagline: 'A hybrid digital ecosystem for independent Kazakh content. The practical product of a diploma research project.',
+      research_title: 'Diploma Research Topic',
+      research_desc: '«State-sponsored vs independent cinema in Kazakhstan distributed in 2020–2025: challenges of profitability, distribution, and audience engagement» — a study of Kazakh independent cinema challenges and a practical solution in the form of a platform combining VOD streaming, professional networking, and crowdfunding.',
+      stat_modules: 'Platform Modules', stat_content: 'Content Units',
+      stat_roles: 'Access Levels', stat_langs: 'Interface Languages',
+      team_title: 'Development Team', tech_title: 'Technology Stack',
+      role_lead_dev: 'Lead Developer · Researcher',
+      role_supervisor: 'Astana IT University', role_design: 'Interface Concept',
+    }
+  };
+
+  let currentLang = 'ru';
+
+  // ── translation helper (safe shorthand) ─────────────────────
+  function t(key) {
+    return (i18n[currentLang] || i18n.ru)[key] || (i18n.ru)[key] || key;
+  }
+
+  function applyLang(lang) {
+    currentLang = lang;
+    const dict = i18n[lang] || i18n.ru;
+
+    // 1. textContent elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+
+    // 2. placeholder attributes (textarea / input)
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.dataset.i18nPlaceholder;
+      if (dict[key] !== undefined) el.placeholder = dict[key];
+    });
+
+    // 3. Re-render dynamic profile page so injected strings also translate
+    updateProfilePage(getUser());
+  }
+
+  function setLang(lang, el) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    // Sync settings page lang opts
+    document.querySelectorAll('.lang-opt').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang);
+    });
+    applyLang(lang);
+  }
+
+  /* ============================================================
+     ROLE SYSTEM & MODERATION
+  ============================================================ */
+
+  // ── Storage helpers ──────────────────────────────────────────
+  function getContentReqs() { try { return JSON.parse(localStorage.getItem('korseteik_content_reqs'))||[]; } catch{return[];} }
+  function saveContentReqs(r) { localStorage.setItem('korseteik_content_reqs', JSON.stringify(r)); }
+  function getBanReqs()     { try { return JSON.parse(localStorage.getItem('korseteik_ban_reqs'))||[]; } catch{return[];} }
+  function saveBanReqs(r)   { localStorage.setItem('korseteik_ban_reqs', JSON.stringify(r)); }
+
+  // ── Apply role class to body so CSS shows dots ───────────────
+  function applyRoleToBody(user) {
+    document.body.classList.remove('role-admin','role-moderator','role-user');
+    if (user) document.body.classList.add('role-'+user.role);
+  }
+
+  // ── Show/hide role sections in sidebar ──────────────────────
+  function updateSidebarForRole(user) {
+    document.getElementById('admin-sidebar').style.display = (user?.role==='admin') ? 'block' : 'none';
+    document.getElementById('mod-sidebar').style.display   = (user?.role==='moderator') ? 'block' : 'none';
+    updateBadges();
+  }
+
+  function updateBadges() {
+    const pending_c = getContentReqs().filter(r=>r.status==='pending').length;
+    const pending_b = getBanReqs().filter(r=>r.status==='pending').length;
+    const user = getUser();
+    const mod_count = user ? [...getContentReqs(),...getBanReqs()].filter(r=>r.moderatorId===user.id).length : 0;
+    const bc = document.getElementById('badge-content-req');
+    const bb = document.getElementById('badge-ban-req');
+    const bm = document.getElementById('badge-mod-req');
+    if(bc) { bc.textContent=pending_c; bc.style.display=pending_c?'inline-flex':'none'; }
+    if(bb) { bb.textContent=pending_b; bb.style.display=pending_b?'inline-flex':'none'; }
+    if(bm) { bm.textContent=mod_count; bm.style.display=mod_count?'inline-flex':'none'; }
+  }
+
+  // ── Seed test accounts ───────────────────────────────────────
+  async function seedTestAccounts() {
+    const users = getUsers();
+    const seeds = [
+      { email:'admin@korseteik.kz',     password:'admin',     first_name:'Admin',  last_name:'Korseteik', role:'admin' },
+      { email:'moderator@korseteik.kz', password:'moderator', first_name:'Moder',  last_name:'Ator',      role:'moderator' },
+      { email:'user123@korseteik.kz',   password:'user123',   first_name:'User',   last_name:'Test',      role:'viewer' },
+    ];
+    let changed = false;
+    for (const s of seeds) {
+      if (!users.find(u=>u.email===s.email)) {
+        const password_hash = await hashPassword(s.password);
+        users.push({ id: Date.now()+Math.random(), first_name:s.first_name, last_name:s.last_name, email:s.email, password_hash, role:s.role, avatar_url:null, created_at:new Date().toISOString(), banned:false });
+        changed = true;
+      }
+    }
+    if (changed) saveUsers(users);
+  }
+
+  // ── Modal helpers ────────────────────────────────────────────
+  function showModal({ title, body, actions }) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML   = body;
+    const actEl = document.getElementById('modal-actions');
+    actEl.innerHTML = '';
+    actions.forEach(a => {
+      const btn = document.createElement('button');
+      btn.textContent = a.label;
+      btn.style.cssText = a.style || 'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;';
+      btn.onclick = () => { closeModal(); a.action && a.action(); };
+      actEl.appendChild(btn);
+    });
+    const ov = document.getElementById('modal-overlay');
+    ov.style.display = 'flex';
+  }
+  function closeModal() { document.getElementById('modal-overlay').style.display='none'; }
+
+  // ── Three-dots dropdown ───────────────────────────────────────
+  function showDotsMenu(anchorEl, items) {
+    const menu = document.getElementById('dots-menu');
+    menu.innerHTML = '';
+    items.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'dots-item' + (item.danger?' danger':'') + (item.warn?' warn':'');
+      el.innerHTML = (item.icon||'') + ' ' + item.label;
+      el.onclick = (e) => { e.stopPropagation(); menu.style.display='none'; item.action && item.action(); };
+      menu.appendChild(el);
+    });
+    const r = anchorEl.getBoundingClientRect();
+    menu.style.top  = (r.bottom+6)+'px';
+    menu.style.left = Math.max(8, r.right - 190)+'px';
+    menu.style.display = 'block';
+    setTimeout(()=>{ document.addEventListener('click', ()=>{ menu.style.display='none'; }, {once:true}); }, 50);
+  }
+
+  // ── Reason input modal ────────────────────────────────────────
+  function showReasonModal(title, targetDesc, onSubmit) {
+    const uid = 'reason-'+Date.now();
+    showModal({
+      title,
+      body: `<div style="margin-bottom:10px;color:var(--text)">${targetDesc}</div>
+             <textarea id="${uid}" style="width:100%;background:var(--bg3);border:1px solid var(--bg5);border-radius:8px;padding:10px;color:var(--text);font-size:13px;resize:vertical;min-height:80px" placeholder="Укажите причину…"></textarea>`,
+      actions: [
+        { label:'Отмена', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)' },
+        { label:'Отправить заявку', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212',
+          action: () => {
+            const reason = document.getElementById(uid)?.value?.trim();
+            if (!reason) { alert('Укажите причину'); return; }
+            onSubmit(reason);
+          }
+        }
+      ]
+    });
+  }
+
+  // ── MODERATOR: submit content removal request ─────────────────
+  function modReportContent(contentId, contentTitle) {
+    showReasonModal('🗑 Заявка на удаление контента', `Контент: <strong>${contentTitle}</strong>`, reason => {
+      const user = getUser();
+      if (!user) return;
+      const reqs = getContentReqs();
+      reqs.push({ id:Date.now(), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, contentId, contentTitle, reason, status:'pending', createdAt:new Date().toISOString() });
+      saveContentReqs(reqs);
+      updateBadges();
+      showModal({ title:'✅ Заявка отправлена', body:'Администратор рассмотрит заявку на удаление контента.', actions:[{label:'OK', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212'}] });
+    });
+  }
+
+  // ── MODERATOR: submit ban request ─────────────────────────────
+  function modReportUser(targetId, targetName) {
+    showReasonModal('🚫 Заявка на бан пользователя', `Пользователь: <strong>${targetName}</strong>`, reason => {
+      const user = getUser();
+      if (!user) return;
+      const reqs = getBanReqs();
+      reqs.push({ id:Date.now(), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, targetId, targetName, reason, status:'pending', createdAt:new Date().toISOString() });
+      saveBanReqs(reqs);
+      updateBadges();
+      showModal({ title:'✅ Заявка отправлена', body:'Администратор рассмотрит заявку на бан пользователя.', actions:[{label:'OK', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212'}] });
+    });
+  }
+
+  // ── ADMIN: approve/decline content request ───────────────────
+  function adminApproveContent(id) {
+    const reqs = getContentReqs();
+    const r = reqs.find(x=>x.id===id);
+    if (!r) return;
+    showModal({
+      title:'Подтвердить удаление',
+      body:`Удалить контент "<strong>${r.contentTitle}</strong>"?<br/><span style="color:var(--text3);font-size:12px">Причина: ${r.reason}</span>`,
+      actions:[
+        {label:'Отмена',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)'},
+        {label:'Удалить',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#ff4444;color:#fff',
+         action:()=>{ r.status='approved'; saveContentReqs(reqs); renderAdminContentReqs(); updateBadges(); }}
+      ]
+    });
+  }
+  function adminDeclineContent(id) {
+    const reqs = getContentReqs();
+    const r = reqs.find(x=>x.id===id);
+    if (!r) return;
+    r.status='declined'; saveContentReqs(reqs); renderAdminContentReqs(); updateBadges();
+  }
+
+  // ── ADMIN: approve/decline ban request ───────────────────────
+  function adminApproveBan(id) {
+    const reqs = getBanReqs();
+    const r = reqs.find(x=>x.id===id);
+    if (!r) return;
+    showModal({
+      title:'Подтвердить бан',
+      body:`Заблокировать пользователя "<strong>${r.targetName}</strong>"?<br/><span style="color:var(--text3);font-size:12px">Причина: ${r.reason}</span>`,
+      actions:[
+        {label:'Отмена',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)'},
+        {label:'Заблокировать',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#ff4444;color:#fff',
+         action:()=>{
+           r.status='approved';
+           saveBanReqs(reqs);
+           const users=getUsers();
+           const u=users.find(x=>x.id===r.targetId);
+           if(u) { u.banned=true; saveUsers(users); }
+           renderAdminBanReqs(); updateBadges();
+         }}
+      ]
+    });
+  }
+  function adminDeclineBan(id) {
+    const reqs = getBanReqs();
+    const r = reqs.find(x=>x.id===id);
+    if (!r) return;
+    r.status='declined'; saveBanReqs(reqs); renderAdminBanReqs(); updateBadges();
+  }
+
+  // ── ADMIN: direct ban user ────────────────────────────────────
+  function adminBanUser(userId, userName) {
+    showModal({
+      title:'🚫 Заблокировать пользователя',
+      body:`Вы уверены, что хотите заблокировать <strong>${userName}</strong>? Пользователь не сможет войти на платформу.`,
+      actions:[
+        {label:'Отмена',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)'},
+        {label:'Заблокировать',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#ff4444;color:#fff',
+         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.banned=true;saveUsers(u);} showModal({title:'✅ Готово',body:`${userName} заблокирован.`,actions:[{label:'OK',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212'}]}); }}
+      ]
+    });
+  }
+
+  // ── ADMIN: delete account ────────────────────────────────────
+  function adminDeleteAccount(userId, userName) {
+    showModal({
+      title:'⛔ Удалить аккаунт',
+      body:`Вы уверены, что хотите <strong>безвозвратно удалить</strong> аккаунт <strong>${userName}</strong>? Это действие нельзя отменить.`,
+      actions:[
+        {label:'Отмена',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)'},
+        {label:'Удалить навсегда',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#ff4444;color:#fff',
+         action:()=>{ let u=getUsers(); u=u.filter(x=>x.id!==userId); saveUsers(u); showModal({title:'✅ Удалено',body:`Аккаунт ${userName} удалён.`,actions:[{label:'OK',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212'}]}); }}
+      ]
+    });
+  }
+
+  // ── ADMIN: assign moderator role ──────────────────────────────
+  function adminAssignModerator(userId, userName) {
+    showModal({
+      title:'🛡 Назначить модератором',
+      body:`Назначить <strong>${userName}</strong> модератором платформы?`,
+      actions:[
+        {label:'Отмена',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)'},
+        {label:'Назначить',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--teal);color:#121212',
+         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.role='moderator';saveUsers(u);} showModal({title:'✅ Готово',body:`${userName} назначен(а) модератором.`,actions:[{label:'OK',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212'}]}); }}
+      ]
+    });
+  }
+
+  // ── Three-dots for USER (crew list item or profile) ───────────
+  function showUserDots(anchorEl, userId, userName) {
+    const user = getUser();
+    if (!user) return;
+    event.stopPropagation();
+    if (user.role === 'admin') {
+      showDotsMenu(anchorEl, [
+        { icon:'🛡', label:'Назначить модератором', warn:true, action:()=>adminAssignModerator(userId,userName) },
+        { icon:'🚫', label:'Заблокировать', danger:true, action:()=>adminBanUser(userId,userName) },
+        { icon:'⛔', label:'Удалить аккаунт', danger:true, action:()=>adminDeleteAccount(userId,userName) },
+      ]);
+    } else if (user.role === 'moderator') {
+      showDotsMenu(anchorEl, [
+        { icon:'🚩', label:'Пожаловаться (бан)', warn:true, action:()=>modReportUser(userId,userName) },
+      ]);
+    }
+  }
+
+  // ── Three-dots for CONTENT card ───────────────────────────────
+  function showContentDots(anchorEl, contentId, contentTitle) {
+    const user = getUser();
+    if (!user) return;
+    event.stopPropagation();
+    if (user.role === 'admin') {
+      showDotsMenu(anchorEl, [
+        { icon:'🗑', label:'Удалить контент', danger:true, action:()=>adminRemoveContent(anchorEl, contentId, contentTitle) },
+      ]);
+    } else if (user.role === 'moderator') {
+      showDotsMenu(anchorEl, [
+        { icon:'🚩', label:'Заявка на удаление', warn:true, action:()=>modReportContent(contentId, contentTitle) },
+      ]);
+    }
+  }
+
+  function adminRemoveContent(cardEl, contentId, contentTitle) {
+    showModal({
+      title:'🗑 Удалить контент',
+      body:`Удалить "<strong>${contentTitle}</strong>" с платформы?`,
+      actions:[
+        {label:'Отмена',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)'},
+        {label:'Удалить',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#ff4444;color:#fff',
+         action:()=>{
+           const card = document.querySelector(`[data-content-id="${contentId}"]`);
+           if(card) card.style.display='none';
+           showModal({title:'✅ Удалено',body:`"${contentTitle}" удалён с платформы.`,actions:[{label:'OK',style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212'}]});
+         }}
+      ]
+    });
+  }
+
+  // ── Render admin pages ───────────────────────────────────────
+  function renderAdminContentReqs() {
+    const el = document.getElementById('admin-content-list');
+    if (!el) return;
+    const reqs = getContentReqs();
+    if (!reqs.length) { el.innerHTML='<div class="req-empty">Заявок пока нет</div>'; return; }
+    el.innerHTML = reqs.map(r => `
+      <div class="req-card">
+        <div class="req-card-head">
+          <div class="req-card-title">🗑 ${r.contentTitle}</div>
+          <span class="req-status ${r.status}">${{pending:'На рассмотрении',approved:'Одобрено',declined:'Отклонено'}[r.status]}</span>
+        </div>
+        <div class="req-meta">Модератор: ${r.moderatorName} · ${new Date(r.createdAt).toLocaleDateString('ru')}</div>
+        <div class="req-reason">Причина: ${r.reason}</div>
+        ${r.status==='pending' ? `<div class="req-actions"><button class="req-btn req-btn-approve" onclick="adminApproveContent(${r.id})">✓ Одобрить</button><button class="req-btn req-btn-decline" onclick="adminDeclineContent(${r.id})">✗ Отклонить</button></div>` : ''}
+      </div>
+    `).join('');
+  }
+  function renderAdminBanReqs() {
+    const el = document.getElementById('admin-bans-list');
+    if (!el) return;
+    const reqs = getBanReqs();
+    if (!reqs.length) { el.innerHTML='<div class="req-empty">Заявок пока нет</div>'; return; }
+    el.innerHTML = reqs.map(r => `
+      <div class="req-card">
+        <div class="req-card-head">
+          <div class="req-card-title">🚫 ${r.targetName}</div>
+          <span class="req-status ${r.status}">${{pending:'На рассмотрении',approved:'Одобрено',declined:'Отклонено'}[r.status]}</span>
+        </div>
+        <div class="req-meta">Модератор: ${r.moderatorName} · ${new Date(r.createdAt).toLocaleDateString('ru')}</div>
+        <div class="req-reason">Причина: ${r.reason}</div>
+        ${r.status==='pending' ? `<div class="req-actions"><button class="req-btn req-btn-approve" onclick="adminApproveBan(${r.id})">✓ Одобрить</button><button class="req-btn req-btn-decline" onclick="adminDeclineBan(${r.id})">✗ Отклонить</button></div>` : ''}
+      </div>
+    `).join('');
+  }
+  function renderModReqs() {
+    const el = document.getElementById('mod-requests-list');
+    if (!el) return;
+    const user = getUser();
+    if (!user) { el.innerHTML='<div class="req-empty">Войдите как модератор</div>'; return; }
+    const all = [...getContentReqs().map(r=>({...r,type:'content'})), ...getBanReqs().map(r=>({...r,type:'ban'}))].filter(r=>r.moderatorId===user.id).sort((a,b)=>b.id-a.id);
+    if (!all.length) { el.innerHTML='<div class="req-empty">Вы ещё не подавали заявок</div>'; return; }
+    el.innerHTML = all.map(r => `
+      <div class="req-card">
+        <div class="req-card-head">
+          <div class="req-card-title">${r.type==='content'?'🗑 '+r.contentTitle:'🚫 '+r.targetName}</div>
+          <span class="req-status ${r.status}">${{pending:'На рассмотрении',approved:'Одобрено',declined:'Отклонено'}[r.status]}</span>
+        </div>
+        <div class="req-meta">${new Date(r.createdAt).toLocaleDateString('ru')} · ${r.type==='content'?'Удаление контента':'Бан пользователя'}</div>
+        <div class="req-reason">Причина: ${r.reason}</div>
+      </div>
+    `).join('');
+  }
+
+  // ── Init crew-list three-dots ─────────────────────────────────
+  function initCrewDots() {
+    document.querySelectorAll('.crew-item').forEach(item => {
+      if (item.querySelector('.crew-dots')) return;
+      const nameEl = item.querySelector('.cname');
+      const name = nameEl ? nameEl.textContent.trim() : 'Unknown';
+      const fakeId = 'crew_'+name.replace(/\s/g,'_');
+      const btn = document.createElement('div');
+      btn.className = 'crew-dots';
+      btn.innerHTML = '⋮';
+      btn.title = 'Действия';
+      btn.onclick = (e) => { e.stopPropagation(); showUserDots(btn, fakeId, name); };
+      item.appendChild(btn);
+    });
+  }
+
+  // ── Init content card three-dots ──────────────────────────────
+  function initContentDots() {
+    document.querySelectorAll('.card[onclick], .pgcard[onclick], .rec-card[onclick], .pc').forEach((card, i) => {
+      if (card.querySelector('.card-dots')) return;
+      const titleEl = card.querySelector('.card-title, .pgcard-title, .rec-title, .pc-title');
+      const title   = titleEl ? titleEl.textContent.trim() : 'Контент '+(i+1);
+      const contentId = 'content_'+i;
+      card.dataset.contentId = contentId;
+      const btn = document.createElement('div');
+      btn.className = 'card-dots';
+      btn.innerHTML = '⋮';
+      btn.title = 'Действия';
+      btn.onclick = (e) => { e.stopPropagation(); showContentDots(btn, contentId, title); };
+      card.appendChild(btn);
+    });
+  }
+
+  // ── Add profile three-dots to the prof-top area ───────────────
+  function addProfileDots() {
+    const profName = document.getElementById('prof-name');
+    if (!profName) return;
+    let dots = document.getElementById('prof-dots-btn');
+    if (!dots) {
+      dots = document.createElement('div');
+      dots.id = 'prof-dots-btn';
+      dots.className = 'prof-dots';
+      dots.innerHTML = '⋮';
+      dots.title = 'Действия';
+      dots.onclick = (e) => {
+        const user = getUser();
+        if (!user || user.role==='viewer' || user.role==='creator' || user.role==='studio') return;
+        const fakeTarget = { id: 'profile_demo', name: profName.textContent };
+        showUserDots(dots, fakeTarget.id, fakeTarget.name);
+      };
+      profName.parentElement.insertBefore(dots, profName.nextSibling);
+    }
+  }
+
+  // ── Sidebar toggle ───────────────────────────────────────────
+  function toggleSidebar() {
+    document.body.classList.toggle('sidebar-collapsed');
+  }
+
+  // ── Run all init after auth change ────────────────────────────
+  function initModerationUI(user) {
+    applyRoleToBody(user);
+    updateSidebarForRole(user);
+    setTimeout(() => {
+      initCrewDots();
+      initContentDots();
+      addProfileDots();
+    }, 100);
+  }
+
+  // ── On page load: restore session (must run AFTER i18n is declared) ──
+  (function restoreSession() {
+    const user = getUser();
+    if (user) updateAuthUI(user);
+    seedTestAccounts();
+    // Restore theme
+    const savedTheme = localStorage.getItem('aya_theme') || 'dark';
+    setTheme(savedTheme);
+  })();
+</script>
+
+<!-- Modal and dropdown -->
+<div id="modal-overlay" onclick="closeModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center">
+  <div id="modal-box" onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:16px;padding:28px;min-width:340px;max-width:480px;width:90%;box-shadow:var(--shadow-lg);position:relative">
+    <div id="modal-title" style="font-size:18px;font-weight:800;margin-bottom:12px"></div>
+    <div id="modal-body" style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6"></div>
+    <div id="modal-actions" style="display:flex;gap:10px;justify-content:flex-end"></div>
+  </div>
+</div>
+
+<!-- THREE DOTS DROPDOWN -->
+<div id="dots-menu" style="display:none;position:fixed;z-index:999;background:var(--bg3);border-radius:10px;padding:6px;box-shadow:var(--shadow-lg);min-width:180px;border:1px solid var(--bg5)"></div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "korseteik-server",
+  "version": "1.0.0",
+  "description": "Kórseteıik platform backend — pure Node.js, zero dependencies",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
