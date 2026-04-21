@@ -1497,7 +1497,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     <div class="nav-item active" onclick="goPage('home',this)"><span class="ico">🏠</span><span data-i18n="nav_home">Главная</span></div>
     <div class="nav-item" onclick="goPage('pitch',this)"><span class="ico">💡</span><span data-i18n="nav_pitch">Pitching</span><span class="badge">18</span></div>
     <div class="nav-item" onclick="goPage('profile',this)"><span class="ico">👤</span><span data-i18n="nav_profile">Профиль</span></div>
-    <div class="nav-item" onclick="goPage('home',null)"><span class="ico">🔖</span><span data-i18n="saved">Сохранённое</span></div>
+    <div class="nav-item" onclick="goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)"><span class="ico">🔖</span><span data-i18n="saved">Сохранённое</span></div>
     <div id="nav-auth-btn" class="nav-item" onclick="navAuthClick()"><span class="ico">🔑</span><span id="nav-auth-label" data-i18n="login">Войти</span></div>
     <div class="nav-item" onclick="goPage('settings',this)"><span class="ico">⚙️</span><span data-i18n="settings">Настройки</span></div>
     <div class="nav-item" onclick="goPage('about',this)"><span class="ico">ℹ️</span><span data-i18n="about">О проекте</span></div>
