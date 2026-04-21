@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYA — Color Palette</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0F1209;
+    color: #EDE5CC;
+    min-height: 100vh;
+    padding: 48px 32px;
+  }
+
+  .page-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #96A878;
+    margin-bottom: 6px;
+  }
+  .page-heading {
+    font-size: 36px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #D4C9A0, #7D9158);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #536045;
+    margin-bottom: 48px;
+  }
+
+  /* Theme toggle */
+  .theme-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+  .theme-btn {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1px solid #374424;
+    background: #1E2514;
+    color: #96A878;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .05em;
+  }
+  .theme-btn.active {
+    background: #7D9158;
+    color: #0F1209;
+    border-color: #7D9158;
+  }
+
+  /* Section */
+  .section { margin-bottom: 48px; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: #536045;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1E2514;
+  }
+
+  /* Swatches grid */
+  .swatches { display: flex; flex-wrap: wrap; gap: 16px; }
+
+  .swatch {
+    width: 160px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #1E2514;
+    border: 1px solid #27311A;
+  }
+  .swatch-color {
+    height: 80px;
+    width: 100%;
+    position: relative;
+  }
+  .swatch-color.small { height: 56px; }
+  .swatch-body { padding: 12px 14px 14px; }
+  .swatch-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #EDE5CC;
+    margin-bottom: 3px;
+  }
+  .swatch-var {
+    font-size: 10px;
+    color: #96A878;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    margin-bottom: 3px;
+  }
+  .swatch-hex {
+    font-size: 11px;
+    color: #536045;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    cursor: pointer;
+    transition: color .15s;
+    user-select: all;
+  }
+  .swatch-hex:hover { color: #D4C9A0; }
+
+  /* Wide swatch for gradients */
+  .swatch.wide { width: 200px; }
+  .swatch.wide .swatch-color { height: 70px; }
+
+  /* Usage tag */
+  .swatch-usage {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #374424;
+    margin-top: 5px;
+  }
+
+  /* Divider between themes */
+  .theme-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 40px 0 28px;
+  }
+  .theme-divider-line { flex: 1; height: 1px; background: #1E2514; }
+  .theme-divider-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #374424;
+    white-space: nowrap;
+  }
+
+  /* Light theme preview strip */
+  .light-preview {
+    background: #F0E9D6;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #CABFA0;
+  }
+  .light-preview .swatch { background: #E6DBC4; border-color: #CABFA0; }
+  .light-preview .swatch-name { color: #18200E; }
+  .light-preview .swatch-var { color: #445228; }
+  .light-preview .swatch-hex { color: #748058; }
+  .light-preview .swatch-hex:hover { color: #18200E; }
+  .light-preview .swatch-usage { color: #CABFA0; }
+  .light-preview .section-label { color: #AFA588; border-color: #D9CEB4; }
+
+  /* Copy flash */
+  .copied-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #7D9158;
+    color: #0F1209;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0;
+    transition: all .2s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .copied-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="page-title">AYA Platform</div>
+<div class="page-heading">Color Palette</div>
+<div class="page-sub">All colors used across the platform · Click any hex to copy</div>
+
+<!-- ═══ DARK THEME ═══ -->
+<div class="section">
+  <div class="section-label">🌑 Dark Theme — Backgrounds</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0F1209"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Base</div>
+        <div class="swatch-var">--bg</div>
+        <div class="swatch-hex" onclick="copy('#0F1209')">#0F1209</div>
+        <div class="swatch-usage">Page background</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#161A0E"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Surface</div>
+        <div class="swatch-var">--bg2</div>
+        <div class="swatch-hex" onclick="copy('#161A0E')">#161A0E</div>
+        <div class="swatch-usage">Sidebar, cards</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1E2514"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Elevated</div>
+        <div class="swatch-var">--bg3</div>
+        <div class="swatch-hex" onclick="copy('#1E2514')">#1E2514</div>
+        <div class="swatch-usage">Elevated surfaces</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#27311A"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Hover</div>
+        <div class="swatch-var">--bg4</div>
+        <div class="swatch-hex" onclick="copy('#27311A')">#27311A</div>
+        <div class="swatch-usage">Hover states</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#374424"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Border</div>
+        <div class="swatch-var">--bg5</div>
+        <div class="swatch-hex" onclick="copy('#374424')">#374424</div>
+        <div class="swatch-usage">Subtle borders</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">✦ Dark Theme — Accents</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#7D9158"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Sage Green</div>
+        <div class="swatch-var">--gold</div>
+        <div class="swatch-hex" onclick="copy('#7D9158')">#7D9158</div>
+        <div class="swatch-usage">Primary accent</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#9DB472"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Light Sage</div>
+        <div class="swatch-var">--gold2</div>
+        <div class="swatch-hex" onclick="copy('#9DB472')">#9DB472</div>
+        <div class="swatch-usage">Lighter accent</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#D4C9A0"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Warm Cream</div>
+        <div class="swatch-var">--teal</div>
+        <div class="swatch-hex" onclick="copy('#D4C9A0')">#D4C9A0</div>
+        <div class="swatch-usage">Secondary accent</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">✦ Dark Theme — Typography</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#EDE5CC"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Primary Text</div>
+        <div class="swatch-var">--text</div>
+        <div class="swatch-hex" onclick="copy('#EDE5CC')">#EDE5CC</div>
+        <div class="swatch-usage">Headings, body</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#96A878"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Muted Text</div>
+        <div class="swatch-var">--text2</div>
+        <div class="swatch-hex" onclick="copy('#96A878')">#96A878</div>
+        <div class="swatch-usage">Subtitles, labels</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#536045"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Dim Text</div>
+        <div class="swatch-var">--text3</div>
+        <div class="swatch-hex" onclick="copy('#536045')">#536045</div>
+        <div class="swatch-usage">Timestamps, hints</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LIGHT THEME ═══ -->
+<div class="theme-divider">
+  <div class="theme-divider-line"></div>
+  <div class="theme-divider-label">☀️ Light Theme</div>
+  <div class="theme-divider-line"></div>
+</div>
+
+<div class="light-preview">
+  <div class="section" style="margin-bottom:28px">
+    <div class="section-label">Light Theme — Backgrounds</div>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F0E9D6"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Base</div>
+          <div class="swatch-var">--bg</div>
+          <div class="swatch-hex" onclick="copy('#F0E9D6')">#F0E9D6</div>
+          <div class="swatch-usage">Page background</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#E6DBC4"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Surface</div>
+          <div class="swatch-var">--bg2</div>
+          <div class="swatch-hex" onclick="copy('#E6DBC4')">#E6DBC4</div>
+          <div class="swatch-usage">Sidebar, cards</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#D9CEB4"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Elevated</div>
+          <div class="swatch-var">--bg3</div>
+          <div class="swatch-hex" onclick="copy('#D9CEB4')">#D9CEB4</div>
+          <div class="swatch-usage">Elevated surfaces</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#CABFA0"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Hover</div>
+          <div class="swatch-var">--bg4</div>
+          <div class="swatch-hex" onclick="copy('#CABFA0')">#CABFA0</div>
+          <div class="swatch-usage">Hover states</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#AFA588"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Border</div>
+          <div class="swatch-var">--bg5</div>
+          <div class="swatch-hex" onclick="copy('#AFA588')">#AFA588</div>
+          <div class="swatch-usage">Subtle borders</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="margin-bottom:0">
+    <div class="section-label">Light Theme — Accents & Typography</div>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#5C7840"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Dark Sage</div>
+          <div class="swatch-var">--gold</div>
+          <div class="swatch-hex" onclick="copy('#5C7840')">#5C7840</div>
+          <div class="swatch-usage">Primary accent</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#7A9A58"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Mid Sage</div>
+          <div class="swatch-var">--gold2</div>
+          <div class="swatch-hex" onclick="copy('#7A9A58')">#7A9A58</div>
+          <div class="swatch-usage">Lighter accent</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#3E5428"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Forest</div>
+          <div class="swatch-var">--teal</div>
+          <div class="swatch-hex" onclick="copy('#3E5428')">#3E5428</div>
+          <div class="swatch-usage">Secondary accent</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#18200E"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Primary Text</div>
+          <div class="swatch-var">--text</div>
+          <div class="swatch-hex" onclick="copy('#18200E')">#18200E</div>
+          <div class="swatch-usage">Headings, body</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#445228"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Muted Text</div>
+          <div class="swatch-var">--text2</div>
+          <div class="swatch-hex" onclick="copy('#445228')">#445228</div>
+          <div class="swatch-usage">Subtitles, labels</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#748058"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">Dim Text</div>
+          <div class="swatch-var">--text3</div>
+          <div class="swatch-hex" onclick="copy('#748058')">#748058</div>
+          <div class="swatch-usage">Timestamps, hints</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONTENT TYPE COLORS ═══ -->
+<div class="theme-divider">
+  <div class="theme-divider-line"></div>
+  <div class="theme-divider-label">🎬 Content Type Badges</div>
+  <div class="theme-divider-line"></div>
+</div>
+
+<div class="section">
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color small" style="background:rgba(212,168,67,.12)">
+        <span style="position:absolute;bottom:10px;left:12px;background:rgba(212,168,67,.15);color:#d4a843;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid rgba(212,168,67,.3)">Фильм</span>
+      </div>
+      <div class="swatch-body">
+        <div class="swatch-name">Film</div>
+        <div class="swatch-var">.ct-film</div>
+        <div class="swatch-hex" onclick="copy('#d4a843')">#d4a843</div>
+        <div class="swatch-usage">Gold amber</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color small" style="background:rgba(224,122,212,.1)">
+        <span style="position:absolute;bottom:10px;left:12px;background:rgba(224,122,212,.15);color:#e07ad4;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid rgba(224,122,212,.3)">Клип</span>
+      </div>
+      <div class="swatch-body">
+        <div class="swatch-name">Music Video</div>
+        <div class="swatch-var">.ct-music</div>
+        <div class="swatch-hex" onclick="copy('#e07ad4')">#e07ad4</div>
+        <div class="swatch-usage">Purple pink</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color small" style="background:rgba(122,212,224,.1)">
+        <span style="position:absolute;bottom:10px;left:12px;background:rgba(122,212,224,.15);color:#7ad4e0;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid rgba(122,212,224,.3)">Доку</span>
+      </div>
+      <div class="swatch-body">
+        <div class="swatch-name">Documentary</div>
+        <div class="swatch-var">.ct-doc</div>
+        <div class="swatch-hex" onclick="copy('#7ad4e0')">#7ad4e0</div>
+        <div class="swatch-usage">Cyan</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color small" style="background:rgba(160,212,122,.1)">
+        <span style="position:absolute;bottom:10px;left:12px;background:rgba(160,212,122,.15);color:#a0d47a;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid rgba(160,212,122,.3)">Подкаст</span>
+      </div>
+      <div class="swatch-body">
+        <div class="swatch-name">Podcast</div>
+        <div class="swatch-var">.ct-podcast</div>
+        <div class="swatch-hex" onclick="copy('#a0d47a')">#a0d47a</div>
+        <div class="swatch-usage">Lime green</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color small" style="background:rgba(122,174,212,.1)">
+        <span style="position:absolute;bottom:10px;left:12px;background:rgba(122,174,212,.15);color:#7aaed4;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid rgba(122,174,212,.3)">Короткий</span>
+      </div>
+      <div class="swatch-body">
+        <div class="swatch-name">Short Film</div>
+        <div class="swatch-var">.ct-short</div>
+        <div class="swatch-hex" onclick="copy('#7aaed4')">#7aaed4</div>
+        <div class="swatch-usage">Sky blue</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color small" style="background:rgba(212,144,122,.1)">
+        <span style="position:absolute;bottom:10px;left:12px;background:rgba(212,144,122,.15);color:#d4907a;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;border:1px solid rgba(212,144,122,.3)">Соц. ролик</span>
+      </div>
+      <div class="swatch-body">
+        <div class="swatch-name">Social Video</div>
+        <div class="swatch-var">.ct-social</div>
+        <div class="swatch-hex" onclick="copy('#d4907a')">#d4907a</div>
+        <div class="swatch-usage">Warm coral</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AVATAR GRADIENTS ═══ -->
+<div class="theme-divider">
+  <div class="theme-divider-line"></div>
+  <div class="theme-divider-label">👤 Avatar Gradients</div>
+  <div class="theme-divider-line"></div>
+</div>
+
+<div class="section">
+  <div class="swatches">
+    <div class="swatch wide">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#3ecfb2,#d4a843)"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Teal → Gold</div>
+        <div class="swatch-hex" onclick="copy('#3ecfb2')">#3ecfb2</div>
+        <div class="swatch-hex" onclick="copy('#d4a843')">#d4a843</div>
+      </div>
+    </div>
+    <div class="swatch wide">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#4380d4,#43d48e)"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Blue → Mint</div>
+        <div class="swatch-hex" onclick="copy('#4380d4')">#4380d4</div>
+        <div class="swatch-hex" onclick="copy('#43d48e')">#43d48e</div>
+      </div>
+    </div>
+    <div class="swatch wide">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#d44343,#7b2fd4)"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Red → Purple</div>
+        <div class="swatch-hex" onclick="copy('#d44343')">#d44343</div>
+        <div class="swatch-hex" onclick="copy('#7b2fd4')">#7b2fd4</div>
+      </div>
+    </div>
+    <div class="swatch wide">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#d4a843,#d46343)"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Gold → Orange</div>
+        <div class="swatch-hex" onclick="copy('#d4a843')">#d4a843</div>
+        <div class="swatch-hex" onclick="copy('#d46343')">#d46343</div>
+      </div>
+    </div>
+    <div class="swatch wide">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#7b43d4,#d443a8)"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Violet → Pink</div>
+        <div class="swatch-hex" onclick="copy('#7b43d4')">#7b43d4</div>
+        <div class="swatch-hex" onclick="copy('#d443a8')">#d443a8</div>
+      </div>
+    </div>
+    <div class="swatch wide">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#43d4c2,#4380d4)"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Aqua → Blue</div>
+        <div class="swatch-hex" onclick="copy('#43d4c2')">#43d4c2</div>
+        <div class="swatch-hex" onclick="copy('#4380d4')">#4380d4</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SYSTEM COLORS ═══ -->
+<div class="theme-divider">
+  <div class="theme-divider-line"></div>
+  <div class="theme-divider-label">⚙️ System / UI</div>
+  <div class="theme-divider-line"></div>
+</div>
+
+<div class="section">
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#e05555"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Danger</div>
+        <div class="swatch-var">Error / Delete</div>
+        <div class="swatch-hex" onclick="copy('#e05555')">#e05555</div>
+        <div class="swatch-usage">Remove, ban, error</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#ff4444"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">Alert Red</div>
+        <div class="swatch-var">Destructive action</div>
+        <div class="swatch-hex" onclick="copy('#ff4444')">#ff4444</div>
+        <div class="swatch-usage">Block, delete forever</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#FF0000"></div>
+      <div class="swatch-body">
+        <div class="swatch-name">YouTube Red</div>
+        <div class="swatch-var">External link</div>
+        <div class="swatch-hex" onclick="copy('#FF0000')">#FF0000</div>
+        <div class="swatch-usage">YouTube fallback btn</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="copied-toast" id="toast">Copied!</div>
+
+<script>
+  function copy(hex) {
+    navigator.clipboard.writeText(hex).catch(() => {});
+    const toast = document.getElementById('toast');
+    toast.textContent = hex + ' copied!';
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+</script>
+</body>
+</html>
