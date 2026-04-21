@@ -4,6 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>AYA — Art Yearns Action</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    DESIGN TOKENS — AYA identity
@@ -48,7 +51,7 @@
 
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Barlow', 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   display: flex;
@@ -115,7 +118,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   white-space: nowrap;
 }
 .nav-item:hover { color: var(--text); background: rgba(255,255,255,.07); }
-.nav-item.active { color: var(--text); }
+.nav-item.active { color: var(--text); background: rgba(255,255,255,.06); }
+.nav-item.active .ico { color: var(--gold2); }
 .nav-item .ico { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
 .nav-item .badge {
   margin-left: auto;
@@ -148,8 +152,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 .sidebar-upgrade {
   margin: 8px;
-  background: linear-gradient(135deg, rgba(212,168,67,.15), rgba(62,207,178,.08));
-  border: 1px solid rgba(212,168,67,.2);
+  background: linear-gradient(135deg, var(--gold-dim), rgba(125,145,88,.06));
+  border: 1px solid rgba(125,145,88,.25);
   border-radius: var(--r-lg);
   padding: 16px;
   flex-shrink: 0;
@@ -172,8 +176,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .topbar {
   position: fixed; top: 0; left: var(--sidebar); right: 0;
   height: var(--topbar);
-  background: rgba(18,18,18,.95);
-  backdrop-filter: blur(16px);
+  background: rgba(15,18,9,.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,.04);
   display: flex; align-items: center; gap: 12px;
   padding: 0 24px; z-index: 100;
   transition: left .25s ease;
@@ -278,15 +283,16 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(212,168,67,.1); border: 1px solid rgba(212,168,67,.25);
+  background: var(--gold-dim); border: 1px solid rgba(125,145,88,.3);
   color: var(--gold); font-size: 10px; font-weight: 800;
   padding: 5px 12px; border-radius: var(--r-pill);
   margin-bottom: 16px;
   text-transform: uppercase; letter-spacing: 1.2px;
 }
 .hero-title {
-  font-size: 38px; font-weight: 900; line-height: 1.06;
-  letter-spacing: -1px; margin-bottom: 14px;
+  font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  font-size: 42px; font-weight: 900; line-height: 1.02;
+  letter-spacing: -.5px; margin-bottom: 14px;
 }
 .hero-title em { color: var(--gold); font-style: normal; }
 .hero-desc {
@@ -368,7 +374,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .c-find-btn:hover { background: var(--gold2); transform: scale(1.03); }
 .c-result {
   margin-top: 12px; padding: 10px 14px;
-  background: var(--teal-dim); border: 1px solid rgba(62,207,178,.2);
+  background: var(--teal-dim); border: 1px solid rgba(212,201,160,.25);
   border-radius: var(--r-md); font-size: 12px; color: var(--teal);
   display: none; align-items: center; gap: 8px;
 }
@@ -381,7 +387,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: flex; align-items: baseline; justify-content: space-between;
   margin-bottom: 16px;
 }
-.row-title { font-size: 22px; font-weight: 800; letter-spacing: -.5px; }
+.row-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -.2px; }
 .row-more {
   font-size: 12px; font-weight: 700; color: var(--text2);
   text-transform: uppercase; letter-spacing: .8px;
@@ -455,7 +461,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .ct-social { color: #d4907a; }
 .ct-short  { color: #7aaed4; }
 
-.card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; line-height: 1.35; }
+.card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .card-sub { font-size: 11px; color: var(--text2); }
 .card-rating { font-size: 11px; color: var(--gold); margin-top: 4px; font-weight: 600; }
 
@@ -506,10 +512,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   width: 64px; height: 64px; border-radius: 50%;
   background: var(--gold); display: flex; align-items: center; justify-content: center;
   font-size: 24px; color: #000; margin-bottom: 14px;
-  box-shadow: 0 8px 32px rgba(212,168,67,.4);
+  box-shadow: 0 8px 32px rgba(125,145,88,.45);
   transition: transform .15s, box-shadow .15s;
 }
-.play-big:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(212,168,67,.5); }
+.play-big:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(125,145,88,.6); }
 .player-title-over { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
 .player-meta-over { font-size: 12px; color: var(--text2); }
 
@@ -542,7 +548,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 
 /* Video info */
-.video-title { font-size: 22px; font-weight: 900; letter-spacing: -.5px; margin: 18px 0 10px; }
+.video-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 26px; font-weight: 900; letter-spacing: -.3px; margin: 18px 0 10px; }
 .video-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
 .vtag {
   background: var(--bg2); color: var(--text2);
@@ -586,7 +592,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   font-size: 9px; font-weight: 800;
   padding: 3px 10px; border-radius: var(--r-pill);
   text-transform: uppercase; letter-spacing: .6px;
-  border: 1px solid rgba(62,207,178,.2);
+  border: 1px solid rgba(212,201,160,.25);
 }
 
 .crew-item {
@@ -610,7 +616,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 /* Comments */
 .comments-section { margin-bottom: 24px; }
-.cs-head { font-size: 16px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 18px; }
+.cs-head { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -.1px; margin-bottom: 18px; }
 .comment-input-row { display: flex; gap: 10px; margin-bottom: 22px; align-items: flex-start; }
 .comment-av {
   width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
@@ -674,12 +680,12 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .pitch-page { padding: 28px 28px 60px; }
 
 .pitch-banner {
-  background: linear-gradient(135deg, #1a0828, #0d1535, #081810);
+  background: linear-gradient(135deg, #0A1808, #111A0C, #0C1A0A);
   border-radius: var(--r-lg); padding: 36px 40px; margin-bottom: 28px;
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
   box-shadow: var(--shadow-md);
 }
-.pb-title { font-size: 26px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 10px; }
+.pb-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 10px; }
 .pb-title em { color: var(--gold); font-style: normal; }
 .pb-desc { font-size: 13px; color: var(--text2); max-width: 420px; line-height: 1.65; }
 .pb-action {
@@ -732,7 +738,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .pc-days { font-size: 11px; color: var(--text2); }
 .pc-body { padding: 16px 18px 18px; }
 .pc-type { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
-.pc-title { font-size: 16px; font-weight: 900; margin-bottom: 5px; letter-spacing: -.3px; }
+.pc-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 5px; letter-spacing: -.1px; }
 .pc-author {
   font-size: 11px; color: var(--text2); margin-bottom: 10px;
   display: flex; align-items: center; gap: 6px;
@@ -791,7 +797,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   font-size: 10px; font-weight: 800; color: var(--text2);
   text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px;
 }
-.prof-name { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 3px; }
+.prof-name { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 3px; }
 .prof-handle { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
 .prof-bio { font-size: 13px; color: var(--text2); line-height: 1.6; max-width: 480px; margin-bottom: 14px; }
 .prof-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -809,7 +815,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .prof-link:hover { background: var(--bg4); color: var(--text); }
 .prof-stats { display: flex; gap: 28px; padding: 0; margin-left: auto; padding-top: 54px; align-self: flex-start; }
-.pstat-v { font-size: 20px; font-weight: 900; letter-spacing: -.5px; }
+.pstat-v { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 24px; font-weight: 900; letter-spacing: -.3px; }
 .pstat-l { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
 
 .profile-tabs {
@@ -876,9 +882,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   box-shadow: var(--shadow-lg);
 }
 .auth-logo {
-  font-size: 20px; font-weight: 900;
-  background: linear-gradient(120deg, var(--gold), var(--gold2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  font-size: 22px; font-weight: 900; letter-spacing: 1px;
+  color: var(--gold);
   margin-bottom: 4px;
 }
 .auth-subtitle { font-size: 12px; color: var(--text3); margin-bottom: 24px; }
@@ -906,7 +912,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   padding: 11px 14px; border-radius: var(--r-md);
   outline: none; transition: all .2s;
 }
-.form-input:focus { border-color: rgba(212,168,67,.45); background: var(--bg4); }
+.form-input:focus { border-color: rgba(125,145,88,.5); background: var(--bg4); }
 .form-input::placeholder { color: var(--text3); }
 /* Two-column row: both fields equal width */
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -947,8 +953,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   line-height: 1.4;
 }
 .form-success {
-  background: rgba(62,207,178,.1);
-  border: 1px solid rgba(62,207,178,.35);
+  background: var(--teal-dim);
+  border: 1px solid rgba(212,201,160,.35);
   color: var(--teal);
   padding: 10px 14px;
   border-radius: var(--r-md);
@@ -980,7 +986,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
    SETTINGS PAGE
 ============================================================ */
 .settings-page { padding: 32px 28px 60px; max-width: 720px; }
-.settings-title { font-size: 26px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 28px; }
+.settings-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 28px; }
 .settings-block {
   background: var(--bg2); border-radius: var(--r-lg);
   margin-bottom: 16px; overflow: hidden;
@@ -1040,7 +1046,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 ============================================================ */
 .about-page { padding: 32px 28px 60px; max-width: 860px; }
 .about-hero {
-  background: linear-gradient(135deg, #1a0828, #0d1535, #081810);
+  background: linear-gradient(135deg, #0C1808, #111F0C, #0f1a09);
   border-radius: var(--r-lg); padding: 40px 44px; margin-bottom: 32px;
   box-shadow: var(--shadow-md);
 }
@@ -1049,17 +1055,17 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .uni-logo {
   width: 52px; height: 52px; border-radius: var(--r-md);
-  background: linear-gradient(135deg, #1a3a8f, #0d2060);
+  background: var(--bg3);
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px; font-weight: 900; color: #fff;
-  flex-shrink: 0;
+  font-size: 20px; font-weight: 900; color: var(--text);
+  flex-shrink: 0; overflow: hidden;
 }
 .uni-name { font-size: 12px; font-weight: 700; color: var(--text2); line-height: 1.5; }
 .uni-name strong { display: block; font-size: 14px; color: var(--text); }
 .about-project-title {
-  font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px;
-  background: linear-gradient(120deg, var(--gold), var(--gold2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  font-size: 48px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px;
+  color: var(--gold);
 }
 .about-tagline { font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 560px; }
 .about-research {
@@ -1071,7 +1077,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .about-stat {
   background: var(--bg2); border-radius: var(--r-lg); padding: 20px 24px; flex: 1; min-width: 140px;
 }
-.about-stat-num { font-size: 28px; font-weight: 900; color: var(--gold); letter-spacing: -1px; }
+.about-stat-num { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); letter-spacing: -.5px; }
 .about-stat-label { font-size: 11px; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: .6px; }
 .about-section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; letter-spacing: -.3px; }
 .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 32px; }
@@ -1138,7 +1144,7 @@ body.role-admin .prof-dots, body.role-moderator .prof-dots { display: flex; }
 .req-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .req-card-title { font-weight: 700; font-size: 14px; flex: 1; }
 .req-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-.req-status.pending { background: rgba(212,168,67,.15); color: var(--gold); }
+.req-status.pending { background: var(--gold-dim); color: var(--gold); }
 .req-status.approved { background: rgba(76,175,80,.15); color: #4caf50; }
 .req-status.declined { background: rgba(255,107,107,.15); color: #ff6b6b; }
 .req-reason { font-size: 12px; color: var(--text2); margin-bottom: 12px; line-height: 1.5; }
@@ -1193,7 +1199,7 @@ body.light-theme .sidebar           { background: #DDD3B8; }
 body.light-theme .pitch-banner      { background: linear-gradient(135deg, #C4D4A8, #B0C898, #A8C090); }
 body.light-theme .pitch-banner .pb-title em { color: var(--teal); }
 body.light-theme .about-hero        { background: linear-gradient(135deg, #C4D4A8, #B0C898, #A8C090); }
-body.light-theme .about-hero .about-project-title { background: none; -webkit-text-fill-color: var(--teal); color: var(--teal); }
+body.light-theme .about-hero .about-project-title { color: var(--teal); }
 body.light-theme .topbar            { background: rgba(240,233,214,.96); border-bottom: 1px solid var(--bg5); }
 body.light-theme .hero-bg           { background: linear-gradient(135deg, #B8C9A0 0%, #C8D4A8 45%, #B0C498 100%); }
 body.light-theme .hm1  { background: linear-gradient(145deg,#8CAE78,#6A9050); }
@@ -1324,6 +1330,153 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
   /* Pitch */
   .pitch-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Collections ─────────────────────────────────────────── */
+/* Card like overlay */
+.card { position: relative; }
+.card-like-btn {
+  display: none;
+  position: absolute; top: 8px; right: 8px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(0,0,0,.6); border: none;
+  color: #fff; font-size: 14px; line-height: 1;
+  cursor: pointer; align-items: center; justify-content: center;
+  z-index: 5; transition: transform .15s, background .15s;
+  backdrop-filter: blur(4px);
+}
+.card:hover .card-like-btn { display: flex; }
+.card-like-btn.liked { color: #e05555; background: rgba(0,0,0,.75); }
+.card-like-btn:hover { transform: scale(1.15); }
+@keyframes heartPop { 0%{transform:scale(1)} 40%{transform:scale(1.6)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
+.card-like-btn.pop { animation: heartPop .4s cubic-bezier(.36,.07,.19,.97); }
+/* Saved toast */
+#coll-toast { position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg2);border:1px solid var(--bg5);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:2000;white-space:nowrap;box-shadow:var(--shadow-lg); }
+#coll-toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+
+/* Collection cards on profile / home */
+.coll-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 16px; }
+.coll-card {
+  background: var(--bg2); border-radius: 14px; overflow: hidden;
+  cursor: pointer; border: 1px solid var(--bg5);
+  transition: transform .15s, border-color .15s;
+  position: relative;
+}
+.coll-card:hover { transform: translateY(-2px); border-color: var(--gold); }
+.coll-thumb {
+  height: 100px; display: grid;
+  grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+  gap: 2px; background: var(--bg3);
+}
+.coll-thumb-cell { background: var(--bg4); overflow: hidden; }
+.coll-thumb-cell img { width: 100%; height: 100%; object-fit: cover; }
+.coll-thumb-cell.empty { background: var(--bg3); }
+.coll-thumb.single { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.coll-body { padding: 12px 14px 14px; }
+.coll-name { font-size: 13px; font-weight: 800; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.coll-meta { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+.coll-privacy { font-size: 10px; padding: 2px 7px; border-radius: 8px; font-weight: 700; }
+.coll-privacy.pub  { background: rgba(125,145,88,.15); color: var(--gold); }
+.coll-privacy.priv { background: var(--bg4); color: var(--text3); }
+.coll-follow-btn {
+  position: absolute; top: 8px; right: 8px;
+  padding: 4px 10px; border-radius: 10px; border: 1px solid var(--bg5);
+  background: var(--bg3); color: var(--text2); font-size: 10px; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+}
+.coll-follow-btn:hover, .coll-follow-btn.following { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+
+/* Collection picker modal */
+.coll-picker-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  transition: background .12s; border: 1px solid transparent;
+}
+.coll-picker-item:hover { background: var(--bg3); }
+.coll-picker-item.selected { background: var(--bg3); border-color: var(--gold); }
+.coll-picker-thumb {
+  width: 42px; height: 42px; border-radius: 8px;
+  background: var(--bg4); flex-shrink: 0; overflow: hidden; position: relative;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.coll-picker-info { flex: 1; min-width: 0; }
+.coll-picker-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.coll-picker-count { font-size: 11px; color: var(--text2); }
+.coll-picker-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--bg5); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.coll-picker-item.selected .coll-picker-check { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+
+/* Profile collections tab */
+.prof-collections { padding: 20px 0; }
+.ptab { background: none; border: none; color: var(--text2); font-size: 13px; font-weight: 600; padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; }
+.ptab.active { color: var(--text); border-bottom-color: var(--gold); }
+
+/* ── Page transitions ─────────────────────────────────────── */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page.active { animation: pageFadeIn .2s cubic-bezier(.22,.61,.36,1) forwards; }
+
+/* ── Focus visible — keyboard navigation accessibility ──── */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: none; /* handled by border-color on these elements */
+}
+
+/* ── Comment submit button ────────────────────────────────── */
+.comment-submit-btn {
+  padding: 9px 18px; border-radius: var(--r-pill);
+  background: var(--gold); color: #000;
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .6px;
+  transition: all .15s; white-space: nowrap; flex-shrink: 0;
+  align-self: flex-end;
+}
+.comment-submit-btn:hover { background: var(--gold2); transform: scale(1.03); }
+.comment-input-expanded {
+  display: flex; flex-direction: column; gap: 8px; flex: 1;
+}
+
+/* ── Touch device like button (always show on non-hover devices) ── */
+@media (hover: none) {
+  .card-like-btn { display: flex; }
+  .card-like-btn:not(.liked) { background: rgba(0,0,0,.5); }
+}
+
+/* ── Topbar scroll-aware shadow ─────────────────────────── */
+.topbar.scrolled {
+  box-shadow: 0 2px 20px rgba(0,0,0,.4);
+}
+
+/* ── Rec card title line-clamp ──────────────────────────── */
+.rec-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ── Pitch card title line-clamp ────────────────────────── */
+.pc-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ── Coll card count polish ────────────────────────────── */
+.coll-card:hover .coll-body .coll-name { color: var(--gold2); }
+
+/* ── Watch action bar — like button highlight ───────────── */
+#watch-like-btn.liked { color: #e05555; }
+
+/* ── Reduced motion — accessibility ─────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1388,6 +1541,7 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
 <!-- ======================================================  TOPBAR  -->
 <header class="topbar">
+  <img id="tb-aitu-logo" src="assets/aitu_logo_white.png" alt="Astana IT University" style="height:32px;object-fit:contain;flex-shrink:0;margin-right:4px">
   <div class="search-wrap">
     <span class="search-ico">🔍</span>
     <input class="search-input" type="text" data-i18n-placeholder="search_ph" placeholder="Что ищешь? Фильм, клип, подкаст, автор…"/>
@@ -1399,7 +1553,7 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
       <button class="lang-btn" onclick="setLang('en',this)" data-lang="en">EN</button>
     </div>
     <div class="tb-ico"><span>🔔</span><div class="notif"></div></div>
-    <button class="tb-upload" onclick="goPage('pitch',null)" data-i18n="upload">+ Загрузить</button>
+    <button class="tb-upload" onclick="openUploadModal()" data-i18n="upload">+ Загрузить</button>
     <div id="tb-avatar" class="tb-avatar" onclick="tbAvatarClick()">?</div>
   </div>
 </header>
@@ -1498,6 +1652,18 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
       </div>
     </div>
 
+    <!-- Top Collections of the Month -->
+    <div id="top-collections-row" class="row" style="display:none">
+      <div class="row-head"><span class="row-title">🗂 Топ коллекции месяца</span><span class="row-more" onclick="switchProfTab && goPage('profile',null)">Смотреть все →</span></div>
+      <div id="top-collections-cards" class="cards-h" style="gap:14px"></div>
+    </div>
+
+    <!-- User-uploaded content (shown when content exists) -->
+    <div id="user-content-row" class="row" style="display:none">
+      <div class="row-head"><span class="row-title">📤 Загруженное сообществом</span><span class="row-more" onclick="renderUserContent()">Обновить →</span></div>
+      <div id="user-content-cards" class="cards-h"></div>
+    </div>
+
   </div>
 </div><!-- /home -->
 
@@ -1507,25 +1673,34 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
   <div class="watch-layout">
     <div class="watch-main">
       <button class="back-btn" onclick="goBack()" data-i18n="back_btn">← Назад</button>
-      <div class="player-wrap">
-        <div class="player-bg"></div>
-        <div class="player-center">
-          <button class="play-big">▶</button>
-          <div class="player-title-over">Боз жел</div>
-          <div class="player-meta-over">Казахстан · 2023 · 84 мин</div>
+      <div class="player-wrap" id="player-wrap">
+        <!-- Real HTML5 video player -->
+        <video id="aya-video" controls style="display:none;width:100%;height:100%;object-fit:contain;background:#000"></video>
+        <!-- YouTube embed -->
+        <iframe id="aya-iframe" allowfullscreen allow="autoplay; encrypted-media" style="display:none;width:100%;height:100%;border:none;position:absolute;inset:0"></iframe>
+        <!-- YouTube fallback (shown if embedding blocked) -->
+        <div id="yt-fallback" style="display:none;position:absolute;inset:0;background:#111;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+          <div style="font-size:40px">▶</div>
+          <div style="color:#fff;font-size:15px;font-weight:700">Видео нельзя встроить</div>
+          <div style="color:#aaa;font-size:12px">Автор запретил воспроизведение на других сайтах</div>
+          <a id="yt-fallback-link" href="#" target="_blank" rel="noopener" style="margin-top:8px;padding:10px 24px;background:#FF0000;color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none">▶ Смотреть на YouTube</a>
         </div>
-        <div class="player-controls">
-          <div class="progress"><div class="progress-fill"></div><div class="progress-thumb"></div></div>
-          <div class="ctrl-bar">
-            <button class="ctrl-ico">⏮</button>
-            <button class="ctrl-ico">▶</button>
-            <button class="ctrl-ico">⏭</button>
-            <button class="ctrl-ico">🔊</button>
-            <span class="ctrl-time">29:24 / 84:00</span>
-            <div class="ctrl-r"><button class="ctrl-q">HD</button><button class="ctrl-ico">CC</button><button class="ctrl-ico">⛶</button></div>
+        <!-- Placeholder shown for demo content -->
+        <div id="player-placeholder">
+          <div class="player-bg"></div>
+          <div class="player-center">
+            <button class="play-big" onclick="document.getElementById('player-placeholder').style.display='none'">▶</button>
+            <div class="player-title-over" id="placeholder-title">Боз жел</div>
+            <div class="player-meta-over" id="placeholder-meta">Казахстан · 2023 · 84 мин</div>
           </div>
         </div>
       </div>
+
+      <!-- YouTube external link (visible only when a YouTube video is loaded) -->
+      <a id="yt-open-link" href="#" target="_blank" rel="noopener" style="display:none;margin-bottom:10px;font-size:12px;color:var(--text2);text-decoration:none;align-items:center;gap:6px">
+        <span style="background:#FF0000;color:#fff;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700">▶ YouTube</span>
+        <span>Не воспроизводится? Открыть на YouTube →</span>
+      </a>
 
       <h1 class="video-title">Боз жел <span style="color:var(--text2);font-weight:400;font-size:16px">/ Pale Wind</span></h1>
       <div class="video-tags">
@@ -1535,10 +1710,10 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
         <span class="vtag">2023</span>
       </div>
       <div class="action-row">
-        <button class="action-btn primary" data-i18n="btn_watch">▶ Смотреть</button>
-        <button class="action-btn">👍 1.4K</button>
+        <button class="action-btn primary" onclick="document.getElementById('player-placeholder').querySelector('.play-big').click()" data-i18n="btn_watch">▶ Смотреть</button>
+        <button class="action-btn" id="watch-like-btn" onclick="toggleLikeWatch()">❤️ Нравится</button>
         <button class="action-btn" data-i18n="btn_review">💬 Рецензия</button>
-        <button class="action-btn" data-i18n="btn_save">🔖 Сохранить</button>
+        <button class="action-btn" id="watch-save-btn" onclick="openCollectionPicker()" data-i18n="btn_save">🔖 Сохранить</button>
         <button class="action-btn" data-i18n="btn_share">↗ Поделиться</button>
       </div>
       <div class="desc-box">
@@ -1561,9 +1736,15 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
       <div class="comments-section">
         <div class="cs-head"><span data-i18n="comments_title">Рецензии и комментарии</span> <span style="color:var(--text2);font-weight:400;font-size:13px">(47)</span></div>
-        <div class="comment-input-row">
-          <div class="comment-av">Е</div>
-          <textarea class="comment-input" rows="1" data-i18n-placeholder="comment_ph" placeholder="Напиши рецензию или комментарий…"></textarea>
+        <div class="comment-input-row" id="comment-input-row">
+          <div class="comment-av" id="comment-av-user">Е</div>
+          <div class="comment-input-expanded">
+            <textarea class="comment-input" id="comment-textarea" rows="1"
+              data-i18n-placeholder="comment_ph" placeholder="Напиши рецензию или комментарий…"
+              oninput="this.rows=this.value.split('\n').length>2?3:1;document.getElementById('comment-submit-btn').style.display=this.value.trim()?'block':'none'"></textarea>
+            <button class="comment-submit-btn" id="comment-submit-btn" style="display:none;align-self:flex-end"
+              onclick="submitComment()">Опубликовать</button>
+          </div>
         </div>
         <div class="comment">
           <div class="comment-av" style="background:linear-gradient(135deg,#d44343,#7b2fd4)">АБ</div>
@@ -1660,11 +1841,23 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
         </div>
       </div>
       <div class="profile-tabs" id="prof-tabs" style="display:none">
-        <button class="ptab active" data-i18n="tab_works">Мои работы</button>
-        <button class="ptab" data-i18n="tab_collab">Участие в проектах</button>
-        <button class="ptab" data-i18n="tab_reviews">Рецензии</button>
+        <button class="ptab active" onclick="switchProfTab('works',this)" data-i18n="tab_works">Мои работы</button>
+        <button class="ptab" onclick="switchProfTab('collab',this)" data-i18n="tab_collab">Участие в проектах</button>
+        <button class="ptab" onclick="switchProfTab('reviews',this)" data-i18n="tab_reviews">Рецензии</button>
+        <button class="ptab" onclick="switchProfTab('collections',this)">🗂 Коллекции</button>
       </div>
       <div class="profile-grid" id="prof-grid"></div>
+      <div id="prof-collections" class="prof-collections" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:700;color:var(--text2)">Мои коллекции</div>
+          <button onclick="openCreateCollection()" style="padding:6px 14px;border-radius:20px;border:none;background:var(--teal);color:var(--bg);font-size:11px;font-weight:700;cursor:pointer">+ Новая</button>
+        </div>
+        <div id="my-coll-grid" class="coll-grid"></div>
+        <div id="followed-coll-section" style="display:none;margin-top:28px">
+          <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px">Сохранённые коллекции</div>
+          <div id="followed-coll-grid" class="coll-grid"></div>
+        </div>
+      </div>
 
       <!-- Guest CTA card -->
       <div id="prof-guest-cta" style="padding:40px 0;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
@@ -1930,7 +2123,7 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
     <div class="about-hero">
       <div class="about-uni">
-        <div class="uni-logo">AI</div>
+        <img src="assets/logo_no_title.png" alt="AITU" class="uni-logo" style="background:none;border-radius:0;object-fit:contain">
         <div class="uni-name">
           <strong>Astana IT University</strong>
           School of Creative Industries · Media Technologies
@@ -1956,27 +2149,11 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
       <div class="about-stat"><div class="about-stat-num">3</div><div class="about-stat-label" data-i18n="stat_langs">Языка интерфейса</div></div>
     </div>
 
-    <div class="about-section-title" data-i18n="team_title">Команда разработки</div>
-    <div class="team-grid">
-      <div class="team-card">
-        <div class="team-av" style="background:linear-gradient(135deg,#3ecfb2,#d4a843)">ЕМ</div>
-        <div class="team-name">Ерканат Малаев</div>
-        <div class="team-role" data-i18n="role_lead_dev">Ведущий разработчик · Исследователь</div>
-        <span class="team-role-badge" style="background:var(--gold-dim);color:var(--gold)">Lead Developer</span>
-      </div>
-      <div class="team-card">
-        <div class="team-av" style="background:linear-gradient(135deg,#4380d4,#43d48e)">НА</div>
-        <div class="team-name">Научный руководитель</div>
-        <div class="team-role" data-i18n="role_supervisor">Astana IT University</div>
-        <span class="team-role-badge" style="background:var(--teal-dim);color:var(--teal)">Supervisor</span>
-      </div>
-      <div class="team-card">
-        <div class="team-av" style="background:linear-gradient(135deg,#d44343,#7b2fd4)">UX</div>
-        <div class="team-name">UI/UX Design</div>
-        <div class="team-role" data-i18n="role_design">Концепция интерфейса</div>
-        <span class="team-role-badge" style="background:rgba(224,122,212,.1);color:#e07ad4">Designer</span>
-      </div>
+    <div class="about-section-title" style="display:flex;align-items:center;gap:12px">
+      <span data-i18n="team_title">Команда разработки</span>
+      <button id="team-add-btn" onclick="openAddTeamMember()" style="display:none;width:28px;height:28px;border-radius:50%;border:none;background:var(--teal);color:var(--bg);font-size:18px;font-weight:700;cursor:pointer;line-height:1;flex-shrink:0" title="Добавить участника">+</button>
     </div>
+    <div id="team-grid" class="team-grid"></div>
 
     <div class="about-section-title" data-i18n="tech_title">Технологический стек</div>
     <div class="tech-stack">
@@ -2034,10 +2211,811 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
     if (id==='admin-bans')      renderAdminBanReqs();
     if (id==='mod-requests')    renderModReqs();
   }
-  function openWatch() {
+  /* ════════════════════════════════════════════════
+     COLLECTIONS SYSTEM
+  ════════════════════════════════════════════════ */
+
+  let _currentContent = null; // content being viewed on watch page
+  let _fromPicker = false;    // whether create-coll was opened from picker
+  let _collPublicNew = false; // toggle state for new collection
+
+  /* ── Stable content ID from title+author ── */
+  function contentId(c) {
+    const s = (c.title || '') + '::' + (c.author || '');
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+    return 'c' + Math.abs(h).toString(36);
+  }
+
+  /* ── Storage ── */
+  function getCollections() {
+    try { return JSON.parse(localStorage.getItem('aya_colls')) || []; } catch { return []; }
+  }
+  function saveCollections(arr) { localStorage.setItem('aya_colls', JSON.stringify(arr)); }
+
+  /* ── Ensure every logged-in user has a "Likes" collection ── */
+  function ensureDefaultCollections(user) {
+    if (!user) return;
+    const all = getCollections();
+    const hasLikes = all.some(c => c.userId === user.id && c.isDefault);
+    if (!hasLikes) {
+      all.push({ id: 'likes_' + user.id, userId: user.id, name: 'Понравилось', emoji: '❤️',
+        isPublic: false, isDefault: true, items: [], followers: [], createdAt: Date.now() });
+      saveCollections(all);
+    }
+  }
+
+  function getUserCollections(userId) {
+    return getCollections().filter(c => c.userId === userId);
+  }
+
+  function getFollowedCollections(userId) {
+    return getCollections().filter(c => c.userId !== userId && (c.followers || []).includes(userId));
+  }
+
+  /* ── Check if item is in a collection ── */
+  function isInColl(collId, cid) {
+    const c = getCollections().find(c => c.id === collId);
+    return c ? c.items.some(i => i.id === cid) : false;
+  }
+
+  function isLiked(userId, cid) {
+    const all = getCollections();
+    const likes = all.find(c => c.userId === userId && c.isDefault);
+    return likes ? likes.items.some(i => i.id === cid) : false;
+  }
+
+  /* ── Add / remove item ── */
+  function addToCollById(collId, content) {
+    const all = getCollections();
+    const coll = all.find(c => c.id === collId);
+    if (!coll) return;
+    const cid = contentId(content);
+    if (!coll.items.some(i => i.id === cid)) {
+      coll.items.unshift({ id: cid, title: content.title, author: content.author,
+        cat: content.cat, catLabel: content.catLabel,
+        thumb: content.thumb || null, ytId: content.ytId || null });
+    }
+    saveCollections(all);
+  }
+
+  function removeFromCollById(collId, cid) {
+    const all = getCollections();
+    const coll = all.find(c => c.id === collId);
+    if (coll) { coll.items = coll.items.filter(i => i.id !== cid); saveCollections(all); }
+  }
+
+  /* ── Like / Unlike from watch page ── */
+  function toggleLikeWatch() {
+    const user = getUser();
+    if (!user) { showModal({ title:'Войдите', body:'Нужно войти, чтобы ставить лайки.', actions:[{label:'Войти', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212', action:()=>goPage('auth',null)}] }); return; }
+    ensureDefaultCollections(user);
+    const c = _currentContent;
+    if (!c) return;
+    const cid = contentId(c);
+    const all = getCollections();
+    const likes = all.find(col => col.userId === user.id && col.isDefault);
+    if (!likes) return;
+    const already = likes.items.some(i => i.id === cid);
+    if (already) { likes.items = likes.items.filter(i => i.id !== cid); }
+    else { likes.items.unshift({ id: cid, title: c.title, author: c.author, cat: c.cat, catLabel: c.catLabel, thumb: c.thumb || null, ytId: c.ytId || null }); }
+    saveCollections(all);
+    updateWatchLikeBtn();
+    updateCardLikeBtn(cid, !already);
+    if (!already) showCollToast('❤️ Добавлено в «Понравилось»');
+    // animate watch like btn
+    const wBtn = document.getElementById('watch-like-btn');
+    if (wBtn) { wBtn.classList.remove('pop'); void wBtn.offsetWidth; wBtn.classList.add('pop'); }
+    renderTopCollections();
+  }
+
+  function updateWatchLikeBtn() {
+    const user = getUser();
+    const btn = document.getElementById('watch-like-btn');
+    if (!btn || !_currentContent) return;
+    const liked = user && isLiked(user.id, contentId(_currentContent));
+    btn.style.color = liked ? '#e05555' : '';
+    btn.style.fontWeight = liked ? '800' : '';
+    btn.textContent = liked ? '❤️ Нравится' : '🤍 Нравится';
+  }
+
+  function updateCardLikeBtn(cid, liked) {
+    document.querySelectorAll('.card-like-btn').forEach(btn => {
+      if (btn.dataset.cid === cid) btn.classList.toggle('liked', liked);
+    });
+  }
+
+  /* ── Collection Picker ── */
+  function openCollectionPicker() {
+    const user = getUser();
+    if (!user) { showModal({ title:'Войдите', body:'Нужно войти, чтобы сохранять в коллекции.', actions:[{label:'Войти', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212', action:()=>goPage('auth',null)}] }); return; }
+    if (!_currentContent) return;
+    ensureDefaultCollections(user);
+    _fromPicker = false;
+    renderCollPickerList(user);
+    const nameEl = document.getElementById('coll-picker-content-name');
+    if (nameEl) nameEl.textContent = '"' + (_currentContent.title || '') + '"';
+    document.getElementById('coll-picker-overlay').style.display = 'flex';
+  }
+
+  function closeCollectionPicker() {
+    document.getElementById('coll-picker-overlay').style.display = 'none';
+    renderTopCollections();
+  }
+
+  /* ── Toast ── */
+  function showCollToast(msg) {
+    const t = document.getElementById('coll-toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._collToastTimer);
+    window._collToastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function renderCollPickerList(user) {
+    const colls = getUserCollections(user.id);
+    const list = document.getElementById('coll-picker-list');
+    const cid = contentId(_currentContent);
+    list.innerHTML = colls.map(c => {
+      const inColl = c.items.some(i => i.id === cid);
+      const sid = safeId(c.id);
+      const thumbHtml = `<div style="width:100%;height:100%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:20px">${c.emoji}</div>`;
+      return `<div class="coll-picker-item ${inColl ? 'selected' : ''}" data-coll="${sid}" data-coll-id="${c.id}">
+        <div class="coll-picker-thumb" data-coll="${sid}" onclick="_openCollCard(this)" title="Открыть коллекцию" style="cursor:pointer">${thumbHtml}</div>
+        <div class="coll-picker-info" style="cursor:pointer" data-coll="${sid}" onclick="_openCollCard(this)">
+          <div class="coll-picker-name">${c.emoji} ${c.name}</div>
+          <div class="coll-picker-count">${c.items.length} ${c.items.length === 1 ? 'элемент' : c.items.length < 5 ? 'элемента' : 'элементов'}</div>
+        </div>
+        <button data-coll="${sid}" data-cid="${cid}" data-name="${encodeURIComponent(c.name)}" onclick="_pickerToggleBtn(this)"
+          style="flex-shrink:0;padding:6px 12px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;
+            background:${inColl ? 'rgba(224,85,85,.15)' : 'var(--teal)'};
+            color:${inColl ? '#e05555' : 'var(--bg)'}">
+          ${inColl ? '✕ Убрать' : '+ Добавить'}
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleCollItem(collId, cid, el, collNameEnc) {
+    const isSelected = el.classList.contains('selected');
+    const collName = decodeURIComponent(collNameEnc);
+    if (isSelected) {
+      removeFromCollById(collId, cid);
+      showCollToast(`Удалено из «${collName}»`);
+    } else {
+      addToCollById(collId, _currentContent);
+      showCollToast(`✓ Добавлено в «${collName}»`);
+    }
+    const user = getUser();
+    if (user) renderCollPickerList(user);
+    renderTopCollections();
+  }
+
+  /* ── Create Collection ── */
+  function openCreateCollection(fromPicker = false) {
+    _fromPicker = fromPicker;
+    _collPublicNew = false;
+    document.getElementById('new-coll-name').value = '';
+    document.getElementById('new-coll-error').style.display = 'none';
+    document.querySelectorAll('.coll-emoji-opt').forEach((e,i)=>e.classList.toggle('active',i===0));
+    const knob = document.getElementById('coll-public-knob');
+    const tog = document.getElementById('coll-public-toggle');
+    if (knob) knob.style.left = '3px';
+    if (tog) tog.style.background = 'var(--bg4)';
+    document.getElementById('create-coll-overlay').style.display = 'flex';
+  }
+
+  function closeCreateCollection() {
+    document.getElementById('create-coll-overlay').style.display = 'none';
+    if (_fromPicker) openCollectionPicker();
+  }
+
+  function selectCollEmoji(el) {
+    document.querySelectorAll('.coll-emoji-opt').forEach(e=>e.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleCollPublic() {
+    _collPublicNew = !_collPublicNew;
+    const knob = document.getElementById('coll-public-knob');
+    const tog = document.getElementById('coll-public-toggle');
+    knob.style.left = _collPublicNew ? '21px' : '3px';
+    tog.style.background = _collPublicNew ? 'var(--teal)' : 'var(--bg4)';
+  }
+
+  function submitCreateCollection() {
+    const user = getUser();
+    const name = document.getElementById('new-coll-name').value.trim();
+    const errEl = document.getElementById('new-coll-error');
+    errEl.style.display = 'none';
+    if (!name) { errEl.textContent = 'Введите название'; errEl.style.display = 'block'; return; }
+    const emoji = document.querySelector('.coll-emoji-opt.active')?.textContent || '🎬';
+    const all = getCollections();
+    const newColl = { id: Date.now(), userId: user.id, name, emoji,
+      isPublic: _collPublicNew, isDefault: false, items: [], followers: [], createdAt: Date.now() };
+    all.push(newColl);
+    saveCollections(all);
+    document.getElementById('create-coll-overlay').style.display = 'none';
+    if (_fromPicker) { openCollectionPicker(); }
+    else { renderProfileCollections(); }
+  }
+
+  /* ── Toggle collection public/private ── */
+  function toggleCollPrivacy(collId, btn) {
+    const all = getCollections();
+    const c = all.find(x => x.id === collId);
+    if (!c) return;
+    c.isPublic = !c.isPublic;
+    saveCollections(all);
+    btn.textContent = c.isPublic ? '🌐 Публичная' : '🔒 Приватная';
+    btn.style.background = c.isPublic ? 'rgba(125,145,88,.15)' : 'var(--bg4)';
+    btn.style.color = c.isPublic ? 'var(--gold)' : 'var(--text3)';
+    renderTopCollections();
+  }
+
+  /* ── Delete collection ── */
+  function deleteCollection(collId) {
+    showModal({ title:'Удалить коллекцию?', body:'Все сохранённые элементы будут удалены.',
+      actions: [
+        { label:'Отмена', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg4);color:var(--text)' },
+        { label:'Удалить', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#e05555;color:#fff',
+          action: () => {
+            const all = getCollections().filter(c => c.id !== collId);
+            saveCollections(all);
+            renderProfileCollections();
+            renderTopCollections();
+          }
+        }
+      ]
+    });
+  }
+
+  /* ── Follow / unfollow public collection ── */
+  function toggleFollowColl(collId, btn) {
+    const user = getUser();
+    if (!user) return;
+    const all = getCollections();
+    const c = all.find(x => x.id === collId);
+    if (!c) return;
+    const idx = (c.followers || []).indexOf(user.id);
+    if (idx > -1) { c.followers.splice(idx, 1); btn.textContent = '+ Сохранить'; btn.classList.remove('following'); }
+    else { c.followers = c.followers || []; c.followers.push(user.id); btn.textContent = '✓ Сохранено'; btn.classList.add('following'); }
+    saveCollections(all);
+    renderTopCollections();
+  }
+
+  /* ── Render profile collections ── */
+  function renderProfileCollections() {
+    const user = getUser();
+    if (!user) return;
+    const mine = getUserCollections(user.id);
+    const followed = getFollowedCollections(user.id);
+    const grid = document.getElementById('my-coll-grid');
+    const followedSection = document.getElementById('followed-coll-section');
+    const followedGrid = document.getElementById('followed-coll-grid');
+    if (!grid) return;
+
+    grid.innerHTML = mine.map(c => buildCollCard(c, true)).join('');
+    if (followed.length) {
+      followedSection.style.display = '';
+      followedGrid.innerHTML = followed.map(c => buildCollCard(c, false)).join('');
+    } else { followedSection.style.display = 'none'; }
+  }
+
+  /* Safe ID attr — avoids quote-breaking when ID is a string like "likes_123" */
+  function safeId(id) { return String(id).replace(/[^a-zA-Z0-9_\-]/g, '_'); }
+
+  function buildCollCard(c, isOwner) {
+    const sid = safeId(c.id);
+    const previews = c.items.slice(0,4);
+    const cells = [0,1,2,3].map(i => {
+      const item = previews[i];
+      if (!item) return `<div class="coll-thumb-cell empty"></div>`;
+      return `<div class="coll-thumb-cell"><div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text2);text-align:center;padding:4px;box-sizing:border-box;line-height:1.2">${item.title || ''}</div></div>`;
+    }).join('');
+
+    const privacyBtn = isOwner ? `<button data-coll="${sid}" onclick="event.stopPropagation();_togglePrivacyBtn(this)" style="margin-top:8px;padding:3px 9px;border-radius:8px;border:none;font-size:10px;font-weight:700;cursor:pointer;background:${c.isPublic?'rgba(125,145,88,.15)':'var(--bg4)'};color:${c.isPublic?'var(--gold)':'var(--text3)'}">
+      ${c.isPublic ? '🌐 Публичная' : '🔒 Приватная'}
+    </button>` : '';
+    const deleteBtn = isOwner && !c.isDefault ? `<button data-coll="${sid}" onclick="event.stopPropagation();_deleteCollBtn(this)" style="position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:50%;background:rgba(224,85,85,.8);border:none;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>` : '';
+    const followBtn = !isOwner ? `<button class="coll-follow-btn following" data-coll="${sid}" onclick="event.stopPropagation();_followCollBtn(this)">✓ Сохранено</button>` : '';
+
+    return `<div class="coll-card" data-coll="${sid}" onclick="_openCollCard(this)">
+      ${deleteBtn}${followBtn}
+      <div class="coll-thumb${previews.length <= 1 ? ' single' : ''}">${cells}</div>
+      <div class="coll-body">
+        <div class="coll-name">${c.emoji} ${c.name}</div>
+        <div class="coll-meta"><span>${c.items.length} элем.</span></div>
+        ${privacyBtn}
+      </div>
+    </div>`;
+  }
+
+  /* data-coll bridge helpers — avoid inline JSON quoting issues */
+  function _collIdFromAttr(el) {
+    const sid = el.dataset.coll || el.closest('[data-coll]')?.dataset.coll;
+    return getCollections().find(c => safeId(c.id) === sid)?.id;
+  }
+  function _openCollCard(el) { const id = _collIdFromAttr(el); if(id!=null) openCollectionDetail(id); }
+  function _togglePrivacyBtn(btn) { const id = _collIdFromAttr(btn); if(id!=null) toggleCollPrivacy(id, btn); }
+  function _deleteCollBtn(btn) { const id = _collIdFromAttr(btn); if(id!=null) deleteCollection(id); }
+  function _followCollBtn(btn) { const id = _collIdFromAttr(btn); if(id!=null) toggleFollowColl(id, btn); }
+  function _detailRemoveItem(btn) {
+    const id = _collIdFromAttr(btn);
+    const itemId = btn.dataset.itemId;
+    if (id == null || !itemId) return;
+    removeFromCollById(id, itemId);
+    openCollectionDetail(id);
+  }
+  function _pickerToggleBtn(btn) {
+    const id = _collIdFromAttr(btn);
+    if (id == null) return;
+    const cid = btn.dataset.cid;
+    const collNameEnc = btn.dataset.name;
+    const row = btn.closest('.coll-picker-item');
+    toggleCollItem(id, cid, row, collNameEnc);
+  }
+  function _detailPrivacyBtn(btn) {
+    const id = _collIdFromAttr(btn);
+    if (id == null) return;
+    toggleCollPrivacy(id, btn);
+    // re-render the meta row so privacy label + button text update
+    const all = getCollections();
+    const c = all.find(x => String(x.id) === String(id));
+    if (!c) return;
+    const user = getUser();
+    const isOwn = user && String(c.userId) === String(user.id);
+    const meta = document.getElementById('coll-detail-meta');
+    if (meta) {
+      meta.innerHTML =
+        `<span>${c.items.length} ${c.items.length === 1 ? 'элемент' : c.items.length < 5 ? 'элемента' : 'элементов'}</span>
+         <span style="color:var(--bg5)">·</span>
+         <span>${c.isPublic ? '🌐 Публичная' : '🔒 Приватная'}</span>
+         ${isOwn ? `<button data-coll="${safeId(c.id)}" onclick="_detailPrivacyBtn(this)"
+           style="padding:2px 8px;border-radius:8px;border:none;font-size:10px;font-weight:700;cursor:pointer;
+             background:${c.isPublic?'rgba(125,145,88,.15)':'var(--bg4)'};color:${c.isPublic?'var(--gold)':'var(--text3)'}">
+           ${c.isPublic ? 'Сделать приватной' : 'Сделать публичной'}</button>` : ''}`;
+    }
+  }
+
+  /* ── Top Collections on home ── */
+  function renderTopCollections() {
+    const all = getCollections();
+    const user = getUser();
+    const top = all
+      .filter(c => c.isPublic && c.items.length > 0)
+      .sort((a,b) => ((b.followers||[]).length + b.items.length) - ((a.followers||[]).length + a.items.length))
+      .slice(0, 8);
+    const row = document.getElementById('top-collections-row');
+    const container = document.getElementById('top-collections-cards');
+    if (!row || !container) return;
+    if (!top.length) { row.style.display = 'none'; return; }
+    row.style.display = '';
+    container.innerHTML = top.map(c => {
+      const isFollowing = user && (c.followers||[]).includes(user.id);
+      const isOwn = user && c.userId === user.id;
+      const sid = safeId(c.id);
+      return `<div class="coll-card w-200" style="width:180px;flex-shrink:0" data-coll="${sid}" onclick="_openCollCard(this)">
+        <div class="coll-thumb single" style="height:80px">
+          <div class="coll-thumb-cell" style="display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(135deg,var(--bg3),var(--bg4))">${c.emoji}</div>
+        </div>
+        <div class="coll-body">
+          <div class="coll-name">${c.name}</div>
+          <div class="coll-meta">${c.items.length} элем. · ${(c.followers||[]).length} сохр.</div>
+          ${!isOwn ? `<button class="coll-follow-btn ${isFollowing?'following':''}" style="position:static;margin-top:8px;display:block" data-coll="${sid}" onclick="event.stopPropagation();_followCollBtn(this)">${isFollowing ? '✓ Сохранено' : '+ Сохранить'}</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ── Collection Detail (simple modal view) ── */
+  function openCollectionDetail(collId) {
+    // Close picker if open (detail opens on top)
+    document.getElementById('coll-picker-overlay').style.display = 'none';
+    const all = getCollections();
+    const c = all.find(x => String(x.id) === String(collId));
+    if (!c) return;
+    const user = getUser();
+    const isOwn = user && String(c.userId) === String(user.id);
+
+    document.getElementById('coll-detail-title').textContent = `${c.emoji} ${c.name}`;
+    document.getElementById('coll-detail-meta').innerHTML =
+      `<span>${c.items.length} ${c.items.length === 1 ? 'элемент' : c.items.length < 5 ? 'элемента' : 'элементов'}</span>
+       <span style="color:var(--bg5)">·</span>
+       <span>${c.isPublic ? '🌐 Публичная' : '🔒 Приватная'}</span>
+       ${isOwn ? `<button data-coll="${safeId(c.id)}" onclick="_detailPrivacyBtn(this)"
+         style="padding:2px 8px;border-radius:8px;border:none;font-size:10px;font-weight:700;cursor:pointer;
+           background:${c.isPublic?'rgba(125,145,88,.15)':'var(--bg4)'};color:${c.isPublic?'var(--gold)':'var(--text3)'}">
+         ${c.isPublic ? 'Сделать приватной' : 'Сделать публичной'}</button>` : ''}`;
+
+    const renderItems = () => {
+      const fresh = getCollections().find(x => String(x.id) === String(collId));
+      if (!fresh) return;
+      const listEl = document.getElementById('coll-detail-list');
+      if (!fresh.items.length) {
+        listEl.innerHTML = `<div style="padding:32px 0;text-align:center;color:var(--text2);font-size:13px">Коллекция пока пуста</div>`;
+        return;
+      }
+      const sid = safeId(collId);
+      listEl.innerHTML = fresh.items.map(item => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bg3)">
+          <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--bg3),var(--bg5));
+            display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎬</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
+            <div style="font-size:11px;color:var(--text2)">${item.author||''}</div>
+          </div>
+          ${isOwn ? `<button data-coll="${sid}" data-item-id="${item.id}" onclick="_detailRemoveItem(this)"
+            style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:color .12s"
+            onmouseover="this.style.color='#e05555'" onmouseout="this.style.color='var(--text3)'">✕</button>` : ''}
+        </div>`).join('');
+    };
+    renderItems();
+    document.getElementById('coll-detail-overlay').style.display = 'flex';
+  }
+
+  function closeCollectionDetail() {
+    document.getElementById('coll-detail-overlay').style.display = 'none';
+  }
+
+  /* ── Inject like buttons on all home page cards ── */
+  function initCardLikeButtons() {
+    document.querySelectorAll('.card').forEach(card => {
+      if (card.querySelector('.card-like-btn')) return;
+      const title = card.querySelector('.card-title')?.textContent?.trim();
+      const author = card.querySelector('.card-sub')?.textContent?.trim();
+      if (!title) return;
+      const catEl = card.querySelector('[class*="ct-film"],[class*="ct-music"],[class*="ct-doc"],[class*="ct-short"],[class*="ct-podcast"],[class*="ct-social"]');
+      const cat = catEl ? [...catEl.classList].find(cl => cl.startsWith('ct-')) : 'ct-film';
+      const catLabel = catEl?.textContent?.trim() || '';
+      const thumbCls = card.querySelector('.thumb-inner')?.className?.match(/\bp\d+\b/)?.[0] || 'p1';
+      const cid = contentId({title, author});
+      const btn = document.createElement('button');
+      btn.className = 'card-like-btn';
+      btn.dataset.cid = cid;
+      btn.title = 'Нравится';
+      btn.innerHTML = '❤';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const user = getUser();
+        if (!user) { showModal({ title:'Войдите', body:'Нужно войти, чтобы ставить лайки.', actions:[{label:'Войти', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212', action:()=>goPage('auth',null)}] }); return; }
+        ensureDefaultCollections(user);
+        const all = getCollections();
+        const likes = all.find(c => c.userId === user.id && c.isDefault);
+        if (!likes) return;
+        const already = likes.items.some(i => i.id === cid);
+        if (already) { likes.items = likes.items.filter(i => i.id !== cid); }
+        else { likes.items.unshift({ id: cid, title, author, cat, catLabel, thumb: thumbCls }); }
+        saveCollections(all);
+        btn.classList.toggle('liked', !already);
+        btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop');
+        if (!already) showCollToast('❤️ Добавлено в «Понравилось»');
+        renderTopCollections();
+      };
+      card.appendChild(btn);
+      // Reflect existing liked state
+      const user = getUser();
+      if (user && isLiked(user.id, cid)) btn.classList.add('liked');
+    });
+  }
+
+  /* ── Profile tab switcher ── */
+  function switchProfTab(tab, el) {
+    document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.getElementById('prof-grid').style.display = tab === 'collections' ? 'none' : '';
+    document.getElementById('prof-collections').style.display = tab === 'collections' ? '' : 'none';
+    if (tab === 'collections') renderProfileCollections();
+  }
+
+  /* ── Set current content when opening watch page ── */
+  // Intercept card clicks to capture demo content
+  document.addEventListener('click', function(e) {
+    const card = e.target.closest('.card');
+    if (card && !e.target.closest('.card-like-btn')) {
+      const title = card.querySelector('.card-title')?.textContent?.trim();
+      const author = card.querySelector('.card-sub')?.textContent?.trim();
+      if (!title) return;
+      const catEl = card.querySelector('[class*="ct-"]');
+      const cat = catEl ? [...catEl.classList].find(cl=>cl.startsWith('ct-')) : 'ct-film';
+      const catLabel = catEl?.textContent?.trim() || '';
+      const thumb = card.querySelector('.thumb-inner')?.className?.match(/\bp\d+\b/)?.[0] || 'p1';
+      _currentContent = { id: contentId({title,author}), title, author, cat, catLabel, thumb };
+    }
+  });
+
+  /* ---- Team Members ---- */
+  const TEAM_DEFAULTS = [
+    { id:1, name:'Ерканат Малаев',       role:'Ведущий разработчик · Исследователь', badge:'Lead Developer', grad:'linear-gradient(135deg,#3ecfb2,#d4a843)', fixed:true },
+    { id:2, name:'Научный руководитель', role:'Astana IT University',                badge:'Supervisor',     grad:'linear-gradient(135deg,#4380d4,#43d48e)', fixed:true },
+    { id:3, name:'UI/UX Design',         role:'Концепция интерфейса',                badge:'Designer',       grad:'linear-gradient(135deg,#d44343,#7b2fd4)', fixed:false }
+  ];
+
+  function getTeamMembers() {
+    try {
+      const stored = localStorage.getItem('aya_team');
+      if (stored) return JSON.parse(stored);
+    } catch(e) {}
+    // First visit: seed defaults
+    localStorage.setItem('aya_team', JSON.stringify(TEAM_DEFAULTS));
+    return TEAM_DEFAULTS;
+  }
+  function saveTeamMembers(arr) { localStorage.setItem('aya_team', JSON.stringify(arr)); }
+
+  function teamInitials(name) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+    return name.slice(0,2).toUpperCase();
+  }
+
+  const BADGE_COLORS = [
+    { bg:'var(--gold-dim)',          color:'var(--gold)' },
+    { bg:'var(--teal-dim)',          color:'var(--teal)' },
+    { bg:'rgba(224,122,212,.1)',     color:'#e07ad4' },
+    { bg:'rgba(67,128,212,.12)',     color:'#7aaed4' },
+    { bg:'rgba(212,168,67,.12)',     color:'#d4a843' },
+    { bg:'rgba(160,212,122,.1)',     color:'#a0d47a' }
+  ];
+
+  function renderTeamGrid() {
+    const members = getTeamMembers();
+    const isAdmin = document.body.classList.contains('role-admin');
+    const grid = document.getElementById('team-grid');
+    const addBtn = document.getElementById('team-add-btn');
+    if (!grid) return;
+    if (addBtn) addBtn.style.display = isAdmin ? 'flex' : 'none';
+
+    grid.innerHTML = members.map((m, idx) => {
+      const bc = BADGE_COLORS[idx % BADGE_COLORS.length];
+      return `<div class="team-card">
+        <button class="team-remove-btn" onclick="removeTeamMember(${m.id})" title="Удалить">✕</button>
+        <div class="team-av" style="background:${m.grad}">${teamInitials(m.name)}</div>
+        <div class="team-name">${m.name}</div>
+        <div class="team-role">${m.role}</div>
+        ${m.badge ? `<span class="team-role-badge" style="background:${bc.bg};color:${bc.color}">${m.badge}</span>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function removeTeamMember(id) {
+    showModal({
+      title: 'Удалить участника?',
+      body: 'Карточка будет удалена из команды разработки.',
+      actions: [
+        { label:'Отмена', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg4);color:var(--text)' },
+        { label:'Удалить', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#e05555;color:#fff',
+          action: () => {
+            const arr = getTeamMembers().filter(m => m.id !== id);
+            saveTeamMembers(arr);
+            renderTeamGrid();
+          }
+        }
+      ]
+    });
+  }
+
+  function openAddTeamMember() {
+    document.getElementById('tm-name').value = '';
+    document.getElementById('tm-role').value = '';
+    document.getElementById('tm-badge').value = '';
+    document.getElementById('tm-error').style.display = 'none';
+    document.querySelectorAll('.tm-color-swatch').forEach((s,i)=>s.classList.toggle('active',i===0));
+    document.getElementById('team-modal-overlay').style.display = 'flex';
+    // Color swatch click handlers
+    document.querySelectorAll('.tm-color-swatch').forEach(s => {
+      s.onclick = () => {
+        document.querySelectorAll('.tm-color-swatch').forEach(x=>x.classList.remove('active'));
+        s.classList.add('active');
+      };
+    });
+  }
+
+  function closeAddTeamMember() {
+    document.getElementById('team-modal-overlay').style.display = 'none';
+  }
+
+  function submitAddTeamMember() {
+    const name  = document.getElementById('tm-name').value.trim();
+    const role  = document.getElementById('tm-role').value.trim();
+    const badge = document.getElementById('tm-badge').value.trim();
+    const errEl = document.getElementById('tm-error');
+    errEl.style.display = 'none';
+
+    if (!name) { errEl.textContent = 'Введите имя участника'; errEl.style.display = 'block'; return; }
+    if (!role) { errEl.textContent = 'Введите роль или должность'; errEl.style.display = 'block'; return; }
+
+    const activeSwatch = document.querySelector('.tm-color-swatch.active');
+    const grad = activeSwatch ? activeSwatch.dataset.grad : 'linear-gradient(135deg,#3ecfb2,#d4a843)';
+
+    const arr = getTeamMembers();
+    arr.push({ id: Date.now(), name, role, badge, grad, fixed: false });
+    saveTeamMembers(arr);
+    closeAddTeamMember();
+    renderTeamGrid();
+  }
+
+  /* ---- Content storage helpers ---- */
+  function getAyaContent() { try { return JSON.parse(localStorage.getItem('aya_content'))||[]; } catch{return[];} }
+  function saveAyaContent(arr) { localStorage.setItem('aya_content', JSON.stringify(arr)); }
+
+  function getYouTubeId(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  /* ---- Open watch page with optional content object ---- */
+  function openWatch(content) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-watch').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const videoEl = document.getElementById('aya-video');
+    const iframeEl = document.getElementById('aya-iframe');
+    const placeholder = document.getElementById('player-placeholder');
+
+    // Reset player state
+    videoEl.style.display = 'none';
+    videoEl.pause && videoEl.pause();
+    videoEl.src = '';
+    iframeEl.style.display = 'none';
+    iframeEl.src = '';
+    placeholder.style.display = '';
+    document.getElementById('yt-open-link').style.display = 'none';
+    document.getElementById('yt-fallback').style.display = 'none';
+
+    if (!content) { updateWatchLikeBtn(); return; } // demo mode
+    _currentContent = content;
+
+    // Update title and meta overlays
+    document.getElementById('placeholder-title').textContent = content.title || '';
+    document.getElementById('placeholder-meta').textContent = [content.author, content.year].filter(Boolean).join(' · ');
+    document.querySelector('.video-title').innerHTML = (content.title||'') + (content.author ? `<span style="color:var(--text2);font-weight:400;font-size:16px"> / ${content.author}</span>` : '');
+
+    if (content.ytId) {
+      // YouTube: replace placeholder click to load iframe
+      const playBtn = placeholder.querySelector('.play-big');
+      playBtn.onclick = function() {
+        placeholder.style.display = 'none';
+            const fallback = document.getElementById('yt-fallback');
+        fallback.style.display = 'none';
+        const ytOpenLink = document.getElementById('yt-open-link');
+        ytOpenLink.href = `https://www.youtube.com/watch?v=${content.ytId}`;
+        ytOpenLink.style.display = 'flex';
+        document.getElementById('yt-fallback-link').href = `https://www.youtube.com/watch?v=${content.ytId}`;
+        iframeEl.src = `https://www.youtube-nocookie.com/embed/${content.ytId}?autoplay=1&rel=0`;
+        iframeEl.style.display = 'block';
+      };
+    } else if (content.objectUrl) {
+      // Local file: replace placeholder click to show HTML5 video
+      const playBtn = placeholder.querySelector('.play-big');
+      playBtn.onclick = function() {
+        placeholder.style.display = 'none';
+        videoEl.src = content.objectUrl;
+        videoEl.style.display = 'block';
+        videoEl.play().catch(()=>{});
+      };
+    }
+  }
+
+  /* ---- Upload modal ---- */
+  let _uploadFileObjectUrl = null;
+
+  function openUploadModal() {
+    const user = getUser();
+    if (!user) { showModal({ title:'Войдите в аккаунт', body:'Чтобы загружать контент, нужно войти в систему.', actions:[{label:'Войти', style:'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--gold);color:#121212', action:()=>goPage('home',null)}] }); return; }
+    document.getElementById('upload-overlay').style.display = 'flex';
+    // reset form
+    document.getElementById('up-title').value = '';
+    document.getElementById('up-author').value = user.name || '';
+    document.getElementById('up-desc').value = '';
+    document.getElementById('up-yt-url').value = '';
+    document.getElementById('up-file').value = '';
+    document.getElementById('up-file-name').style.display = 'none';
+    document.getElementById('up-error').style.display = 'none';
+    document.querySelectorAll('.up-cat-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+    switchUploadTab('file');
+    _uploadFileObjectUrl = null;
+  }
+
+  function closeUploadModal() {
+    document.getElementById('upload-overlay').style.display = 'none';
+  }
+
+  function switchUploadTab(tab) {
+    const isFile = tab === 'file';
+    document.getElementById('up-file-panel').style.display = isFile ? '' : 'none';
+    document.getElementById('up-yt-panel').style.display = isFile ? 'none' : '';
+    document.getElementById('up-tab-file').style.background = isFile ? 'var(--gold)' : 'var(--bg5)';
+    document.getElementById('up-tab-file').style.color = isFile ? 'var(--bg)' : 'var(--text2)';
+    document.getElementById('up-tab-yt').style.background = isFile ? 'var(--bg5)' : 'var(--gold)';
+    document.getElementById('up-tab-yt').style.color = isFile ? 'var(--text2)' : 'var(--bg)';
+  }
+
+  function selectUploadCat(el) {
+    document.querySelectorAll('.up-cat-btn').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function handleFileSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (_uploadFileObjectUrl) URL.revokeObjectURL(_uploadFileObjectUrl);
+    _uploadFileObjectUrl = URL.createObjectURL(file);
+    const nameEl = document.getElementById('up-file-name');
+    nameEl.textContent = '✔ ' + file.name + ' (' + (file.size/1048576).toFixed(1) + ' МБ)';
+    nameEl.style.display = 'block';
+    document.getElementById('up-dropzone').style.borderColor = 'var(--teal)';
+  }
+
+  function handleUpload() {
+    const errEl = document.getElementById('up-error');
+    errEl.style.display = 'none';
+
+    const title = document.getElementById('up-title').value.trim();
+    if (!title) { errEl.textContent = 'Введите название'; errEl.style.display = 'block'; return; }
+
+    const ytUrl = document.getElementById('up-yt-url').value.trim();
+    const isYtTab = document.getElementById('up-yt-panel').style.display !== 'none';
+    const ytId = isYtTab ? getYouTubeId(ytUrl) : null;
+
+    if (isYtTab && ytUrl && !ytId) { errEl.textContent = 'Не удалось распознать ссылку YouTube. Проверьте формат.'; errEl.style.display = 'block'; return; }
+    if (!isYtTab && !_uploadFileObjectUrl) { errEl.textContent = 'Выберите видеофайл'; errEl.style.display = 'block'; return; }
+
+    const activeCat = document.querySelector('.up-cat-btn.active');
+    const user = getUser();
+
+    const content = {
+      id: Date.now(),
+      title,
+      author: document.getElementById('up-author').value.trim() || (user ? user.name : ''),
+      desc: document.getElementById('up-desc').value.trim(),
+      cat: activeCat ? activeCat.dataset.cat : 'ct-film',
+      catLabel: activeCat ? activeCat.textContent.trim() : 'Фильм',
+      ytId: ytId || null,
+      objectUrl: _uploadFileObjectUrl || null,
+      uploaderId: user ? user.id : null,
+      ts: Date.now()
+    };
+
+    const all = getAyaContent();
+    all.unshift(content);
+    saveAyaContent(all);
+
+    closeUploadModal();
+    renderUserContent();
+
+    // Immediately open the watch page for the uploaded content
+    openWatch(content);
+  }
+
+  /* ---- Render user-uploaded content row ---- */
+  function renderUserContent() {
+    const items = getAyaContent();
+    const row = document.getElementById('user-content-row');
+    const container = document.getElementById('user-content-cards');
+    if (!items.length) { row.style.display = 'none'; return; }
+    row.style.display = '';
+    container.innerHTML = items.map(c => {
+      const catColors = {
+        'ct-film':'#d4a843','ct-short':'#7aaed4','ct-doc':'#7ad4e0',
+        'ct-music':'#e07ad4','ct-animation':'#a0d47a','ct-podcast':'#d47a7a'
+      };
+      const col = catColors[c.cat] || 'var(--gold)';
+      const thumb = c.ytId
+        ? `<img src="https://img.youtube.com/vi/${c.ytId}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`
+        : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px">🎬</div>`;
+      return `<div class="card w-200" onclick='openWatch(${JSON.stringify(c)})'>
+        <div class="thumb r-film" style="position:relative">
+          ${thumb}
+          <span class="ct-badge" style="background:rgba(0,0,0,.6);color:${col};border:1px solid ${col}30">${c.catLabel}</span>
+          <div class="thumb-play-wrap"><div class="thumb-play">▶</div></div>
+        </div>
+        <div class="card-title">${c.title}</div>
+        <div class="card-sub">${c.author||''}</div>
+      </div>`;
+    }).join('');
   }
   function goBack() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2198,6 +3176,12 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
       applyRoleToBody(null);
       updateSidebarForRole(null);
     }
+    renderTeamGrid();
+    const _authUser = getUser();
+    if (_authUser) ensureDefaultCollections(_authUser);
+    initCardLikeButtons();
+    renderTopCollections();
+    updateWatchLikeBtn();
   }
 
   // ── Profile page: logged-in vs guest ─────────────────────────
@@ -2441,6 +3425,8 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
     localStorage.setItem('aya_theme', theme);
     document.getElementById('theme-btn-dark').classList.toggle('active', theme === 'dark');
     document.getElementById('theme-btn-light').classList.toggle('active', theme === 'light');
+    const tbLogo = document.getElementById('tb-aitu-logo');
+    if (tbLogo) tbLogo.src = theme === 'light' ? 'assets/aitu_logo.png' : 'assets/aitu_logo_white.png';
   }
 
   function setLangFromSettings(lang, el) {
@@ -2849,6 +3835,7 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
   function applyRoleToBody(user) {
     document.body.classList.remove('role-admin','role-moderator','role-user');
     if (user) document.body.classList.add('role-'+user.role);
+    renderTeamGrid();
   }
 
   // ── Show/hide role sections in sidebar ──────────────────────
@@ -3244,13 +4231,64 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
     // Restore theme
     const savedTheme = localStorage.getItem('aya_theme') || 'dark';
     setTheme(savedTheme);
+    // Render any previously uploaded community content
+    renderUserContent();
+    // Render team grid
+    renderTeamGrid();
+    // Collections init
+    const _u = getUser();
+    if (_u) ensureDefaultCollections(_u);
+    initCardLikeButtons();
+    renderTopCollections();
+
+    // ── Topbar scroll-aware shadow ──────────────────────────
+    const _topbar = document.querySelector('.topbar');
+    if (_topbar) {
+      const _mainEl = document.querySelector('.main');
+      if (_mainEl) {
+        _mainEl.addEventListener('scroll', () => {
+          _topbar.classList.toggle('scrolled', _mainEl.scrollTop > 4);
+        });
+      }
+    }
   })();
+
+  // ── Comment submit ───────────────────────────────────────
+  function submitComment() {
+    const ta = document.getElementById('comment-textarea');
+    const btn = document.getElementById('comment-submit-btn');
+    const user = getUser();
+    if (!ta || !ta.value.trim()) return;
+    const text = ta.value.trim();
+    const initials = user ? (user.name || 'А').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() : 'АН';
+    const name = user ? (user.name || 'Аноним') : 'Аноним';
+    const grad = user ? 'linear-gradient(135deg,var(--teal),var(--gold))' : 'linear-gradient(135deg,#7a8848,#d4c9a0)';
+    // Insert new comment above existing comments
+    const firstComment = document.querySelector('.comments-section .comment');
+    const newComment = document.createElement('div');
+    newComment.className = 'comment';
+    newComment.style.cssText = 'animation:pageFadeIn .25s ease forwards';
+    newComment.innerHTML = `
+      <div class="comment-av" style="background:${grad}">${initials}</div>
+      <div class="comment-body">
+        <div class="comment-name">${name} <span style="color:var(--text3);font-weight:400;font-size:10px">· только что</span></div>
+        <div class="comment-text">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="comment-acts"><span class="comment-act">👍 0</span><span class="comment-act">Ответить</span></div>
+      </div>`;
+    if (firstComment) {
+      firstComment.parentNode.insertBefore(newComment, firstComment);
+    }
+    ta.value = '';
+    ta.rows = 1;
+    if (btn) btn.style.display = 'none';
+    showCollToast('✓ Комментарий опубликован');
+  }
 </script>
 
 <!-- Modal and dropdown -->
 <div id="modal-overlay" onclick="closeModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center">
-  <div id="modal-box" onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:16px;padding:28px;min-width:340px;max-width:480px;width:90%;box-shadow:var(--shadow-lg);position:relative">
-    <div id="modal-title" style="font-size:18px;font-weight:800;margin-bottom:12px"></div>
+  <div id="modal-box" onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:28px;min-width:340px;max-width:480px;width:90%;box-shadow:var(--shadow-lg);position:relative;border:1px solid var(--bg5)">
+    <div id="modal-title" style="font-family:'Barlow Condensed','Barlow',system-ui,sans-serif;font-size:22px;font-weight:800;margin-bottom:12px;letter-spacing:-.2px"></div>
     <div id="modal-body" style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6"></div>
     <div id="modal-actions" style="display:flex;gap:10px;justify-content:flex-end"></div>
   </div>
@@ -3258,5 +4296,202 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
 <!-- THREE DOTS DROPDOWN -->
 <div id="dots-menu" style="display:none;position:fixed;z-index:999;background:var(--bg3);border-radius:10px;padding:6px;box-shadow:var(--shadow-lg);min-width:180px;border:1px solid var(--bg5)"></div>
+
+<!-- UPLOAD MODAL -->
+<div id="upload-overlay" onclick="closeUploadModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1100;align-items:center;justify-content:center">
+  <div id="upload-box" onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:32px;width:90%;max-width:520px;box-shadow:var(--shadow-lg);position:relative;max-height:90vh;overflow-y:auto">
+    <button onclick="closeUploadModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1">✕</button>
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text)">📤 Загрузить контент</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:24px">Видео воспроизводится прямо в браузере — ничего не уходит на сервер</div>
+
+    <!-- Title -->
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Название *</label>
+      <input id="up-title" type="text" placeholder="Название фильма, клипа, подкаста…" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none">
+    </div>
+
+    <!-- Author -->
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Автор / Режиссёр</label>
+      <input id="up-author" type="text" placeholder="Имя автора" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none">
+    </div>
+
+    <!-- Category -->
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Категория</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="up-cat-btn active" data-cat="ct-film" onclick="selectUploadCat(this)">🎬 Фильм</button>
+        <button class="up-cat-btn" data-cat="ct-short" onclick="selectUploadCat(this)">🎞 Короткий</button>
+        <button class="up-cat-btn" data-cat="ct-doc" onclick="selectUploadCat(this)">📷 Доку</button>
+        <button class="up-cat-btn" data-cat="ct-music" onclick="selectUploadCat(this)">🎵 Клип</button>
+        <button class="up-cat-btn" data-cat="ct-animation" onclick="selectUploadCat(this)">✨ Анимация</button>
+        <button class="up-cat-btn" data-cat="ct-podcast" onclick="selectUploadCat(this)">🎙 Подкаст</button>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Описание</label>
+      <textarea id="up-desc" rows="3" placeholder="Краткое описание…" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;resize:vertical"></textarea>
+    </div>
+
+    <!-- File OR YouTube -->
+    <div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">Источник видео</div>
+
+      <!-- Tab row -->
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button id="up-tab-file" onclick="switchUploadTab('file')" style="flex:1;padding:8px;border-radius:8px;border:none;background:var(--gold);color:var(--bg);font-size:12px;font-weight:700;cursor:pointer">📁 Файл с устройства</button>
+        <button id="up-tab-yt" onclick="switchUploadTab('yt')" style="flex:1;padding:8px;border-radius:8px;border:none;background:var(--bg5);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer">▶ YouTube ссылка</button>
+      </div>
+
+      <!-- File picker -->
+      <div id="up-file-panel">
+        <input id="up-file" type="file" accept="video/*" onchange="handleFileSelect(this)" style="display:none">
+        <div onclick="document.getElementById('up-file').click()" id="up-dropzone" style="border:2px dashed var(--bg5);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s">
+          <div style="font-size:28px;margin-bottom:6px">🎬</div>
+          <div style="font-size:13px;color:var(--text2)">Нажмите или перетащите видеофайл</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">MP4, WebM, MOV — до 2 ГБ</div>
+        </div>
+        <div id="up-file-name" style="margin-top:8px;font-size:12px;color:var(--teal);display:none"></div>
+      </div>
+
+      <!-- YouTube URL -->
+      <div id="up-yt-panel" style="display:none">
+        <input id="up-yt-url" type="text" placeholder="https://www.youtube.com/watch?v=…" style="width:100%;box-sizing:border-box;background:var(--bg5);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13px;outline:none">
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Вставьте ссылку на YouTube — видео откроется во встроенном плеере</div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div id="up-error" style="display:none;color:#e05555;font-size:12px;margin-bottom:12px;padding:10px 12px;background:rgba(224,85,85,.1);border-radius:8px"></div>
+
+    <!-- Submit -->
+    <button onclick="handleUpload()" style="width:100%;padding:14px;background:var(--teal);color:var(--bg);border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;transition:opacity .2s">Опубликовать</button>
+  </div>
+</div>
+
+<!-- Saved toast -->
+<div id="coll-toast"></div>
+
+<!-- COLLECTION DETAIL OVERLAY -->
+<div id="coll-detail-overlay" onclick="closeCollectionDetail()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1200;align-items:center;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:0;width:90%;max-width:440px;max-height:80vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden">
+    <div id="coll-detail-header" style="padding:24px 24px 16px;border-bottom:1px solid var(--bg4)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div id="coll-detail-title" style="font-size:17px;font-weight:800"></div>
+        <button onclick="closeCollectionDetail()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1">✕</button>
+      </div>
+      <div id="coll-detail-meta" style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:10px"></div>
+    </div>
+    <div id="coll-detail-list" style="overflow-y:auto;flex:1;padding:8px 16px 16px"></div>
+  </div>
+</div>
+
+<!-- COLLECTION PICKER MODAL -->
+<div id="coll-picker-overlay" onclick="closeCollectionPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1200;align-items:center;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:28px;width:90%;max-width:420px;box-shadow:var(--shadow-lg);position:relative;max-height:80vh;display:flex;flex-direction:column">
+    <button onclick="closeCollectionPicker()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
+    <div style="font-size:16px;font-weight:800;margin-bottom:4px">🔖 Сохранить в коллекцию</div>
+    <div id="coll-picker-content-name" style="font-size:12px;color:var(--text2);margin-bottom:16px"></div>
+    <div id="coll-picker-list" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px"></div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bg4)">
+      <button onclick="openCreateCollection(true)" style="width:100%;padding:11px;border-radius:12px;border:1px dashed var(--bg5);background:none;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--bg5)';this.style.color='var(--text2)'">+ Создать новую коллекцию</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE COLLECTION MODAL -->
+<div id="create-coll-overlay" onclick="if(!_fromPicker)closeCreateCollection()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1300;align-items:center;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:28px;width:90%;max-width:400px;box-shadow:var(--shadow-lg);position:relative">
+    <button onclick="closeCreateCollection()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
+    <div style="font-size:16px;font-weight:800;margin-bottom:20px">✨ Новая коллекция</div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Эмодзи</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="coll-emoji-row">
+        <span class="coll-emoji-opt active" onclick="selectCollEmoji(this)">🎬</span>
+        <span class="coll-emoji-opt" onclick="selectCollEmoji(this)">🎵</span>
+        <span class="coll-emoji-opt" onclick="selectCollEmoji(this)">📽</span>
+        <span class="coll-emoji-opt" onclick="selectCollEmoji(this)">🌟</span>
+        <span class="coll-emoji-opt" onclick="selectCollEmoji(this)">🏆</span>
+        <span class="coll-emoji-opt" onclick="selectCollEmoji(this)">💫</span>
+        <span class="coll-emoji-opt" onclick="selectCollEmoji(this)">🎭</span>
+        <span class="coll-emoji-opt" onclick="selectCollEmoji(this)">📚</span>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Название *</label>
+      <input id="new-coll-name" type="text" placeholder="Название коллекции…" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none">
+    </div>
+
+    <div style="margin-bottom:20px;display:flex;align-items:center;gap:10px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">Публичная коллекция</div>
+        <div style="font-size:11px;color:var(--text2)">Другие пользователи смогут сохранить её к себе</div>
+      </div>
+      <div id="coll-public-toggle" onclick="toggleCollPublic()" style="width:40px;height:22px;border-radius:11px;background:var(--bg4);cursor:pointer;position:relative;transition:background .15s;flex-shrink:0">
+        <div id="coll-public-knob" style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s"></div>
+      </div>
+    </div>
+
+    <div id="new-coll-error" style="display:none;color:#e05555;font-size:12px;margin-bottom:12px;padding:8px 12px;background:rgba(224,85,85,.1);border-radius:8px"></div>
+    <button onclick="submitCreateCollection()" style="width:100%;padding:12px;background:var(--teal);color:var(--bg);border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer">Создать</button>
+  </div>
+</div>
+
+<style>
+.coll-emoji-opt { font-size:22px;cursor:pointer;padding:6px;border-radius:8px;border:2px solid transparent;transition:border-color .12s; }
+.coll-emoji-opt.active { border-color:var(--gold); }
+</style>
+
+<!-- ADD TEAM MEMBER MODAL -->
+<div id="team-modal-overlay" onclick="closeAddTeamMember()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1100;align-items:center;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:32px;width:90%;max-width:440px;box-shadow:var(--shadow-lg);position:relative">
+    <button onclick="closeAddTeamMember()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
+    <div style="font-size:17px;font-weight:800;margin-bottom:20px;color:var(--text)">👤 Добавить участника</div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Имя *</label>
+      <input id="tm-name" type="text" placeholder="Полное имя" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none">
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Роль / Должность *</label>
+      <input id="tm-role" type="text" placeholder="Напр. UI/UX Designer · AITU" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none">
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Бейдж (короткое название)</label>
+      <input id="tm-badge" type="text" placeholder="Напр. Lead Developer" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none">
+    </div>
+
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Цвет аватара</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap" id="tm-color-row">
+        <div class="tm-color-swatch active" data-grad="linear-gradient(135deg,#3ecfb2,#d4a843)" style="background:linear-gradient(135deg,#3ecfb2,#d4a843)"></div>
+        <div class="tm-color-swatch" data-grad="linear-gradient(135deg,#4380d4,#43d48e)" style="background:linear-gradient(135deg,#4380d4,#43d48e)"></div>
+        <div class="tm-color-swatch" data-grad="linear-gradient(135deg,#d44343,#7b2fd4)" style="background:linear-gradient(135deg,#d44343,#7b2fd4)"></div>
+        <div class="tm-color-swatch" data-grad="linear-gradient(135deg,#d4a843,#d46343)" style="background:linear-gradient(135deg,#d4a843,#d46343)"></div>
+        <div class="tm-color-swatch" data-grad="linear-gradient(135deg,#7b43d4,#d443a8)" style="background:linear-gradient(135deg,#7b43d4,#d443a8)"></div>
+        <div class="tm-color-swatch" data-grad="linear-gradient(135deg,#43d4c2,#4380d4)" style="background:linear-gradient(135deg,#43d4c2,#4380d4)"></div>
+      </div>
+    </div>
+
+    <div id="tm-error" style="display:none;color:#e05555;font-size:12px;margin-bottom:12px;padding:10px 12px;background:rgba(224,85,85,.1);border-radius:8px"></div>
+    <button onclick="submitAddTeamMember()" style="width:100%;padding:13px;background:var(--teal);color:var(--bg);border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer">Добавить в команду</button>
+  </div>
+</div>
+
+<style>
+.up-cat-btn { padding:6px 12px;border-radius:20px;border:1px solid var(--bg5);background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s; }
+.up-cat-btn.active { background:var(--gold);color:var(--bg);border-color:var(--gold); }
+.tm-color-swatch { width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:border-color .15s;flex-shrink:0; }
+.tm-color-swatch.active { border-color:#fff; }
+.team-card { position:relative; }
+.team-remove-btn { display:none;position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:rgba(224,85,85,.85);border:none;color:#fff;font-size:13px;line-height:1;cursor:pointer;align-items:center;justify-content:center; }
+body.role-admin .team-remove-btn { display:flex; }
+</style>
 </body>
 </html>
