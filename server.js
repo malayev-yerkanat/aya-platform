@@ -186,6 +186,38 @@ async function router(req, res) {
     return json(res, 200, { user: safeUser(user) });
   }
 
+  // ── Serve static assets (images, fonts, etc.) ────────────────────────────
+  if (method === 'GET' && url.startsWith('/assets/')) {
+    const assetPath = path.join(__dirname, url);
+    if (fs.existsSync(assetPath)) {
+      const ext = path.extname(assetPath).toLowerCase();
+      const mimeTypes = {
+        '.png':  'image/png',
+        '.jpg':  'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif':  'image/gif',
+        '.webp': 'image/webp',
+        '.svg':  'image/svg+xml',
+        '.ico':  'image/x-icon',
+        '.woff': 'font/woff',
+        '.woff2':'font/woff2',
+        '.ttf':  'font/ttf',
+        '.css':  'text/css',
+        '.js':   'text/javascript',
+      };
+      const contentType = mimeTypes[ext] || 'application/octet-stream';
+      const content = fs.readFileSync(assetPath);
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=31536000',
+        'Content-Length': content.length
+      });
+      return res.end(content);
+    }
+    res.writeHead(404);
+    return res.end('Asset not found');
+  }
+
   // ── Serve static HTML ─────────────────────────────────────────────────────
   if (method === 'GET') {
     if (fs.existsSync(HTML_FILE)) {
