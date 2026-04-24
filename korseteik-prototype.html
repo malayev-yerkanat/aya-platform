@@ -3644,12 +3644,19 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         iframeEl.src = `https://www.youtube-nocookie.com/embed/${content.ytId}?autoplay=1&rel=0`;
         iframeEl.style.display = 'block';
       };
-    } else if (content.objectUrl) {
-      // Local file: replace placeholder click to show HTML5 video
+    } else if (content.video_url) {
+      // Cloudinary URL: load directly into HTML5 player
       const playBtn = placeholder.querySelector('.play-big');
       playBtn.onclick = function() {
         placeholder.style.display = 'none';
-        videoEl.src = content.objectUrl;
+        videoEl.src = content.video_url;
+        videoEl.style.display = 'block';
+        videoEl.play().catch(()=>{});
+      };
+      // Also wire the "▶ Смотреть" action button
+      document.querySelector('.action-btn.primary').onclick = function() {
+        placeholder.style.display = 'none';
+        videoEl.src = content.video_url;
         videoEl.style.display = 'block';
         videoEl.play().catch(()=>{});
       };
@@ -3657,7 +3664,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
 
   /* ---- Upload modal ---- */
-  let _uploadFileObjectUrl = null;
+  const CLOUDINARY_CLOUD  = 'dmpax008r';
+  const CLOUDINARY_PRESET = 'aya_videos';
+  let _cloudinaryUrl = null;
 
   function openUploadModal() {
     const user = getUser();
@@ -3674,8 +3683,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     document.getElementById('up-tags-chips').innerHTML = '';
     document.getElementById('up-tag-input').value = '';
     document.getElementById('up-dropzone').style.borderColor = 'var(--bg5)';
+    document.getElementById('up-progress').style.display = 'none';
+    document.getElementById('up-progress-bar').style.width = '0%';
+    document.getElementById('up-progress-label').textContent = '0%';
     document.querySelectorAll('.up-cat-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
-    _uploadFileObjectUrl = null;
+    _cloudinaryUrl = null;
   }
 
   function closeUploadModal() {
@@ -3728,12 +3740,59 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   function handleFileSelect(input) {
     const file = input.files[0];
     if (!file) return;
-    if (_uploadFileObjectUrl) URL.revokeObjectURL(_uploadFileObjectUrl);
-    _uploadFileObjectUrl = URL.createObjectURL(file);
-    const nameEl = document.getElementById('up-file-name');
-    nameEl.textContent = '✔ ' + file.name + ' (' + (file.size/1048576).toFixed(1) + ' МБ)';
+
+    _cloudinaryUrl = null;
+    const nameEl    = document.getElementById('up-file-name');
+    const progressEl = document.getElementById('up-progress');
+    const barEl     = document.getElementById('up-progress-bar');
+    const labelEl   = document.getElementById('up-progress-label');
+    const dropzone  = document.getElementById('up-dropzone');
+
+    nameEl.textContent = file.name + ' (' + (file.size/1048576).toFixed(1) + ' МБ) — загрузка…';
     nameEl.style.display = 'block';
-    document.getElementById('up-dropzone').style.borderColor = 'var(--teal)';
+    nameEl.style.color = 'var(--text2)';
+    progressEl.style.display = 'block';
+    barEl.style.width = '0%';
+    labelEl.textContent = '0%';
+    dropzone.style.borderColor = 'var(--bg5)';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+
+    xhr.upload.onprogress = function(e) {
+      if (!e.lengthComputable) return;
+      const pct = Math.round((e.loaded / e.total) * 100);
+      barEl.style.width = pct + '%';
+      labelEl.textContent = pct + '%';
+    };
+
+    xhr.onload = function() {
+      progressEl.style.display = 'none';
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        _cloudinaryUrl = data.secure_url;
+        nameEl.textContent = '✔ ' + file.name;
+        nameEl.style.color = 'var(--teal)';
+        dropzone.style.borderColor = 'var(--teal)';
+      } else {
+        nameEl.textContent = '✗ Ошибка загрузки. Попробуйте снова.';
+        nameEl.style.color = '#ff5555';
+        dropzone.style.borderColor = '#ff5555';
+      }
+    };
+
+    xhr.onerror = function() {
+      progressEl.style.display = 'none';
+      nameEl.textContent = '✗ Ошибка сети. Проверьте подключение.';
+      nameEl.style.color = '#ff5555';
+      dropzone.style.borderColor = '#ff5555';
+    };
+
+    xhr.send(formData);
   }
 
   function handleUpload() {
@@ -3742,7 +3801,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
     const title = document.getElementById('up-title').value.trim();
     if (!title) { errEl.textContent = 'Введите название'; errEl.style.display = 'block'; return; }
-    if (!_uploadFileObjectUrl) { errEl.textContent = 'Выберите видеофайл'; errEl.style.display = 'block'; return; }
+    if (!_cloudinaryUrl) { errEl.textContent = 'Дождитесь окончания загрузки видео'; errEl.style.display = 'block'; return; }
 
     const activeCat = document.querySelector('.up-cat-btn.active');
     const user = getUser();
@@ -3773,7 +3832,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       cast,
       tags,
       ytId: null,
-      objectUrl: _uploadFileObjectUrl || null,
+      video_url: _cloudinaryUrl || null,
       uploaderId: user ? user.id : null,
       ts: Date.now()
     };
@@ -5171,6 +5230,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <div style="font-size:11px;color:var(--text3);margin-top:4px">MP4, WebM, MOV — до 2 ГБ</div>
       </div>
       <div id="up-file-name" style="margin-top:8px;font-size:12px;color:var(--teal);display:none"></div>
+      <div id="up-progress" style="display:none;margin-top:10px">
+        <div style="background:var(--bg5);border-radius:4px;height:4px;overflow:hidden">
+          <div id="up-progress-bar" style="height:100%;background:var(--teal);width:0%;transition:width .15s ease"></div>
+        </div>
+        <div id="up-progress-label" style="font-size:11px;color:var(--text2);margin-top:4px;text-align:right">0%</div>
+      </div>
     </div>
 
     <!-- Crew -->
