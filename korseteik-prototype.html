@@ -2300,35 +2300,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <button class="btn-sharp-gold" onclick="openWatch()" data-i18n="btn_watch_now">▶ Смотреть сейчас</button>
         <button class="btn-sharp-ghost" onclick="goPage('pitch',null)" data-i18n="btn_support">Поддержать проект</button>
       </div>
-      <div class="hero-stats">
-        <div class="hstat"><div class="hstat-num">340<em>+</em></div><div class="hstat-lbl">Работ</div></div>
-        <div class="hstat"><div class="hstat-num">18</div><div class="hstat-lbl">Авторов</div></div>
-        <div class="hstat"><div class="hstat-num">3</div><div class="hstat-lbl">Жанра</div></div>
-      </div>
+      <div class="hero-stats" id="hero-stats"></div>
     </div>
   </div>
 
-  <!-- Ticker marquee -->
-  <div class="hero-ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span class="ticker-item"><span class="ticker-pill">Новое</span> Боз жел — Асель Нурланова</span><span class="ticker-sep"></span>
-      <span class="ticker-item">Жер — Ninety One <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
-      <span class="ticker-item"><span class="ticker-pill">Доку</span> Жетісу. Эпизод I — Данияр Смаков</span><span class="ticker-sep"></span>
-      <span class="ticker-item">BATYR — Ана <span class="ticker-pill">24М</span></span><span class="ticker-sep"></span>
-      <span class="ticker-item"><span class="ticker-pill">Фест.</span> Арал. Реквием — Медеу Тоқаев</span><span class="ticker-sep"></span>
-      <span class="ticker-item">Dala FM — Кино #12 <span class="ticker-pill">Подкаст</span></span><span class="ticker-sep"></span>
-      <span class="ticker-item"><span class="ticker-pill">Новое</span> Байланыс — Сания Алимова</span><span class="ticker-sep"></span>
-      <span class="ticker-item">Skryptonite — Горы <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
-      <!-- duplicate for seamless loop -->
-      <span class="ticker-item"><span class="ticker-pill">Новое</span> Боз жел — Асель Нурланова</span><span class="ticker-sep"></span>
-      <span class="ticker-item">Жер — Ninety One <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
-      <span class="ticker-item"><span class="ticker-pill">Доку</span> Жетісу. Эпизод I — Данияр Смаков</span><span class="ticker-sep"></span>
-      <span class="ticker-item">BATYR — Ана <span class="ticker-pill">24М</span></span><span class="ticker-sep"></span>
-      <span class="ticker-item"><span class="ticker-pill">Фест.</span> Арал. Реквием — Медеу Тоқаев</span><span class="ticker-sep"></span>
-      <span class="ticker-item">Dala FM — Кино #12 <span class="ticker-pill">Подкаст</span></span><span class="ticker-sep"></span>
-      <span class="ticker-item"><span class="ticker-pill">Новое</span> Байланыс — Сания Алимова</span><span class="ticker-sep"></span>
-      <span class="ticker-item">Skryptonite — Горы <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
-    </div>
+  <!-- Ticker marquee — populated dynamically from uploaded content -->
+  <div class="hero-ticker" aria-hidden="true" id="hero-ticker" style="display:none">
+    <div class="ticker-track" id="ticker-track"></div>
   </div>
 
   <div class="type-strip">
@@ -2356,46 +2334,22 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
     <div class="row">
       <div class="row-head-edit"><span class="row-num">01</span><span class="row-title-edit" data-i18n="row_trending">Трендовое сейчас</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
-      <div class="cards-h" id="row-trending-cards">
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="feat-badge">В тренде</div><div class="thumb r-film"><div class="thumb-inner p1"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Боз жел</div><div class="card-sub">Асель Нурланова · 2023</div><div class="card-rating">★★★★☆ 4.2</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p2"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жер — Ninety One</div><div class="card-sub">Ninety One · 2024</div><div class="card-rating">★★★★★ 4.9</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p3"></div><span class="ct-badge ct-doc">Доку</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жетісу. Эпизод I</div><div class="card-sub">Данияр Смаков · 2024</div><div class="card-rating">★★★★★ 4.8</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p6"></div><span class="ct-badge ct-short">Короткий</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Дала толқыны</div><div class="card-sub">Айгерим Бекова · 2022</div><div class="card-rating">★★★★☆ 4.0</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p8"></div><span class="ct-badge ct-podcast">Подкаст</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Dala FM — Кино #12</div><div class="card-sub">Dala FM · 2024</div><div class="card-rating">★★★★☆ 4.4</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p5"></div><span class="ct-badge ct-social">Соц. ролик</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Тіл туралы / О языке</div><div class="card-sub">QazMedia · 2023</div><div class="card-rating">★★★★☆ 4.1</div></div>
-      </div>
+      <div class="cards-h" id="row-trending-cards"></div>
     </div>
 
     <div class="row">
       <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
-      <div class="cards-h" id="row-music-cards">
-        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p2"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">BATYR — Ана</div><div class="card-sub">BATYR · 24М просм.</div></div>
-        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p7"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Moldanazar — Мен</div><div class="card-sub">Moldanazar · 11М просм.</div></div>
-        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p9"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Skryptonite — Горы</div><div class="card-sub">Skryptonite · 8М просм.</div></div>
-        <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p4"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Айгерим — Сені сағындым</div><div class="card-sub">Aigerim · 5М просм.</div></div>
-      </div>
+      <div class="cards-h" id="row-music-cards"></div>
     </div>
 
     <div class="row">
       <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
-      <div class="cards-h" id="row-podcasts-cards">
-        <!-- Podcasts use circle thumbs like Spotify -->
-        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p10"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Qazaq Talk #47</div><div class="card-sub">Qazaq Talk · 2ч 10м</div></div>
-        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p3"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Dala FM #12</div><div class="card-sub">Dala FM · 1ч 34м</div></div>
-        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p6"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Kinoshka #29</div><div class="card-sub">Kinoshka KZ · 58м</div></div>
-        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p2"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Insight Almaty #88</div><div class="card-sub">Insight · 1ч 12м</div></div>
-        <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p8"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Film Lab KZ #3</div><div class="card-sub">Film Lab · 45м</div></div>
-      </div>
+      <div class="cards-h" id="row-podcasts-cards"></div>
     </div>
 
     <div class="row">
       <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_festival">Фестивальные победители</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
-      <div class="cards-h">
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p4"></div><span class="ct-badge ct-doc">Доку</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Арал. Реквием</div><div class="card-sub">Медеу Тоқаев · 2020</div><div class="card-rating">★★★★★ 4.8</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p9"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Байланыс</div><div class="card-sub">Сания Алимова · 2022</div><div class="card-rating">★★★★★ 4.9</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p5"></div><span class="ct-badge ct-short">Короткий</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жоғалған үн</div><div class="card-sub">Асель Нурланова · 2020</div><div class="card-rating">★★★★☆ 4.3</div></div>
-        <div class="card w-200 card-feat" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p7"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жер иесі</div><div class="card-sub">Болат Омаров · 2021</div><div class="card-rating">★★★★☆ 4.3</div></div>
-      </div>
+      <div class="cards-h" id="row-festival-cards"></div>
     </div>
 
     <!-- Top Collections of the Month -->
@@ -2433,8 +2387,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
             <button class="play-big" onclick="document.getElementById('player-placeholder').style.display='none'">▶</button>
           </div>
           <div class="player-title-area">
-            <div class="player-title-over" id="placeholder-title">Боз жел</div>
-            <div class="player-meta-over" id="placeholder-meta">Казахстан · 2023 · 84 мин</div>
+            <div class="player-title-over" id="placeholder-title"></div>
+            <div class="player-meta-over" id="placeholder-meta"></div>
           </div>
         </div>
       </div>
@@ -2445,14 +2399,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <span>Не воспроизводится? Открыть на YouTube →</span>
       </a>
 
-      <div class="pb-eyebrow" style="margin-top:14px;margin-bottom:4px"><span id="watch-eyebrow">Фильм · Казахстан · 2023</span></div>
-      <h1 class="video-title">Боз жел <span style="color:var(--text2);font-weight:400;font-size:16px">/ Pale Wind</span></h1>
-      <div class="video-tags">
-        <span class="vtag gold">★ 4.2</span>
-        <span class="vtag">Драма</span><span class="vtag">Аул / Степь</span>
-        <span class="vtag">84 мин</span><span class="vtag">Каз / Рус</span>
-        <span class="vtag">2023</span>
-      </div>
+      <div class="pb-eyebrow" style="margin-top:14px;margin-bottom:4px"><span id="watch-eyebrow"></span></div>
+      <h1 class="video-title" id="watch-title"></h1>
+      <div class="video-tags" id="watch-tags"></div>
       <div class="action-row">
         <button class="action-btn primary" onclick="document.getElementById('player-placeholder').querySelector('.play-big').click()" data-i18n="btn_watch">▶ Смотреть</button>
         <button class="action-btn" id="watch-like-btn" onclick="toggleLikeWatch()">❤️ Нравится</button>
@@ -2461,26 +2410,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <button class="action-btn" data-i18n="btn_share">↗ Поделиться</button>
         <button class="action-btn" id="watch-delete-btn" onclick="deleteCurrentContent()" style="display:none;color:#ff5555;border-color:rgba(255,85,85,.3)">🗑 Удалить</button>
       </div>
-      <div class="desc-box">
-        История молодого фотографа, вернувшегося в родное село после десяти лет в городе. Встреча с прошлым, забытыми лицами и бескрайней степью заставляет переосмыслить всё, чем он жил.<br/><br/>
-        Дебютная работа Асель Нурлановой. <strong>Победитель программы «Открытие»</strong> Eurasia IFF 2023. Снято полностью на натуре в Жетысуской области.
-      </div>
+      <div class="desc-box" id="watch-desc" style="display:none"></div>
 
-      <div class="panel">
+      <div class="panel" id="watch-crew-panel" style="display:none">
         <div class="panel-head">
           <span class="panel-title" data-i18n="crew_title">Съёмочная группа</span>
           <span class="teal-pill">Networking Player</span>
         </div>
-        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#3ecfb2,#d4a843)">АН</div><div class="cinfo"><div class="cname">Асель Нурланова</div><div class="crole">Режиссёр · Сценарист</div></div><span class="carrow">→</span></div>
-        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#d44343,#7b2fd4)">ДС</div><div class="cinfo"><div class="cname">Данияр Сейткали</div><div class="crole">Оператор-постановщик</div></div><span class="carrow">→</span></div>
-        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#4380d4,#43d48e)">МА</div><div class="cinfo"><div class="cname">Медина Ахметова</div><div class="crole">Монтажёр</div></div><span class="carrow">→</span></div>
-        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#d4a843,#d46343)">ТБ</div><div class="cinfo"><div class="cname">Тимур Бекжанов</div><div class="crole">Звукорежиссёр</div></div><span class="carrow">→</span></div>
-        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#7b43d4,#d443a8)">АК</div><div class="cinfo"><div class="cname">Айжан Қалиева</div><div class="crole">Художник-постановщик</div></div><span class="carrow">→</span></div>
-        <div class="crew-item" onclick="goPage('profile',null)"><div class="cav" style="background:linear-gradient(135deg,#43d4c2,#4380d4)">НО</div><div class="cinfo"><div class="cname">Нуржан Оразов</div><div class="crole">Продюсер</div></div><span class="carrow">→</span></div>
+        <div id="watch-crew-list"></div>
       </div>
 
       <div class="comments-section">
-        <div class="cs-head"><span data-i18n="comments_title">Рецензии и комментарии</span> <span style="color:var(--text2);font-weight:400;font-size:13px">(47)</span></div>
+        <div class="cs-head"><span data-i18n="comments_title">Рецензии и комментарии</span> <span id="watch-comment-count" style="color:var(--text2);font-weight:400;font-size:13px"></span></div>
         <div class="comment-input-row" id="comment-input-row">
           <div class="comment-av" id="comment-av-user">Е</div>
           <div class="comment-input-expanded">
@@ -2492,33 +2433,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
               onclick="submitComment()">Опубликовать</button>
           </div>
         </div>
-        <div class="comment">
-          <div class="comment-av" style="background:linear-gradient(135deg,#d44343,#7b2fd4)">АБ</div>
-          <div class="comment-body">
-            <div class="comment-name">Алия Берекова <span style="color:var(--text3);font-weight:400;font-size:10px">· 2 дня назад</span></div>
-            <div class="comment-text">Поразительная работа для дебюта. Оператор — отдельный разговор, эти планы степи с золотым часом просто невероятные. Ждём следующей работы Асель.</div>
-            <div class="comment-acts"><span class="comment-act">👍 34</span><span class="comment-act">Ответить</span></div>
-          </div>
-        </div>
-        <div class="comment">
-          <div class="comment-av" style="background:linear-gradient(135deg,#4380d4,#43d48e)">НС</div>
-          <div class="comment-body">
-            <div class="comment-name">Нурлан Серіков <span style="color:var(--text3);font-weight:400;font-size:10px">· 5 дней назад</span></div>
-            <div class="comment-text">Хочу связаться с Данияром (оператор) — нашёл его через Crew List, уже написал в профиле. Вот за что люблю эту платформу!</div>
-            <div class="comment-acts"><span class="comment-act">👍 12</span><span class="comment-act">Ответить</span></div>
-          </div>
-        </div>
+        <div id="watch-comments-list"></div>
       </div>
     </div>
 
     <div class="watch-side">
       <div class="watch-side-label" data-i18n="also_rec">Также рекомендуем</div>
-      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p4"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Байланыс</div><div class="rec-meta">Сания Алимова</div><span class="rec-tag" style="background:rgba(212,168,67,.1);color:var(--gold)">ФИЛЬМ</span></div></div>
-      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p1"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Дала толқыны</div><div class="rec-meta">Айгерим Бекова</div><span class="rec-tag" style="background:rgba(122,174,212,.1);color:#7aaed4">КОРОТКИЙ</span></div></div>
-      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p3"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Жетісу. Эпизод I</div><div class="rec-meta">Данияр Смаков</div><span class="rec-tag" style="background:rgba(122,212,224,.1);color:#7ad4e0">ДОКУ</span></div></div>
-      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p2"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">BATYR — Ана</div><div class="rec-meta">BATYR · 24М просм.</div><span class="rec-tag" style="background:rgba(224,122,212,.1);color:#e07ad4">КЛИП</span></div></div>
-      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p8" style="border-radius:6px"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Kinoshka #29</div><div class="rec-meta">Kinoshka KZ · 58м</div><span class="rec-tag" style="background:rgba(160,212,122,.1);color:#a0d47a">ПОДКАСТ</span></div></div>
-      <div class="rec-card" onclick="openWatch()"><div class="rec-thumb"><div class="rec-thumb-inner p7"></div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">Арал. Реквием</div><div class="rec-meta">Медеу Тоқаев</div><span class="rec-tag" style="background:rgba(122,212,224,.1);color:#7ad4e0">ДОКУ</span></div></div>
+      <div id="watch-recommendations"></div>
     </div>
   </div>
 </div><!-- /watch -->
@@ -3690,9 +3611,58 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     _currentContent = content;
 
     // Update title and meta overlays
+    const firstCreator = content.crew && content.crew.length ? content.crew[0].tag : (content.author || '');
     document.getElementById('placeholder-title').textContent = content.title || '';
-    document.getElementById('placeholder-meta').textContent = [content.author, content.year].filter(Boolean).join(' · ');
-    document.querySelector('.video-title').innerHTML = (content.title||'') + (content.author ? `<span style="color:var(--text2);font-weight:400;font-size:16px"> / ${content.author}</span>` : '');
+    document.getElementById('placeholder-meta').textContent = firstCreator;
+    document.getElementById('watch-title').textContent = content.title || '';
+    document.getElementById('watch-eyebrow').textContent = [content.catLabel, content.year].filter(Boolean).join(' · ');
+
+    // Tags
+    const tagsEl = document.getElementById('watch-tags');
+    tagsEl.innerHTML = '';
+    (content.tags || []).forEach(t => {
+      const s = document.createElement('span'); s.className = 'vtag'; s.textContent = '#' + t; tagsEl.appendChild(s);
+    });
+
+    // Description
+    const descEl = document.getElementById('watch-desc');
+    if (content.desc) { descEl.textContent = content.desc; descEl.style.display = ''; }
+    else { descEl.style.display = 'none'; }
+
+    // Crew panel
+    const crewPanel = document.getElementById('watch-crew-panel');
+    const crewList  = document.getElementById('watch-crew-list');
+    crewList.innerHTML = '';
+    const allPeople = [...(content.crew||[]).map(p=>({...p,section:'crew'})), ...(content.cast||[]).map(p=>({...p,section:'cast'}))];
+    if (allPeople.length) {
+      crewPanel.style.display = '';
+      allPeople.forEach(p => {
+        const initials = p.tag.replace('@','').slice(0,2).toUpperCase();
+        const colors = ['#3ecfb2,#d4a843','#d44343,#7b2fd4','#4380d4,#43d48e','#d4a843,#d46343','#7b43d4,#d443a8','#43d4c2,#4380d4'];
+        const grad = colors[Math.abs(p.tag.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % colors.length];
+        const div = document.createElement('div');
+        div.className = 'crew-item';
+        div.innerHTML = `<div class="cav" style="background:linear-gradient(135deg,${grad})">${initials}</div><div class="cinfo"><div class="cname">${p.tag}</div><div class="crole">${p.role}</div></div><span class="carrow">→</span>`;
+        crewList.appendChild(div);
+      });
+    } else {
+      crewPanel.style.display = 'none';
+    }
+
+    // Sidebar recommendations (other uploaded content, excluding current)
+    const recContainer = document.getElementById('watch-recommendations');
+    if (recContainer) {
+      recContainer.innerHTML = '';
+      const CAT_COLORS = { 'ct-film':'var(--gold)', 'ct-music':'#e07ad4', 'ct-doc':'#7ad4e0', 'ct-short':'#7aaed4', 'ct-podcast':'#a0d47a', 'ct-animation':'#7ad4e0', 'ct-social':'#d4a843' };
+      getAyaContent().filter(c => c.id !== content.id).slice(0,6).forEach(c => {
+        const col = CAT_COLORS[c.cat] || 'var(--gold)';
+        const div = document.createElement('div');
+        div.className = 'rec-card';
+        div.onclick = () => openWatch(c);
+        div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner" style="background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px">🎬</div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.crew&&c.crew.length?c.crew[0].tag:''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${(c.catLabel||'').toUpperCase()}</span></div>`;
+        recContainer.appendChild(div);
+      });
+    }
 
     if (content.ytId) {
       // YouTube: replace placeholder click to load iframe
