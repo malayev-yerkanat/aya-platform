@@ -1363,27 +1363,29 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   /* ── Sidebar: completely hidden, replaced by bottom nav ── */
   aside.sidebar { display: none !important; }
 
-  /* ── Main: full width, no left offset, add bottom padding for bottom nav ── */
+  /* ── Main: full width, no left offset, bottom padding clears nav + safe area ── */
   .main {
     margin-left: 0 !important;
     width: 100% !important;
-    padding-bottom: calc(var(--bottom-nav) + 8px);
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 16px);
   }
 
   /* ── Topbar: full width, decluttered ── */
   .topbar {
     left: 0 !important;
-    padding: 0 14px;
-    gap: 8px;
+    padding: 0 12px;
+    gap: 6px;
   }
-  /* Hide AITU logo on mobile — saves space */
+  /* Hide AITU logo + search bar + avatar on mobile */
   #tb-aitu-logo { display: none; }
-  /* Hide search bar — no room */
   .search-wrap { display: none; }
-  /* Upload button: icon-only gold pill */
-  .tb-upload { padding: 8px 14px; font-size: 11px; gap: 4px; }
-  .tb-upload span { display: none; }
-  .tb-upload::before { content: '+ Upload'; font-size: 11px; font-weight: 800; }
+  #tb-avatar { display: none; }
+  /* Upload button: hide original text, show compact label via font trick */
+  .tb-upload {
+    padding: 7px 12px; font-size: 0; gap: 0;
+    white-space: nowrap; letter-spacing: 0;
+  }
+  .tb-upload::before { content: '+ ЗАГРУЗИТЬ'; font-size: 11px; font-weight: 800; letter-spacing: .5px; }
   /* Language pills: smaller */
   .lang-btn { font-size: 10px; padding: 4px 6px; }
 
@@ -1413,13 +1415,26 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   .card { min-width: 140px; }
   .section-head, .row-head-edit { padding: 20px 14px 10px; }
 
-  /* Rows */
-  .type-strip { padding: 12px 14px 4px; gap: 6px; }
-  .type-pill { font-size: 11px; padding: 6px 12px; }
+  /* Type strip — horizontal scroll, no wrap */
+  .type-strip { padding: 10px 14px 4px; gap: 7px; flex-wrap: nowrap; overflow-x: auto; }
+  .type-pill { font-size: 11px; padding: 6px 11px; flex-shrink: 0; }
+
+  /* Pitch filters — horizontal scroll, no wrap */
+  .pitch-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .pitch-filters::-webkit-scrollbar { display: none; }
+  .pf { flex-shrink: 0; }
+
+  /* Constructor */
   .constructor-bar { margin: 10px 14px; padding: 14px 16px; }
+  .constructor-label { font-size: 11px; }
   .constructor-row { flex-direction: column; gap: 8px; }
   .csel { min-width: unset; width: 100%; }
   .c-find-btn { width: 100%; justify-content: center; }
+
+  /* Hero buttons — allow wrapping, don't clip */
+  .hero-actions { flex-wrap: wrap; gap: 8px; }
+  .btn-sharp-gold, .btn-sharp-ghost,
+  .btn-pill-gold, .btn-pill-ghost { flex-shrink: 0; }
 
   /* Watch page */
   .watch-layout { flex-direction: column; padding: 14px 14px 0; gap: 16px; }
@@ -1463,35 +1478,39 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 .bottom-nav {
   display: none;
   position: fixed; bottom: 0; left: 0; right: 0;
-  height: var(--bottom-nav, 60px);
-  background: rgba(10,12,6,.96);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255,255,255,.07);
+  /* Total height = icon area + safe area for iOS home indicator */
+  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  background: rgba(8,10,5,.97);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-top: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
   z-index: 200;
-  padding: 0 4px;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .bn-items {
-  display: flex; align-items: stretch;
-  height: 100%; width: 100%;
+  display: flex; align-items: flex-start;
+  height: 60px; width: 100%;
+  padding: 0 4px;
 }
 .bn-item {
   flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 3px;
-  cursor: pointer; padding: 6px 2px;
+  align-items: center; justify-content: center; gap: 2px;
+  cursor: pointer; padding: 8px 2px 4px;
+  height: 100%;
   color: var(--text3);
-  transition: color .15s;
+  transition: color .12s;
   -webkit-tap-highlight-color: transparent;
   border: none; background: none;
 }
-.bn-item .bn-ico { font-size: 20px; line-height: 1; }
+.bn-item .bn-ico { font-size: 21px; line-height: 1; display: block; }
 .bn-item .bn-label {
   font-size: 9px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .4px;
-  white-space: nowrap;
+  text-transform: uppercase; letter-spacing: .3px;
+  white-space: nowrap; line-height: 1;
 }
-.bn-item.active, .bn-item:active { color: var(--gold); }
-.bn-item.active .bn-ico { transform: scale(1.1); }
+.bn-item.active { color: var(--gold); }
+.bn-item.active .bn-ico { transform: scale(1.08); }
+.bn-item:active { opacity: .7; }
 
 /* ── Collections ─────────────────────────────────────────── */
 /* Card like overlay */
