@@ -1354,44 +1354,66 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 
 /* ── Mobile (≤ 600px) ── */
 @media (max-width: 600px) {
-  :root { --sidebar: 56px; --topbar: 52px; }
+  :root {
+    --sidebar: 0px;   /* sidebar hidden — bottom nav takes over */
+    --topbar: 52px;
+    --bottom-nav: 60px;
+  }
 
-  /* Topbar */
-  .topbar { padding: 0 12px; gap: 8px; }
+  /* ── Sidebar: completely hidden, replaced by bottom nav ── */
+  aside.sidebar { display: none !important; }
+
+  /* ── Main: full width, no left offset, add bottom padding for bottom nav ── */
+  .main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-bottom: calc(var(--bottom-nav) + 8px);
+  }
+
+  /* ── Topbar: full width, decluttered ── */
+  .topbar {
+    left: 0 !important;
+    padding: 0 14px;
+    gap: 8px;
+  }
+  /* Hide AITU logo on mobile — saves space */
+  #tb-aitu-logo { display: none; }
+  /* Hide search bar — no room */
   .search-wrap { display: none; }
-  .tb-upload { padding: 7px 10px; font-size: 10px; }
+  /* Upload button: icon-only gold pill */
+  .tb-upload { padding: 8px 14px; font-size: 11px; gap: 4px; }
   .tb-upload span { display: none; }
-  .tb-upload::before { content: '+'; font-size: 16px; font-weight: 900; }
-  .lang-btn { font-size: 11px; padding: 4px 7px; }
+  .tb-upload::before { content: '+ Upload'; font-size: 11px; font-weight: 800; }
+  /* Language pills: smaller */
+  .lang-btn { font-size: 10px; padding: 4px 6px; }
 
-  /* Sidebar */
-  .sidebar-logo { padding: 12px 8px; }
-  .logo-badge { width: 34px; height: 34px; font-size: 11px; border-radius: 9px; }
-  .nav-item { padding: 10px 8px; }
-  .nav-item .ico { font-size: 18px; width: 20px; }
+  /* ── Bottom navigation bar ── */
+  .bottom-nav {
+    display: flex !important;
+  }
 
-  /* Hero — updated for new elements */
-  .hero { height: auto; min-height: 240px; }
-  .hero-title-slab { font-size: 22px; letter-spacing: 0; }
-  .hero-desc { font-size: 13px; }
-  .hero-content { padding: 28px 16px; max-width: 100%; }
-  .hero-watermark { font-size: 100px; right: -4px; bottom: -8px; letter-spacing: -6px; }
+  /* ── Hero ── */
+  .hero { height: auto; min-height: 260px; }
+  .hero-title-slab { font-size: clamp(28px, 8vw, 38px); letter-spacing: -.5px; }
+  .hero-desc { font-size: 13px; max-width: 100%; }
+  .hero-content { padding: 28px 16px 24px; max-width: 100%; }
+  .hero-watermark { font-size: 110px; right: -4px; bottom: -8px; letter-spacing: -6px; opacity: .06; }
   .hero-stats { gap: 16px; margin-top: 20px; padding-top: 16px; }
-  .hstat-num { font-size: 16px; }
+  .hstat-num { font-size: 18px; }
   .hstat-lbl { font-size: 8px; }
-  .btn-sharp-gold, .btn-sharp-ghost { padding: 10px 16px; font-size: 10px; }
+  .btn-sharp-gold, .btn-sharp-ghost { padding: 10px 18px; font-size: 11px; }
   .btn-pill-gold, .btn-pill-ghost { padding: 10px 18px; font-size: 11px; }
-  /* Ticker: smaller text on mobile */
-  .ticker-item { font-size: 9.5px; padding: 0 14px; }
-  /* Card feat: less wide on mobile */
-  .card-feat { min-width: 240px !important; }
-  /* Watch page: stack layout on mobile */
-  .watch-layout { flex-direction: column; padding: 16px; gap: 16px; }
-  .watch-side { width: 100%; }
-  .video-title { font-size: 20px; }
 
-  /* Content areas */
-  .main { padding: 0; }
+  /* Ticker */
+  .ticker-item { font-size: 9.5px; padding: 0 14px; }
+
+  /* Cards */
+  .card-feat { min-width: 220px !important; }
+  .cards-row { padding: 0 14px 16px; gap: 10px; }
+  .card { min-width: 140px; }
+  .section-head, .row-head-edit { padding: 20px 14px 10px; }
+
+  /* Rows */
   .type-strip { padding: 12px 14px 4px; gap: 6px; }
   .type-pill { font-size: 11px; padding: 6px 12px; }
   .constructor-bar { margin: 10px 14px; padding: 14px 16px; }
@@ -1399,11 +1421,10 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   .csel { min-width: unset; width: 100%; }
   .c-find-btn { width: 100%; justify-content: center; }
 
-  /* Cards */
-  .cards-row { padding: 0 14px 16px; gap: 10px; }
-  .card { min-width: 140px; }
-  .card-thumb { height: 100px; }
-  .section-head { padding: 20px 14px 10px; }
+  /* Watch page */
+  .watch-layout { flex-direction: column; padding: 14px 14px 0; gap: 16px; }
+  .watch-side { width: 100%; position: static; }
+  .video-title { font-size: 20px; }
 
   /* Settings */
   .settings-page { padding: 20px 16px 40px; }
@@ -1423,8 +1444,12 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 
   /* Pitch */
   .pitch-grid { grid-template-columns: 1fr; }
+  .pitch-page { padding: 16px 14px 40px; }
+  .pitch-banner { flex-direction: column; align-items: flex-start; padding: 24px 20px; gap: 16px; }
+  .pb-title { font-size: 22px; }
+  .pb-action { width: 100%; justify-content: center; }
 
-  /* Reduce stagger delays on mobile — less latency */
+  /* Reduce stagger delays on mobile */
   .page.active .cards-h .card:nth-child(1) { animation-delay: 0ms; }
   .page.active .cards-h .card:nth-child(2) { animation-delay: 30ms; }
   .page.active .cards-h .card:nth-child(3) { animation-delay: 60ms; }
@@ -1433,6 +1458,40 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   .page.active .cards-h .card:nth-child(6) { animation-delay: 120ms; }
   .page.active { animation-duration: 200ms; }
 }
+
+/* ── Bottom Navigation Bar (hidden on desktop, shown on mobile via media query) ── */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--bottom-nav, 60px);
+  background: rgba(10,12,6,.96);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,.07);
+  z-index: 200;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bn-items {
+  display: flex; align-items: stretch;
+  height: 100%; width: 100%;
+}
+.bn-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px;
+  cursor: pointer; padding: 6px 2px;
+  color: var(--text3);
+  transition: color .15s;
+  -webkit-tap-highlight-color: transparent;
+  border: none; background: none;
+}
+.bn-item .bn-ico { font-size: 20px; line-height: 1; }
+.bn-item .bn-label {
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .4px;
+  white-space: nowrap;
+}
+.bn-item.active, .bn-item:active { color: var(--gold); }
+.bn-item.active .bn-ico { transform: scale(1.1); }
 
 /* ── Collections ─────────────────────────────────────────── */
 /* Card like overlay */
@@ -2856,12 +2915,21 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 </main>
 
 <script>
+  /* ── Bottom nav active state sync ── */
+  const BN_MAP = { home:'bn-home', pitch:'bn-pitch', profile:'bn-profile', settings:'bn-settings' };
+  function setBottomNav(activeId) {
+    document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+    if (activeId) { const el = document.getElementById(activeId); if (el) el.classList.add('active'); }
+  }
+
   function goPage(id, el) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     if (el) el.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Sync bottom nav
+    setBottomNav(BN_MAP[id] || null);
     // Refresh profile page every time it's opened so it reflects latest auth state
     if (id === 'profile')       updateProfilePage(getUser());
     if (id === 'settings')      highlightActiveRoleBadge();
@@ -5106,6 +5174,32 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
 <!-- Saved toast -->
 <div id="coll-toast"></div>
+
+<!-- BOTTOM NAVIGATION (mobile only, shown via CSS media query) -->
+<nav class="bottom-nav" aria-label="Навигация">
+  <div class="bn-items">
+    <button class="bn-item active" id="bn-home" onclick="goPage('home',null);setBottomNav('bn-home')" aria-label="Главная">
+      <span class="bn-ico">🏠</span>
+      <span class="bn-label" data-i18n="nav_home">Главная</span>
+    </button>
+    <button class="bn-item" id="bn-pitch" onclick="goPage('pitch',null);setBottomNav('bn-pitch')" aria-label="Pitching">
+      <span class="bn-ico">💡</span>
+      <span class="bn-label">Pitching</span>
+    </button>
+    <button class="bn-item" id="bn-upload" onclick="openUploadModal()" aria-label="Загрузить" style="color:var(--gold)">
+      <span class="bn-ico" style="width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:#000;margin-bottom:1px">＋</span>
+      <span class="bn-label" style="color:var(--gold)">Upload</span>
+    </button>
+    <button class="bn-item" id="bn-profile" onclick="goPage('profile',null);setBottomNav('bn-profile')" aria-label="Профиль">
+      <span class="bn-ico">👤</span>
+      <span class="bn-label" data-i18n="nav_profile">Профиль</span>
+    </button>
+    <button class="bn-item" id="bn-settings" onclick="goPage('settings',null);setBottomNav('bn-settings')" aria-label="Настройки">
+      <span class="bn-ico">⚙️</span>
+      <span class="bn-label" data-i18n="settings">Ещё</span>
+    </button>
+  </div>
+</nav>
 
 <!-- COLLECTION DETAIL OVERLAY -->
 <div id="coll-detail-overlay" onclick="closeCollectionDetail()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1200;align-items:center;justify-content:center">
