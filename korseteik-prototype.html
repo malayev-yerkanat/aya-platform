@@ -6,7 +6,7 @@
 <title>AYA — Art Yearns Action</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    DESIGN TOKENS — AYA identity
@@ -142,7 +142,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .cat-item {
   display: flex; align-items: center; gap: 10px;
-  padding: 8px 12px; border-radius: var(--r-md);
+  padding: 8px 12px; min-height: 44px; border-radius: var(--r-md);
   font-size: 12px; color: var(--text2);
   cursor: pointer; transition: all .15s;
 }
@@ -290,7 +290,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   text-transform: uppercase; letter-spacing: 1.2px;
 }
 .hero-title {
-  font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  font-family: 'Barlow', system-ui, sans-serif;
   font-size: 42px; font-weight: 900; line-height: 1.02;
   letter-spacing: -.5px; margin-bottom: 14px;
 }
@@ -387,7 +387,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: flex; align-items: baseline; justify-content: space-between;
   margin-bottom: 16px;
 }
-.row-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -.2px; }
+.row-title { font-family: 'Barlow', system-ui, sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -.2px; }
 .row-more {
   font-size: 12px; font-weight: 700; color: var(--text2);
   text-transform: uppercase; letter-spacing: .8px;
@@ -548,7 +548,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 
 /* Video info */
-.video-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 26px; font-weight: 900; letter-spacing: -.3px; margin: 18px 0 10px; }
+.video-title { font-family: 'Podkova', Georgia, serif; font-size: 26px; font-weight: 900; letter-spacing: -.1px; margin: 18px 0 10px; }
 .video-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
 .vtag {
   background: var(--bg2); color: var(--text2);
@@ -560,8 +560,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: flex; align-items: center; gap: 6px;
   background: var(--bg2); color: var(--text);
   font-size: 12px; font-weight: 600;
-  padding: 9px 18px; border-radius: var(--r-pill);
-  transition: all .15s;
+  padding: 9px 18px; border-radius: 3px;
+  transition: background 150ms var(--ease-out, cubic-bezier(0.23,1,0.32,1));
 }
 .action-btn:hover { background: var(--bg4); }
 .action-btn.primary { background: var(--gold); color: #000; font-weight: 800; }
@@ -586,7 +586,16 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
-.panel-title { font-size: 13px; font-weight: 800; letter-spacing: .2px; }
+.panel-title {
+  font-size: 10px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--text2);
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-title::before {
+  content: ''; display: block;
+  width: 14px; height: 1px; background: var(--gold); flex-shrink: 0;
+}
 .teal-pill {
   background: var(--teal-dim); color: var(--teal);
   font-size: 9px; font-weight: 800;
@@ -616,7 +625,18 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 /* Comments */
 .comments-section { margin-bottom: 24px; }
-.cs-head { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -.1px; margin-bottom: 18px; }
+.cs-head {
+  font-size: 10px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--text2); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.cs-head::before {
+  content: ''; display: block;
+  width: 20px; height: 1px; background: var(--gold); flex-shrink: 0;
+}
+body.light-theme .cs-head { border-bottom-color: rgba(0,0,0,.08); }
 .comment-input-row { display: flex; gap: 10px; margin-bottom: 22px; align-items: flex-start; }
 .comment-av {
   width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
@@ -643,10 +663,17 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 /* Watch side — recommendations */
 .watch-side-label {
-  font-size: 11px; font-weight: 800; color: var(--text2);
-  text-transform: uppercase; letter-spacing: 1px;
-  margin-bottom: 14px;
+  font-size: 10px; font-weight: 900; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; gap: 10px;
 }
+.watch-side-label::before {
+  content: ''; display: block;
+  width: 16px; height: 1px; background: var(--gold); flex-shrink: 0;
+}
+body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 .rec-card {
   display: flex; gap: 10px; margin-bottom: 10px;
   padding: 8px; border-radius: var(--r-md);
@@ -685,7 +712,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
   box-shadow: var(--shadow-md);
 }
-.pb-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 10px; }
+.pb-title { font-family: 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 10px; }
 .pb-title em { color: var(--gold); font-style: normal; }
 .pb-desc { font-size: 13px; color: var(--text2); max-width: 420px; line-height: 1.65; }
 .pb-action {
@@ -738,7 +765,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .pc-days { font-size: 11px; color: var(--text2); }
 .pc-body { padding: 16px 18px 18px; }
 .pc-type { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
-.pc-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 5px; letter-spacing: -.1px; }
+.pc-title { font-family: 'Barlow', system-ui, sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 5px; letter-spacing: -.1px; }
 .pc-author {
   font-size: 11px; color: var(--text2); margin-bottom: 10px;
   display: flex; align-items: center; gap: 6px;
@@ -797,7 +824,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   font-size: 10px; font-weight: 800; color: var(--text2);
   text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px;
 }
-.prof-name { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 3px; }
+.prof-name { font-family: 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 3px; }
 .prof-handle { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
 .prof-bio { font-size: 13px; color: var(--text2); line-height: 1.6; max-width: 480px; margin-bottom: 14px; }
 .prof-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -815,7 +842,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .prof-link:hover { background: var(--bg4); color: var(--text); }
 .prof-stats { display: flex; gap: 28px; padding: 0; margin-left: auto; padding-top: 54px; align-self: flex-start; }
-.pstat-v { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 24px; font-weight: 900; letter-spacing: -.3px; }
+.pstat-v { font-family: 'Barlow', system-ui, sans-serif; font-size: 24px; font-weight: 900; letter-spacing: -.3px; }
 .pstat-l { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
 
 .profile-tabs {
@@ -865,7 +892,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   transition: all .15s;
 }
 .lang-btn:hover { background: rgba(255,255,255,.08); color: var(--text); }
-.lang-btn.active { background: rgba(255,255,255,.12); color: var(--text); }
+.lang-btn.active { background: var(--gold); color: #0f120a; }
 
 /* ============================================================
    AUTH PAGE (Login / Register)
@@ -882,7 +909,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   box-shadow: var(--shadow-lg);
 }
 .auth-logo {
-  font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  font-family: 'Barlow', system-ui, sans-serif;
   font-size: 22px; font-weight: 900; letter-spacing: 1px;
   color: var(--gold);
   margin-bottom: 4px;
@@ -986,7 +1013,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
    SETTINGS PAGE
 ============================================================ */
 .settings-page { padding: 32px 28px 60px; max-width: 720px; }
-.settings-title { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 28px; }
+.settings-title { font-family: 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 28px; }
 .settings-block {
   background: var(--bg2); border-radius: var(--r-lg);
   margin-bottom: 16px; overflow: hidden;
@@ -1063,7 +1090,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .uni-name { font-size: 12px; font-weight: 700; color: var(--text2); line-height: 1.5; }
 .uni-name strong { display: block; font-size: 14px; color: var(--text); }
 .about-project-title {
-  font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  font-family: 'Barlow', system-ui, sans-serif;
   font-size: 48px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px;
   color: var(--gold);
 }
@@ -1077,7 +1104,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .about-stat {
   background: var(--bg2); border-radius: var(--r-lg); padding: 20px 24px; flex: 1; min-width: 140px;
 }
-.about-stat-num { font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); letter-spacing: -.5px; }
+.about-stat-num { font-family: 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); letter-spacing: -.5px; }
 .about-stat-label { font-size: 11px; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: .6px; }
 .about-section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; letter-spacing: -.3px; }
 .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 32px; }
@@ -1222,6 +1249,36 @@ body.light-theme .card              { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
 body.light-theme .logo-badge        { box-shadow: 0 3px 10px rgba(0,0,0,.15); color: #EDE5CC; }
 body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
+/* ── Light theme: fix hardcoded dark rgba/oklch values ── */
+body.light-theme .hero-watermark {
+  -webkit-text-stroke: 1.5px oklch(0.28 0.06 100 / 0.08);
+}
+body.light-theme .hero-grain { opacity: 0.12; }
+body.light-theme .row-head-edit { border-bottom-color: rgba(0,0,0,.09); }
+body.light-theme .hero-stats { border-top-color: rgba(0,0,0,.09); }
+body.light-theme .hero-ticker {
+  background: var(--bg3);
+  border-bottom-color: rgba(0,0,0,.07);
+}
+body.light-theme .ticker-sep { background: oklch(0.32 0.07 100 / 0.35); }
+body.light-theme .ticker-pill { background: oklch(0.32 0.07 100 / 0.10); }
+body.light-theme .btn-sharp-ghost {
+  border-color: rgba(0,0,0,.20);
+  color: var(--text);
+}
+body.light-theme .pitch-banner::before {
+  -webkit-text-stroke-color: oklch(0.25 0.06 100 / 0.06);
+}
+body.light-theme .profile-cover::before { opacity: 0.10; }
+body.light-theme .hero-title-slab em { color: var(--teal); }
+body.light-theme .about-project-title { color: var(--teal); }
+body.light-theme .panel-head { border-bottom-color: rgba(0,0,0,.07); }
+body.light-theme .panel { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+body.light-theme .crew-item:hover { background: rgba(0,0,0,.04); }
+body.light-theme .comment-input:focus { border-color: rgba(0,0,0,.12); }
+body.light-theme .settings-title::after { background: var(--gold); }
+body.light-theme .rec-card:hover { background: var(--bg3); }
+
 /* ── Role badge in profile ── */
 .role-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
 .role-tag.admin { background: rgba(125,145,88,.18); color: var(--gold2); }
@@ -1257,10 +1314,12 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
   .search-wrap { max-width: 220px; }
   .tb-upload { padding: 7px 12px; font-size: 11px; letter-spacing: 0; }
 
-  /* Hero */
-  .hero-title { font-size: 30px; }
+  /* Hero — updated for new elements */
+  .hero-title-slab { font-size: 30px; }
   .hero-content { padding: 44px 24px; max-width: 380px; }
-  .hero-mosaic { width: 44%; }
+  .hero-watermark { font-size: 180px; right: -10px; }
+  .hero-stats { gap: 20px; }
+  .hstat-num { font-size: 18px; }
 
   /* Content */
   .section-head, .trending-head { padding: 24px 20px 12px; }
@@ -1287,14 +1346,25 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
   .nav-item { padding: 10px 8px; }
   .nav-item .ico { font-size: 18px; width: 20px; }
 
-  /* Hero */
-  .hero { height: auto; min-height: 260px; }
-  .hero-title { font-size: 24px; letter-spacing: -.5px; }
+  /* Hero — updated for new elements */
+  .hero { height: auto; min-height: 240px; }
+  .hero-title-slab { font-size: 22px; letter-spacing: 0; }
   .hero-desc { font-size: 13px; }
-  .hero-content { padding: 32px 16px; max-width: 100%; }
-  .hero-mosaic { display: none; }
-  .hero-eyebrow { font-size: 9px; }
+  .hero-content { padding: 28px 16px; max-width: 100%; }
+  .hero-watermark { font-size: 100px; right: -4px; bottom: -8px; letter-spacing: -6px; }
+  .hero-stats { gap: 16px; margin-top: 20px; padding-top: 16px; }
+  .hstat-num { font-size: 16px; }
+  .hstat-lbl { font-size: 8px; }
+  .btn-sharp-gold, .btn-sharp-ghost { padding: 10px 16px; font-size: 10px; }
   .btn-pill-gold, .btn-pill-ghost { padding: 10px 18px; font-size: 11px; }
+  /* Ticker: smaller text on mobile */
+  .ticker-item { font-size: 9.5px; padding: 0 14px; }
+  /* Card feat: less wide on mobile */
+  .card-feat { min-width: 240px !important; }
+  /* Watch page: stack layout on mobile */
+  .watch-layout { flex-direction: column; padding: 16px; gap: 16px; }
+  .watch-side { width: 100%; }
+  .video-title { font-size: 20px; }
 
   /* Content areas */
   .main { padding: 0; }
@@ -1329,6 +1399,15 @@ body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
   /* Pitch */
   .pitch-grid { grid-template-columns: 1fr; }
+
+  /* Reduce stagger delays on mobile — less latency */
+  .page.active .cards-h .card:nth-child(1) { animation-delay: 0ms; }
+  .page.active .cards-h .card:nth-child(2) { animation-delay: 30ms; }
+  .page.active .cards-h .card:nth-child(3) { animation-delay: 60ms; }
+  .page.active .cards-h .card:nth-child(4) { animation-delay: 80ms; }
+  .page.active .cards-h .card:nth-child(5) { animation-delay: 100ms; }
+  .page.active .cards-h .card:nth-child(6) { animation-delay: 120ms; }
+  .page.active { animation-duration: 200ms; }
 }
 
 /* ── Collections ─────────────────────────────────────────── */
@@ -1477,9 +1556,539 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+/* ── ACCESSIBILITY ─────────────────────────────────────────────────────────── */
+/* ============================================================
+   EMIL KOWALSKI MOTION PASS — AYA Platform
+   Principles: specificity over `all`, custom curves, `:active` feedback,
+   page entrance, card stagger, reduced-motion, touch guards.
+============================================================ */
+
+/* Custom easing curves — never use built-in easings raw */
+:root {
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);      /* strong ease-out for UI */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);     /* on-screen movement */
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);     /* everyday transitions */
+}
+
+/* ── Page entrance — subtle lift + fade, fires on every page switch ── */
+.page.active {
+  animation: aya-page-in 280ms var(--ease-out) both;
+}
+@keyframes aya-page-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card row stagger — fires when parent page becomes active ── */
+.page.active .cards-h .card { animation: aya-card-in 320ms var(--ease-out) both; }
+.page.active .cards-h .card:nth-child(1) { animation-delay: 30ms; }
+.page.active .cards-h .card:nth-child(2) { animation-delay: 65ms; }
+.page.active .cards-h .card:nth-child(3) { animation-delay: 100ms; }
+.page.active .cards-h .card:nth-child(4) { animation-delay: 135ms; }
+.page.active .cards-h .card:nth-child(5) { animation-delay: 170ms; }
+.page.active .cards-h .card:nth-child(6) { animation-delay: 200ms; }
+@keyframes aya-card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Pitch card stagger ── */
+.page.active .pitch-grid .pc { animation: aya-card-in 340ms var(--ease-out) both; }
+.page.active .pitch-grid .pc:nth-child(1) { animation-delay: 40ms; }
+.page.active .pitch-grid .pc:nth-child(2) { animation-delay: 80ms; }
+.page.active .pitch-grid .pc:nth-child(3) { animation-delay: 120ms; }
+.page.active .pitch-grid .pc:nth-child(4) { animation-delay: 160ms; }
+.page.active .pitch-grid .pc:nth-child(5) { animation-delay: 200ms; }
+.page.active .pitch-grid .pc:nth-child(6) { animation-delay: 240ms; }
+
+/* ── Fix transition: all → specific properties with custom curves ── */
+
+/* Sidebar nav & categories */
+.nav-item {
+  transition: color 150ms var(--ease-out),
+              background 150ms var(--ease-out) !important;
+}
+.cat-item {
+  transition: color 140ms var(--ease-out),
+              background 140ms var(--ease-out) !important;
+}
+.upgrade-btn {
+  transition: background 160ms var(--ease-out),
+              transform 160ms var(--ease-out) !important;
+}
+
+/* Topbar */
+.tb-ico {
+  transition: background 140ms var(--ease-out),
+              color 140ms var(--ease-out) !important;
+}
+.tb-upload {
+  transition: background 160ms var(--ease-out),
+              transform 160ms var(--ease-out) !important;
+}
+.tb-avatar { transition: transform 160ms var(--ease-out) !important; }
+
+/* Type strip filter chips */
+.type-pill {
+  transition: background 130ms var(--ease-out),
+              color 130ms var(--ease-out) !important;
+}
+
+/* Filter buttons (pitch) */
+.pf {
+  transition: background 130ms var(--ease-out),
+              color 130ms var(--ease-out) !important;
+}
+
+/* Cards */
+.card {
+  transition: background 200ms var(--ease-out),
+              box-shadow 200ms var(--ease-out),
+              transform 200ms var(--ease-out) !important;
+}
+.pc {
+  transition: background 200ms var(--ease-out),
+              box-shadow 200ms var(--ease-out),
+              transform 200ms var(--ease-out) !important;
+}
+.rec-card {
+  transition: background 160ms var(--ease-out) !important;
+}
+
+/* Play button reveal */
+.thumb-play-wrap {
+  transition: opacity 180ms var(--ease-out),
+              transform 180ms var(--ease-out) !important;
+}
+.thumb-play {
+  transition: transform 120ms var(--ease-out) !important;
+}
+
+/* Primary CTA buttons */
+.btn-sharp-gold, .btn-sharp-ghost,
+.btn-pill-gold, .btn-pill-ghost,
+.form-submit, .pb-action, .qoldau, .c-find-btn, .tb-upload {
+  transition: background 160ms var(--ease-out),
+              transform 160ms var(--ease-out),
+              border-color 160ms var(--ease-out) !important;
+}
+
+/* Profile tab buttons */
+.ptab {
+  transition: background 140ms var(--ease-out),
+              color 140ms var(--ease-out) !important;
+}
+
+/* Auth tabs */
+.auth-tab {
+  transition: color 150ms var(--ease-out),
+              border-bottom-color 150ms var(--ease-out) !important;
+}
+
+/* Back button */
+.back-btn {
+  transition: color 150ms var(--ease-out),
+              background 150ms var(--ease-out) !important;
+}
+
+/* Action buttons on watch page */
+.action-btn {
+  transition: background 150ms var(--ease-out) !important;
+}
+
+/* Comment actions */
+.comment-act { transition: color 130ms var(--ease-out) !important; }
+
+/* Row-more links */
+.row-more, .row-more-edit { transition: color 140ms var(--ease-out) !important; }
+
+/* Lang buttons */
+.lang-btn {
+  transition: background 140ms var(--ease-out),
+              color 140ms var(--ease-out) !important;
+}
+
+/* Sidebar collapse */
+.sidebar { transition: width 250ms var(--ease-standard) !important; }
+.main { transition: margin-left 250ms var(--ease-standard),
+                     width 250ms var(--ease-standard) !important; }
+
+/* Form inputs — focus ring */
+.form-input {
+  transition: border-color 160ms var(--ease-out),
+              background 160ms var(--ease-out) !important;
+}
+
+/* ── :active press feedback — every interactive surface ── */
+/* Asymmetric: press fast and deliberate, release snappy */
+.btn-sharp-gold:active, .btn-sharp-ghost:active,
+.btn-pill-gold:active, .btn-pill-ghost:active,
+.form-submit:active, .pb-action:active,
+.qoldau:active, .c-find-btn:active, .tb-upload:active {
+  transform: scale(0.97) !important;
+  transition: transform 80ms ease-out !important;  /* instant on press */
+}
+.logo-badge:active  { transform: scale(0.95) !important; }
+.play-big:active    { transform: scale(0.96) !important; }
+.thumb-play:active  { transform: scale(0.92) !important; }
+.action-btn:active  { transform: scale(0.97) !important; transition: transform 80ms ease-out !important; }
+
+/* ── Logo badge: fix scale(1.08) → more subtle ── */
+.logo-badge {
+  transition: transform 200ms var(--ease-out),
+              box-shadow 200ms var(--ease-out) !important;
+}
+.logo-badge:hover { transform: scale(1.05) !important; box-shadow: 0 5px 18px rgba(125,145,88,.5) !important; }
+
+/* ── Play big button: fix scale(1.08) ── */
+.play-big {
+  transition: transform 200ms var(--ease-out),
+              box-shadow 200ms var(--ease-out) !important;
+}
+.play-big:hover { transform: scale(1.06) !important; }
+
+/* ── Ticker: add edge fade masks ── */
+.hero-ticker {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+}
+
+/* ── Touch devices: gate hover transforms ── */
+@media not all and (hover: hover) and (pointer: fine) {
+  .card:hover,
+  .pc:hover { transform: none !important; box-shadow: none !important; }
+  .logo-badge:hover,
+  .play-big:hover,
+  .tb-upload:hover,
+  .btn-sharp-gold:hover,
+  .btn-sharp-ghost:hover,
+  .pb-action:hover,
+  .form-submit:hover { transform: none !important; }
+}
+
+/* ── Reduced motion: keep opacity/color, strip position/scale ── */
+@media (prefers-reduced-motion: reduce) {
+  .page.active { animation: aya-fade-only 180ms ease both !important; }
+  .page.active .cards-h .card,
+  .page.active .pitch-grid .pc { animation: aya-fade-only 180ms ease both !important; }
+  @keyframes aya-fade-only {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .ticker-track { animation: none !important; }
+  .logo-badge:hover, .play-big:hover,
+  .btn-sharp-gold:hover, .pb-action:hover { transform: none !important; }
+  .btn-sharp-gold:active, .btn-pill-gold:active,
+  .form-submit:active, .qoldau:active { transform: none !important; }
+}
+
+/* ============================================================
+   PLATFORM-WIDE IMPECCABLE PASS
+   Applies editorial language to every page consistently
+============================================================ */
+
+/* ── Podkova for all page-level brand headings ── */
+.pb-title,
+.auth-logo,
+.settings-title,
+.about-project-title {
+  font-family: 'Podkova', Georgia, serif !important;
+}
+
+/* ── Sharp primary CTA buttons (3px radius) ── */
+.pb-action,
+.qoldau,
+.form-submit,
+.back-btn {
+  border-radius: 3px !important;
+}
+/* Hover: lift instead of scale for editorial feel */
+.pb-action:hover,
+.form-submit:hover,
+.qoldau:hover { transform: translateY(-1px) !important; }
+
+/* ── Auth card refinements ── */
+.auth-logo {
+  font-size: 32px !important;
+  letter-spacing: 4px !important;
+  margin-bottom: 2px !important;
+}
+.auth-card { border-radius: 4px !important; }
+.auth-tab.active { border-bottom-color: var(--gold); }
+
+/* ── Pitch page: editorial banner ── */
+.pb-title { font-size: 28px !important; letter-spacing: -.2px !important; line-height: 1.08; }
+.pitch-banner {
+  position: relative;
+  background: linear-gradient(135deg, #0C1808 0%, #111F0A 55%, #0a1a0c 100%) !important;
+}
+.pitch-banner::before {
+  content: 'PITCHING';
+  position: absolute; top: 24px; right: 28px;
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: 96px; font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px oklch(0.72 0.08 85 / 0.07);
+  letter-spacing: -4px; pointer-events: none; user-select: none;
+  line-height: 1;
+}
+.pb-eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
+}
+.pb-eyebrow::before {
+  content: ''; display: block;
+  width: 24px; height: 1px; background: var(--gold); flex-shrink: 0;
+}
+.pb-eyebrow span {
+  font-size: 9px; font-weight: 800;
+  color: var(--gold); text-transform: uppercase; letter-spacing: 2.5px;
+}
+
+/* ── Settings page editorial headers ── */
+.settings-title {
+  font-size: 28px !important; letter-spacing: 1px !important;
+  position: relative;
+  padding-bottom: 20px;
+  margin-bottom: 32px !important;
+}
+.settings-title::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 40px; height: 2px; background: var(--gold);
+}
+.settings-block-title {
+  font-size: 10px !important; font-weight: 900 !important;
+  text-transform: uppercase; letter-spacing: 2px !important;
+  color: var(--gold) !important; margin-bottom: 16px !important;
+}
+
+/* ── About page editorial ── */
+.about-project-title {
+  font-size: 52px !important; letter-spacing: 3px !important;
+}
+.about-research-title {
+  font-size: 10px !important; font-weight: 900 !important;
+  color: var(--gold) !important;
+  text-transform: uppercase; letter-spacing: 2px !important;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px !important;
+}
+.about-research-title::before {
+  content: ''; display: block;
+  width: 20px; height: 1px; background: var(--gold); flex-shrink: 0;
+}
+.about-section-title {
+  font-size: 12px !important; font-weight: 900 !important;
+  text-transform: uppercase; letter-spacing: 2px !important;
+  padding-bottom: 12px; margin-bottom: 20px !important;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex !important; align-items: center; gap: 10px;
+  color: var(--text2) !important;
+}
+.about-section-title::before {
+  content: ''; display: block;
+  width: 16px; height: 1px; background: var(--gold); flex-shrink: 0;
+}
+
+/* ── Profile cover grain texture ── */
+.profile-cover { position: relative; overflow: hidden; }
+.profile-cover::before {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px; mix-blend-mode: overlay; pointer-events: none;
+}
+.profile-cover::after { z-index: 2; }
+
+/* ── Profile name in Podkova ── */
+.prof-name {
+  font-family: 'Podkova', Georgia, serif !important;
+  font-size: 30px !important; letter-spacing: 0px !important;
+}
+
+/* ── Profile tab buttons sharp ── */
+.ptab { border-radius: 3px !important; }
+
+/* ── Tech tags square corners ── */
+.tech-tag { border-radius: 2px !important; }
+
+/* ── Type strip pills stay pill (filter chips, not CTAs) ── */
+/* .type-pill keeps --r-pill intentionally */
+
+/* ============================================================
+   HOME — IMPECCABLE REDESIGN
+============================================================ */
+/* SVG noise grain overlay */
+.hero-grain {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+}
+
+/* Giant faded "AYA" watermark */
+.hero-watermark {
+  position: absolute; right: -16px; bottom: -10px; z-index: 1;
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: 260px; font-weight: 900; line-height: 0.82;
+  color: transparent;
+  -webkit-text-stroke: 1.5px oklch(0.72 0.08 85 / 0.09);
+  letter-spacing: -12px;
+  pointer-events: none; user-select: none; white-space: nowrap;
+}
+
+/* Editorial eyebrow — rule + uppercase label */
+.hero-eyebrow-edit {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 22px;
+}
+.hero-eyebrow-edit::before {
+  content: ''; display: block;
+  width: 28px; height: 1px; background: var(--gold); flex-shrink: 0;
+}
+.hero-eyebrow-edit span {
+  font-size: 9px; font-weight: 800;
+  color: var(--gold); text-transform: uppercase; letter-spacing: 2.5px;
+}
+
+/* Podkova slab title for hero */
+.hero-title-slab {
+  font-family: 'Podkova', Georgia, serif;
+  font-size: 44px; font-weight: 900; line-height: 1.0;
+  letter-spacing: -0.5px; margin-bottom: 16px;
+}
+.hero-title-slab em { color: var(--gold); font-style: normal; }
+
+/* Sharp editorial buttons */
+.btn-sharp-gold {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold); color: #0f120a;
+  font-size: 11px; font-weight: 800;
+  padding: 13px 28px; border-radius: 3px;
+  text-transform: uppercase; letter-spacing: 1.2px; white-space: nowrap;
+  transition: all .15s; border: none; cursor: pointer;
+}
+.btn-sharp-gold:hover { background: var(--gold2); transform: translateY(-1px); }
+.btn-sharp-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; color: var(--text);
+  font-size: 11px; font-weight: 700;
+  padding: 13px 28px; border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.22);
+  text-transform: uppercase; letter-spacing: 1.2px; white-space: nowrap;
+  transition: all .15s; cursor: pointer;
+}
+.btn-sharp-ghost:hover { border-color: rgba(255,255,255,.6); transform: translateY(-1px); }
+
+/* Hero stats strip */
+.hero-stats {
+  display: flex; gap: 28px;
+  margin-top: 28px; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.hstat { display: flex; flex-direction: column; gap: 2px; }
+.hstat-num {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: 22px; font-weight: 900; color: var(--text);
+  letter-spacing: -.5px; line-height: 1;
+}
+.hstat-num em { color: var(--gold); font-style: normal; }
+.hstat-lbl {
+  font-size: 9px; font-weight: 700;
+  color: var(--text2); text-transform: uppercase; letter-spacing: 1.2px;
+}
+
+/* Ticker marquee */
+.hero-ticker {
+  overflow: hidden; position: relative;
+  height: 34px; display: flex; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.ticker-track {
+  display: flex; white-space: nowrap;
+  animation: ticker-move 44s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes ticker-move {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 22px;
+  font-size: 10.5px; font-weight: 600;
+  color: var(--text2); cursor: pointer; transition: color .12s;
+}
+.ticker-item:hover { color: var(--text); }
+.ticker-sep {
+  display: inline-block; width: 3px; height: 3px;
+  background: oklch(0.72 0.08 85 / 0.45);
+  border-radius: 50%; align-self: center; flex-shrink: 0;
+}
+.ticker-pill {
+  font-size: 8px; font-weight: 900;
+  color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px;
+  padding: 1px 7px; background: oklch(0.72 0.08 85 / 0.12);
+  border-radius: 2px; flex-shrink: 0;
+}
+
+/* Editorial numbered row headers */
+.row-head-edit {
+  display: flex; align-items: baseline; gap: 0;
+  margin-bottom: 20px; padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.row-num {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: 10px; font-weight: 900;
+  color: var(--gold); letter-spacing: 1px;
+  opacity: 0.65; margin-right: 14px; flex-shrink: 0;
+}
+.row-title-edit {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: 14px; font-weight: 900;
+  letter-spacing: .8px; text-transform: uppercase; flex: 1;
+  color: var(--text);
+}
+.row-more-edit {
+  font-size: 10px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 1px;
+  cursor: pointer; transition: color .15s;
+}
+.row-more-edit:hover { color: var(--text); }
+
+/* Featured card — 2× wider */
+.card-feat {
+  min-width: 320px !important;
+  position: relative;
+}
+.card-feat .thumb { aspect-ratio: 16/9 !important; }
+.card-feat .card-title { font-size: 15px; font-weight: 800; margin-top: 10px; }
+.feat-badge {
+  position: absolute; top: 8px; left: 8px; z-index: 3;
+  background: var(--gold); color: #0f120a;
+  font-size: 8px; font-weight: 900; padding: 3px 8px;
+  border-radius: 2px; text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+.skip-link {
+  position: absolute; top: -48px; left: 12px;
+  background: var(--gold); color: #0f120a;
+  padding: 10px 18px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 700; z-index: 10000;
+  text-decoration: none; transition: top .15s;
+}
+.skip-link:focus { top: 12px; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Перейти к содержимому</a>
 
 <!-- ======================================================  SIDEBAR  -->
 <aside class="sidebar">
@@ -1493,25 +2102,27 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     </div>
   </div>
 
+  <nav aria-label="Основная навигация">
   <div class="sidebar-block">
-    <div class="nav-item active" onclick="goPage('home',this)"><span class="ico">🏠</span><span data-i18n="nav_home">Главная</span></div>
-    <div class="nav-item" onclick="goPage('pitch',this)"><span class="ico">💡</span><span data-i18n="nav_pitch">Pitching</span><span class="badge">18</span></div>
-    <div class="nav-item" onclick="goPage('profile',this)"><span class="ico">👤</span><span data-i18n="nav_profile">Профиль</span></div>
-    <div class="nav-item" onclick="goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)"><span class="ico">🔖</span><span data-i18n="saved">Сохранённое</span></div>
-    <div id="nav-auth-btn" class="nav-item" onclick="navAuthClick()"><span class="ico">🔑</span><span id="nav-auth-label" data-i18n="login">Войти</span></div>
-    <div class="nav-item" onclick="goPage('settings',this)"><span class="ico">⚙️</span><span data-i18n="settings">Настройки</span></div>
-    <div class="nav-item" onclick="goPage('about',this)"><span class="ico">ℹ️</span><span data-i18n="about">О проекте</span></div>
+    <div class="nav-item active" role="button" tabindex="0" onclick="goPage('home',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('home',this)}"><span class="ico" aria-hidden="true">🏠</span><span data-i18n="nav_home">Главная</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('pitch',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('pitch',this)}"><span class="ico" aria-hidden="true">💡</span><span data-i18n="nav_pitch">Pitching</span><span class="badge">18</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('profile',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this)}"><span class="ico" aria-hidden="true">👤</span><span data-i18n="nav_profile">Профиль</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)}"><span class="ico" aria-hidden="true">🔖</span><span data-i18n="saved">Сохранённое</span></div>
+    <div id="nav-auth-btn" class="nav-item" role="button" tabindex="0" onclick="navAuthClick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navAuthClick()}"><span class="ico" aria-hidden="true">🔑</span><span id="nav-auth-label" data-i18n="login">Войти</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('settings',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('settings',this)}"><span class="ico" aria-hidden="true">⚙️</span><span data-i18n="settings">Настройки</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('about',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('about',this)}"><span class="ico" aria-hidden="true">ℹ️</span><span data-i18n="about">О проекте</span></div>
   </div>
+  </nav>
 
   <div class="sidebar-label" data-i18n="sidebar_content">Контент</div>
   <div class="sidebar-block2">
-    <div class="cat-item active" onclick="filterType('all',this)"><div class="cat-dot" style="background:#fff"></div><span data-i18n="filter_all">Все</span></div>
-    <div class="cat-item" onclick="filterType('film',this)"><div class="cat-dot" style="background:#d4a843"></div><span data-i18n="cat_films">Фильмы</span></div>
-    <div class="cat-item" onclick="filterType('music',this)"><div class="cat-dot" style="background:#e07ad4"></div><span data-i18n="cat_clips">Клипы</span></div>
-    <div class="cat-item" onclick="filterType('doc',this)"><div class="cat-dot" style="background:#7ad4e0"></div><span data-i18n="cat_doc">Документальное</span></div>
-    <div class="cat-item" onclick="filterType('podcast',this)"><div class="cat-dot" style="background:#a0d47a"></div><span data-i18n="cat_podcasts">Подкасты</span></div>
-    <div class="cat-item" onclick="filterType('social',this)"><div class="cat-dot" style="background:#d4907a"></div><span data-i18n="cat_social">Соц. ролики</span></div>
-    <div class="cat-item" onclick="filterType('short',this)"><div class="cat-dot" style="background:#7aaed4"></div><span data-i18n="cat_short">Короткий метр</span></div>
+    <div class="cat-item active" role="button" tabindex="0" onclick="filterType('all',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('all',this)}"><div class="cat-dot" aria-hidden="true" style="background:#fff"></div><span data-i18n="filter_all">Все</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('film',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('film',this)}"><div class="cat-dot" aria-hidden="true" style="background:#d4a843"></div><span data-i18n="cat_films">Фильмы</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('music',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('music',this)}"><div class="cat-dot" aria-hidden="true" style="background:#e07ad4"></div><span data-i18n="cat_clips">Клипы</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('doc',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('doc',this)}"><div class="cat-dot" aria-hidden="true" style="background:#7ad4e0"></div><span data-i18n="cat_doc">Документальное</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('podcast',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('podcast',this)}"><div class="cat-dot" aria-hidden="true" style="background:#a0d47a"></div><span data-i18n="cat_podcasts">Подкасты</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('social',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('social',this)}"><div class="cat-dot" aria-hidden="true" style="background:#d4907a"></div><span data-i18n="cat_social">Соц. ролики</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('short',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('short',this)}"><div class="cat-dot" aria-hidden="true" style="background:#7aaed4"></div><span data-i18n="cat_short">Короткий метр</span></div>
   </div>
 
   <!-- ADMIN SECTIONS (hidden by default, shown via JS) -->
@@ -1544,7 +2155,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   <img id="tb-aitu-logo" src="assets/aitu_logo_white.png" alt="Astana IT University" style="height:32px;object-fit:contain;flex-shrink:0;margin-right:4px">
   <div class="search-wrap">
     <span class="search-ico">🔍</span>
-    <input class="search-input" type="text" data-i18n-placeholder="search_ph" placeholder="Что ищешь? Фильм, клип, подкаст, автор…"/>
+    <input class="search-input" type="text" id="search-input" aria-label="Поиск" data-i18n-placeholder="search_ph" placeholder="Что ищешь? Фильм, клип, подкаст, автор…"/>
   </div>
   <div class="topbar-right">
     <div class="lang-switcher">
@@ -1559,29 +2170,51 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 </header>
 
 <!-- ======================================================  MAIN  -->
-<main class="main">
+<main class="main" id="main-content">
 
 <!-- ============ HOME ============ -->
 <div id="page-home" class="page active">
 
   <div class="hero">
     <div class="hero-bg"></div>
-    <div class="hero-mosaic">
-      <div class="hm hm1"></div><div class="hm hm2"></div><div class="hm hm3"></div>
-      <div class="hm hm4"></div><div class="hm hm5"></div>
-      <div class="hm hm6"></div><div class="hm hm7"></div><div class="hm hm8"></div>
-      <div class="hm hm9"></div><div class="hm hm10"></div>
-      <div class="hm hm11"></div><div class="hm hm12"></div>
-    </div>
-    <div class="hero-gradient"></div>
+    <div class="hero-grain"></div>
+    <div class="hero-watermark">AYA</div>
     <div class="hero-content">
-      <div class="hero-eyebrow" data-i18n="hero_eyebrow">✦ Казахстанский независимый контент</div>
-      <h1 class="hero-title" data-i18n="hero_title">Кино, музыка, подкасты — всё своё</h1>
+      <div class="hero-eyebrow-edit"><span data-i18n="hero_eyebrow">Казахстанский независимый контент</span></div>
+      <h1 class="hero-title-slab" data-i18n="hero_title">Кино, музыка, подкасты — <em>всё своё</em></h1>
       <p class="hero-desc" data-i18n="hero_desc">Единая платформа для независимого казахстанского контента. Смотри, слушай, поддерживай авторов и находи команду.</p>
       <div class="hero-actions">
-        <button class="btn-pill-gold" onclick="openWatch()" data-i18n="btn_watch_now">▶ Смотреть сейчас</button>
-        <button class="btn-pill-ghost" onclick="goPage('pitch',null)" data-i18n="btn_support">💡 Поддержать проект</button>
+        <button class="btn-sharp-gold" onclick="openWatch()" data-i18n="btn_watch_now">▶ Смотреть сейчас</button>
+        <button class="btn-sharp-ghost" onclick="goPage('pitch',null)" data-i18n="btn_support">Поддержать проект</button>
       </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num">340<em>+</em></div><div class="hstat-lbl">Работ</div></div>
+        <div class="hstat"><div class="hstat-num">18</div><div class="hstat-lbl">Авторов</div></div>
+        <div class="hstat"><div class="hstat-num">3</div><div class="hstat-lbl">Жанра</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticker marquee -->
+  <div class="hero-ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item"><span class="ticker-pill">Новое</span> Боз жел — Асель Нурланова</span><span class="ticker-sep"></span>
+      <span class="ticker-item">Жер — Ninety One <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
+      <span class="ticker-item"><span class="ticker-pill">Доку</span> Жетісу. Эпизод I — Данияр Смаков</span><span class="ticker-sep"></span>
+      <span class="ticker-item">BATYR — Ана <span class="ticker-pill">24М</span></span><span class="ticker-sep"></span>
+      <span class="ticker-item"><span class="ticker-pill">Фест.</span> Арал. Реквием — Медеу Тоқаев</span><span class="ticker-sep"></span>
+      <span class="ticker-item">Dala FM — Кино #12 <span class="ticker-pill">Подкаст</span></span><span class="ticker-sep"></span>
+      <span class="ticker-item"><span class="ticker-pill">Новое</span> Байланыс — Сания Алимова</span><span class="ticker-sep"></span>
+      <span class="ticker-item">Skryptonite — Горы <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item"><span class="ticker-pill">Новое</span> Боз жел — Асель Нурланова</span><span class="ticker-sep"></span>
+      <span class="ticker-item">Жер — Ninety One <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
+      <span class="ticker-item"><span class="ticker-pill">Доку</span> Жетісу. Эпизод I — Данияр Смаков</span><span class="ticker-sep"></span>
+      <span class="ticker-item">BATYR — Ана <span class="ticker-pill">24М</span></span><span class="ticker-sep"></span>
+      <span class="ticker-item"><span class="ticker-pill">Фест.</span> Арал. Реквием — Медеу Тоқаев</span><span class="ticker-sep"></span>
+      <span class="ticker-item">Dala FM — Кино #12 <span class="ticker-pill">Подкаст</span></span><span class="ticker-sep"></span>
+      <span class="ticker-item"><span class="ticker-pill">Новое</span> Байланыс — Сания Алимова</span><span class="ticker-sep"></span>
+      <span class="ticker-item">Skryptonite — Горы <span class="ticker-pill">Клип</span></span><span class="ticker-sep"></span>
     </div>
   </div>
 
@@ -1598,9 +2231,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   <div class="constructor-bar">
     <div class="constructor-label" data-i18n="constructor_label">✦ Конструктор поиска — найди контент под своё настроение</div>
     <div class="constructor-row">
-      <select class="csel" id="cs-type"><option value="">Тип контента…</option><option>Фильм</option><option>Музыкальный клип</option><option>Документальный</option><option>Подкаст</option><option>Соц. ролик</option><option>Короткий метр</option></select>
-      <select class="csel" id="cs-loc"><option value="">Локация / атмосфера…</option><option>Алматы</option><option>Степь / Аул</option><option>Горы</option><option>Нур-Султан</option><option>Ностальгия 90-х</option></select>
-      <select class="csel" id="cs-feat"><option value="">Особенности…</option><option>Дебют</option><option>Женский взгляд</option><option>Фест. победитель</option><option>Социальная тема</option><option>Молодые авторы</option></select>
+      <select class="csel" id="cs-type" aria-label="Тип контента"><option value="">Тип контента…</option><option>Фильм</option><option>Музыкальный клип</option><option>Документальный</option><option>Подкаст</option><option>Соц. ролик</option><option>Короткий метр</option></select>
+      <select class="csel" id="cs-loc" aria-label="Локация или атмосфера"><option value="">Локация / атмосфера…</option><option>Алматы</option><option>Степь / Аул</option><option>Горы</option><option>Нур-Султан</option><option>Ностальгия 90-х</option></select>
+      <select class="csel" id="cs-feat" aria-label="Особенности контента"><option value="">Особенности…</option><option>Дебют</option><option>Женский взгляд</option><option>Фест. победитель</option><option>Социальная тема</option><option>Молодые авторы</option></select>
       <button class="c-find-btn" onclick="runConstructor()" data-i18n="cs_find">Найти →</button>
     </div>
     <div class="c-result" id="c-res">🔍 <span>Найдено <strong id="c-count"></strong> работ по запросу <em id="c-query"></em></span></div>
@@ -1609,9 +2242,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   <div class="feed">
 
     <div class="row">
-      <div class="row-head"><span class="row-title" data-i18n="row_trending">🔥 Трендовое сейчас</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="row-head-edit"><span class="row-num">01</span><span class="row-title-edit" data-i18n="row_trending">Трендовое сейчас</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
       <div class="cards-h">
-        <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p1"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Боз жел</div><div class="card-sub">Асель Нурланова · 2023</div><div class="card-rating">★★★★☆ 4.2</div></div>
+        <div class="card w-200 card-feat" onclick="openWatch()"><div class="feat-badge">В тренде</div><div class="thumb r-film"><div class="thumb-inner p1"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Боз жел</div><div class="card-sub">Асель Нурланова · 2023</div><div class="card-rating">★★★★☆ 4.2</div></div>
         <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p2"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жер — Ninety One</div><div class="card-sub">Ninety One · 2024</div><div class="card-rating">★★★★★ 4.9</div></div>
         <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p3"></div><span class="ct-badge ct-doc">Доку</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Жетісу. Эпизод I</div><div class="card-sub">Данияр Смаков · 2024</div><div class="card-rating">★★★★★ 4.8</div></div>
         <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p6"></div><span class="ct-badge ct-short">Короткий</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Дала толқыны</div><div class="card-sub">Айгерим Бекова · 2022</div><div class="card-rating">★★★★☆ 4.0</div></div>
@@ -1621,7 +2254,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     </div>
 
     <div class="row">
-      <div class="row-head"><span class="row-title" data-i18n="row_music">🎵 Музыкальные клипы</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
       <div class="cards-h">
         <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p2"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">BATYR — Ана</div><div class="card-sub">BATYR · 24М просм.</div></div>
         <div class="card w-220" onclick="openWatch()"><div class="thumb r-wide"><div class="thumb-inner p7"></div><span class="ct-badge ct-music">Клип</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Moldanazar — Мен</div><div class="card-sub">Moldanazar · 11М просм.</div></div>
@@ -1631,7 +2264,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     </div>
 
     <div class="row">
-      <div class="row-head"><span class="row-title" data-i18n="row_podcasts">🎙 Подкасты</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
       <div class="cards-h">
         <!-- Podcasts use circle thumbs like Spotify -->
         <div class="card w-170" onclick="openWatch()"><div class="thumb r-sq" style="border-radius:12px"><div class="thumb-inner p10"></div><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Qazaq Talk #47</div><div class="card-sub">Qazaq Talk · 2ч 10м</div></div>
@@ -1643,7 +2276,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     </div>
 
     <div class="row">
-      <div class="row-head"><span class="row-title" data-i18n="row_festival">🏆 Фестивальные победители</span><span class="row-more" data-i18n="row_see_all">Показать всё →</span></div>
+      <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_festival">Фестивальные победители</span><span class="row-more-edit" data-i18n="row_see_all">Показать всё →</span></div>
       <div class="cards-h">
         <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p4"></div><span class="ct-badge ct-doc">Доку</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Арал. Реквием</div><div class="card-sub">Медеу Тоқаев · 2020</div><div class="card-rating">★★★★★ 4.8</div></div>
         <div class="card w-200" onclick="openWatch()"><div class="thumb r-film"><div class="thumb-inner p9"></div><span class="ct-badge ct-film">Фильм</span><div class="thumb-play-wrap"><div class="thumb-play">▶</div></div></div><div class="card-title">Байланыс</div><div class="card-sub">Сания Алимова · 2022</div><div class="card-rating">★★★★★ 4.9</div></div>
@@ -1702,6 +2335,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <span>Не воспроизводится? Открыть на YouTube →</span>
       </a>
 
+      <div class="pb-eyebrow" style="margin-top:18px;margin-bottom:10px"><span>Фильм · Казахстан · 2023</span></div>
       <h1 class="video-title">Боз жел <span style="color:var(--text2);font-weight:400;font-size:16px">/ Pale Wind</span></h1>
       <div class="video-tags">
         <span class="vtag gold">★ 4.2</span>
@@ -1740,6 +2374,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           <div class="comment-av" id="comment-av-user">Е</div>
           <div class="comment-input-expanded">
             <textarea class="comment-input" id="comment-textarea" rows="1"
+              aria-label="Написать рецензию или комментарий"
               data-i18n-placeholder="comment_ph" placeholder="Напиши рецензию или комментарий…"
               oninput="this.rows=this.value.split('\n').length>2?3:1;document.getElementById('comment-submit-btn').style.display=this.value.trim()?'block':'none'"></textarea>
             <button class="comment-submit-btn" id="comment-submit-btn" style="display:none;align-self:flex-end"
@@ -1783,6 +2418,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   <div class="pitch-page">
     <div class="pitch-banner">
       <div>
+        <div class="pb-eyebrow"><span data-i18n="pitch_eyebrow">Краудфандинг независимого контента</span></div>
         <div class="pb-title">Pitching — <em>инкубатор идей</em></div>
         <p class="pb-desc" data-i18n="pitch_desc">Фильмы, клипы, подкасты, соц. проекты — любая идея может найти поддержку. Каждый вклад приближает историю к экрану.</p>
       </div>
@@ -1850,7 +2486,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <div id="prof-collections" class="prof-collections" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
           <div style="font-size:13px;font-weight:700;color:var(--text2)">Мои коллекции</div>
-          <button onclick="openCreateCollection()" style="padding:6px 14px;border-radius:20px;border:none;background:var(--teal);color:var(--bg);font-size:11px;font-weight:700;cursor:pointer">+ Новая</button>
+          <button onclick="openCreateCollection()" style="padding:6px 14px;border-radius:3px;border:none;background:var(--teal);color:var(--bg);font-size:11px;font-weight:700;cursor:pointer">+ Новая</button>
         </div>
         <div id="my-coll-grid" class="coll-grid"></div>
         <div id="followed-coll-section" style="display:none;margin-top:28px">
@@ -1864,7 +2500,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <div style="font-size:56px;opacity:.15">👤</div>
         <div style="font-size:20px;font-weight:800;letter-spacing:-.5px" data-i18n="guest_title">Войдите в аккаунт</div>
         <div style="font-size:13px;color:var(--text2);max-width:340px;line-height:1.6" data-i18n="guest_sub">Зарегистрируйтесь бесплатно, чтобы загружать контент, участвовать в питч-кампаниях и строить свою команду.</div>
-        <button onclick="goPage('auth',null)" style="background:var(--gold);color:#121212;font-weight:800;font-size:13px;padding:11px 28px;border-radius:var(--r-pill);letter-spacing:.5px;cursor:pointer" data-i18n="guest_btn">ВОЙТИ / РЕГИСТРАЦИЯ</button>
+        <button onclick="goPage('auth',null)" class="btn-sharp-gold" data-i18n="guest_btn">ВОЙТИ / РЕГИСТРАЦИЯ</button>
 
       </div>
     </div>
@@ -1876,8 +2512,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <div id="page-auth" class="page">
   <div class="auth-page">
     <div class="auth-card">
+      <div class="pb-eyebrow" style="margin-bottom:8px"><span data-i18n="auth_sub">Казахстанский независимый контент</span></div>
       <div class="auth-logo">AYA</div>
-      <div class="auth-subtitle" data-i18n="auth_sub">Казахстанский независимый контент</div>
       <div class="auth-tabs">
         <button class="auth-tab active" onclick="switchAuthTab('login',this)" data-i18n="login_tab">Войти</button>
         <button class="auth-tab" onclick="switchAuthTab('register',this)" data-i18n="register_tab">Регистрация</button>
@@ -1888,11 +2524,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <div id="login-error" class="form-error" style="display:none"></div>
         <div class="form-group">
           <label class="form-label" data-i18n="email_label">Email</label>
-          <input id="login-email" class="form-input" type="email" placeholder="example@mail.com"/>
+          <input id="login-email" class="form-input" type="email" autocomplete="email" placeholder="example@mail.com"/>
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="password_label">Пароль</label>
-          <input id="login-password" class="form-input" type="password" placeholder="••••••••"/>
+          <input id="login-password" class="form-input" type="password" autocomplete="current-password" placeholder="••••••••"/>
         </div>
         <button id="login-btn" class="form-submit" onclick="handleLogin()" data-i18n="login_btn">Войти</button>
         <p class="form-note">
@@ -1907,20 +2543,20 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" data-i18n="firstname_label">Имя</label>
-            <input id="reg-first" class="form-input" type="text" placeholder="Ерканат"/>
+            <input id="reg-first" class="form-input" type="text" autocomplete="given-name" placeholder="Ерканат"/>
           </div>
           <div class="form-group">
             <label class="form-label" data-i18n="lastname_label">Фамилия</label>
-            <input id="reg-last" class="form-input" type="text" placeholder="Малаев"/>
+            <input id="reg-last" class="form-input" type="text" autocomplete="family-name" placeholder="Малаев"/>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="email_label">Email</label>
-          <input id="reg-email" class="form-input" type="email" placeholder="example@mail.com"/>
+          <input id="reg-email" class="form-input" type="email" autocomplete="email" placeholder="example@mail.com"/>
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="password_label">Пароль</label>
-          <input id="reg-password" class="form-input" type="password" placeholder="Минимум 6 символов"/>
+          <input id="reg-password" class="form-input" type="password" autocomplete="new-password" placeholder="Минимум 6 символов"/>
         </div>
         <div class="form-group">
           <div class="role-label-sm" data-i18n="role_label">Я на платформе как…</div>
@@ -1952,6 +2588,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <!-- ============ SETTINGS ============ -->
 <div id="page-settings" class="page">
   <div class="settings-page">
+    <div class="pb-eyebrow" style="margin-bottom:10px"><span>Параметры аккаунта</span></div>
     <div class="settings-title" data-i18n="settings_title">Настройки</div>
 
     <!-- Account & Role -->
@@ -1974,7 +2611,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           <div class="settings-row-label">Email</div>
           <div class="settings-row-desc">malayevyerkanat@gmail.com</div>
         </div>
-        <button style="background:var(--bg3);color:var(--text2);font-size:12px;font-weight:700;padding:7px 16px;border-radius:var(--r-pill)" data-i18n="change_btn">Изменить</button>
+        <button style="background:var(--bg3);color:var(--text2);font-size:12px;font-weight:700;padding:7px 16px;border-radius:3px" data-i18n="change_btn">Изменить</button>
       </div>
     </div>
 
@@ -2129,6 +2766,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           School of Creative Industries · Media Technologies
         </div>
       </div>
+      <div class="pb-eyebrow" style="margin-bottom:10px"><span>Art Yearns Action — Дипломный проект 2025</span></div>
       <div class="about-project-title">AYA</div>
       <p class="about-tagline" data-i18n="about_tagline">
         Гибридная цифровая экосистема для независимого казахстанского контента. Практический продукт дипломного исследования на тему «Государственное и независимое кино Казахстана 2020–2025: проблемы рентабельности, дистрибуции и вовлечённости аудитории».
@@ -3818,6 +4456,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     document.querySelectorAll('.lang-opt').forEach(b => {
       b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang);
     });
+    // Update html[lang] for screen readers (IETF BCP 47: Kazakh = 'kk')
+    document.documentElement.lang = lang === 'kz' ? 'kk' : lang;
     applyLang(lang);
   }
 
@@ -4288,7 +4928,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <!-- Modal and dropdown -->
 <div id="modal-overlay" onclick="closeModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center">
   <div id="modal-box" onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:28px;min-width:340px;max-width:480px;width:90%;box-shadow:var(--shadow-lg);position:relative;border:1px solid var(--bg5)">
-    <div id="modal-title" style="font-family:'Barlow Condensed','Barlow',system-ui,sans-serif;font-size:22px;font-weight:800;margin-bottom:12px;letter-spacing:-.2px"></div>
+    <div id="modal-title" style="font-family:'Barlow',system-ui,sans-serif;font-size:22px;font-weight:800;margin-bottom:12px;letter-spacing:-.2px"></div>
     <div id="modal-body" style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6"></div>
     <div id="modal-actions" style="display:flex;gap:10px;justify-content:flex-end"></div>
   </div>
