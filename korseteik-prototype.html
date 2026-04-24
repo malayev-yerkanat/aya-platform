@@ -1455,7 +1455,9 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   .profile-tabs { gap: 0; }
   .ptab { padding: 10px 12px; font-size: 12px; }
 
-  /* Fix over-scrolling: remove forced min-height so pages only take up as much space as their content */
+  /* Fix over-scrolling: body's flex+min-height:100vh was stretching .main to full viewport height
+     even when content was short. Remove the forced height and stop flex-stretch. */
+  body { min-height: unset; align-items: flex-start; }
   .main { min-height: unset; }
 
   /* Auth: stop vertical centering (creates dead void above the card on mobile) */
