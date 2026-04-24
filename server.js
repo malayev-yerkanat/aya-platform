@@ -186,6 +186,76 @@ async function router(req, res) {
     return json(res, 200, { user: safeUser(user) });
   }
 
+  // ── GET /api/content ─────────────────────────────────────────────────────
+  if (method === 'GET' && url === '/api/content') {
+    const db = readDB();
+    // Strip deleteToken before sending to clients
+    const content = (db.content || []).map(({ deleteToken, ...rest }) => rest);
+    return json(res, 200, { content });
+  }
+
+  // ── POST /api/content ─────────────────────────────────────────────────────
+  if (method === 'POST' && url === '/api/content') {
+    let body;
+    try { body = await readBody(req); }
+    catch { return json(res, 400, { error: 'Invalid JSON' }); }
+
+    const { title, desc, cat, catLabel, crew, cast, tags, video_url, uploaderId, uploaderHandle } = body;
+    if (!title)     return json(res, 400, { error: 'Title required' });
+    if (!video_url) return json(res, 400, { error: 'video_url required' });
+
+    const db = readDB();
+    if (!db.content) db.content = [];
+
+    const deleteToken = crypto.randomBytes(16).toString('hex');
+    const item = {
+      id:             Date.now(),
+      title,
+      desc:           desc          || '',
+      cat:            cat           || 'ct-film',
+      catLabel:       catLabel      || 'Фильм',
+      crew:           crew          || [],
+      cast:           cast          || [],
+      tags:           tags          || [],
+      video_url,
+      uploaderId:     uploaderId    || null,
+      uploaderHandle: uploaderHandle|| null,
+      deleteToken,
+      ts:             Date.now()
+    };
+
+    db.content.unshift(item);
+    writeDB(db);
+
+    return json(res, 201, { content: item, deleteToken });
+  }
+
+  // ── DELETE /api/content/:id ───────────────────────────────────────────────
+  if (method === 'DELETE' && /^\/api\/content\/\d+$/.test(url)) {
+    const id = parseInt(url.split('/').pop(), 10);
+
+    let body;
+    try { body = await readBody(req); }
+    catch { return json(res, 400, { error: 'Invalid JSON' }); }
+
+    const { deleteToken } = body;
+    if (!deleteToken) return json(res, 400, { error: 'deleteToken required' });
+
+    const db = readDB();
+    if (!db.content) return json(res, 404, { error: 'Not found' });
+
+    const idx = db.content.findIndex(c => c.id === id);
+    if (idx === -1) return json(res, 404, { error: 'Not found' });
+
+    if (db.content[idx].deleteToken !== deleteToken)
+      return json(res, 403, { error: 'Not authorized' });
+
+    db.content.splice(idx, 1);
+    writeDB(db);
+
+    return json(res, 200, { success: true });
+  }
+
   // ── Serve static assets (images, fonts, etc.) ────────────────────────────
   if (method === 'GET' && url.startsWith('/assets/')) {
     const assetPath = path.join(__dirname, url);

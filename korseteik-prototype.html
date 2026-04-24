@@ -2459,6 +2459,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <button class="action-btn" data-i18n="btn_review">💬 Рецензия</button>
         <button class="action-btn" id="watch-save-btn" onclick="openCollectionPicker()" data-i18n="btn_save">🔖 Сохранить</button>
         <button class="action-btn" data-i18n="btn_share">↗ Поделиться</button>
+        <button class="action-btn" id="watch-delete-btn" onclick="deleteCurrentContent()" style="display:none;color:#ff5555;border-color:rgba(255,85,85,.3)">🗑 Удалить</button>
       </div>
       <div class="desc-box">
         История молодого фотографа, вернувшегося в родное село после десяти лет в городе. Встреча с прошлым, забытыми лицами и бескрайней степью заставляет переосмыслить всё, чем он жил.<br/><br/>
@@ -3596,6 +3597,65 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   function getAyaContent() { try { return JSON.parse(localStorage.getItem('aya_content'))||[]; } catch{return[];} }
   function saveAyaContent(arr) { localStorage.setItem('aya_content', JSON.stringify(arr)); }
 
+  /* Delete tokens — keyed by content id, only present on the uploading device */
+  function getDeleteTokens() { try { return JSON.parse(localStorage.getItem('aya_delete_tokens'))||{}; } catch{return{};} }
+  function saveDeleteToken(id, token) {
+    const t = getDeleteTokens(); t[id] = token;
+    localStorage.setItem('aya_delete_tokens', JSON.stringify(t));
+  }
+  function getDeleteToken(id) { return getDeleteTokens()[id] || null; }
+  function removeDeleteToken(id) {
+    const t = getDeleteTokens(); delete t[id];
+    localStorage.setItem('aya_delete_tokens', JSON.stringify(t));
+  }
+
+  /* POST content to server; on success store deleteToken locally */
+  async function syncContentToServer(content) {
+    try {
+      const user = getUser();
+      const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title:          content.title,
+          desc:           content.desc,
+          cat:            content.cat,
+          catLabel:       content.catLabel,
+          crew:           content.crew,
+          cast:           content.cast,
+          tags:           content.tags,
+          video_url:      content.video_url,
+          uploaderId:     user ? user.id : null,
+          uploaderHandle: user ? (user.handle || '') : ''
+        })
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.deleteToken) saveDeleteToken(data.content.id, data.deleteToken);
+      // Replace local id with server id so they stay in sync
+      const all = getAyaContent();
+      const idx = all.findIndex(c => c.id === content.id);
+      if (idx !== -1) { all[idx].id = data.content.id; saveAyaContent(all); }
+    } catch(e) { /* offline or server unavailable — content already in localStorage */ }
+  }
+
+  /* Fetch server content and merge into local storage / re-render */
+  async function loadServerContent() {
+    try {
+      const res = await fetch('/api/content');
+      if (!res.ok) return;
+      const { content } = await res.json();
+      if (!content || !content.length) return;
+      const local = getAyaContent();
+      const localIds = new Set(local.map(c => c.id));
+      let added = false;
+      content.forEach(c => {
+        if (!localIds.has(c.id)) { local.push(c); added = true; }
+      });
+      if (added) { saveAyaContent(local); renderUserContent(); }
+    } catch(e) { /* server unreachable */ }
+  }
+
   function getYouTubeId(url) {
     if (!url) return null;
     const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
@@ -3622,6 +3682,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     document.getElementById('yt-open-link').style.display = 'none';
     document.getElementById('yt-fallback').style.display = 'none';
 
+    // Always hide delete button first; it gets shown below if user owns the content
+    const _dBtn = document.getElementById('watch-delete-btn');
+    if (_dBtn) _dBtn.style.display = 'none';
+
     if (!content) { updateWatchLikeBtn(); return; } // demo mode
     _currentContent = content;
 
@@ -3647,20 +3711,60 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     } else if (content.video_url) {
       // Cloudinary URL: load directly into HTML5 player
       const playBtn = placeholder.querySelector('.play-big');
-      playBtn.onclick = function() {
+      const startPlay = function() {
         placeholder.style.display = 'none';
         videoEl.src = content.video_url;
         videoEl.style.display = 'block';
         videoEl.play().catch(()=>{});
       };
-      // Also wire the "▶ Смотреть" action button
-      document.querySelector('.action-btn.primary').onclick = function() {
-        placeholder.style.display = 'none';
-        videoEl.src = content.video_url;
-        videoEl.style.display = 'block';
-        videoEl.play().catch(()=>{});
-      };
+      playBtn.onclick = startPlay;
+      document.querySelector('.action-btn.primary').onclick = startPlay;
     }
+
+    // Show delete button only if this device uploaded the content (has the delete token)
+    const deleteBtn = document.getElementById('watch-delete-btn');
+    if (deleteBtn) {
+      const hasToken = content && content.id && getDeleteToken(content.id);
+      deleteBtn.style.display = hasToken ? '' : 'none';
+    }
+  }
+
+  async function deleteCurrentContent() {
+    if (!_currentContent) return;
+    const token = getDeleteToken(_currentContent.id);
+    if (!token) return;
+
+    showModal({
+      title: 'Удалить видео?',
+      body: `«${_currentContent.title}» будет удалено навсегда. Это действие нельзя отменить.`,
+      actions: [
+        {
+          label: 'Отмена',
+          style: 'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:var(--bg3);color:var(--text2)'
+        },
+        {
+          label: 'Удалить',
+          style: 'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#ff5555;color:#fff',
+          action: async () => {
+            try {
+              await fetch(`/api/content/${_currentContent.id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deleteToken: token })
+              });
+            } catch(e) { /* server unreachable — still remove locally */ }
+
+            // Remove from localStorage
+            const all = getAyaContent().filter(c => c.id !== _currentContent.id);
+            saveAyaContent(all);
+            removeDeleteToken(_currentContent.id);
+
+            renderUserContent();
+            goBack();
+          }
+        }
+      ]
+    });
   }
 
   /* ---- Upload modal ---- */
@@ -3843,6 +3947,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
     closeUploadModal();
     renderUserContent();
+
+    // Sync to server so other devices can see it
+    syncContentToServer(content);
 
     // Immediately open the watch page for the uploaded content
     openWatch(content);
@@ -5122,8 +5229,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     // Restore theme
     const savedTheme = localStorage.getItem('aya_theme') || 'dark';
     setTheme(savedTheme);
-    // Render any previously uploaded community content
+    // Render any previously uploaded community content (local cache first, then sync from server)
     renderUserContent();
+    loadServerContent();
     // Render team grid
     renderTeamGrid();
     // Collections init
