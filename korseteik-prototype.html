@@ -1450,11 +1450,21 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 
   /* Profile */
   .profile-body { padding: 0 14px; }
+  .profile-page { padding-bottom: 16px; } /* main already has bottom padding for nav */
   .prof-name { font-size: 20px; }
   .profile-tabs { gap: 0; }
   .ptab { padding: 10px 12px; font-size: 12px; }
 
-  /* Auth */
+  /* Fix over-scrolling: remove forced min-height so pages only take up as much space as their content */
+  .main { min-height: unset; }
+
+  /* Auth: stop vertical centering (creates dead void above the card on mobile) */
+  .auth-page {
+    min-height: unset;
+    align-items: flex-start;
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
   .auth-card { padding: 28px 20px 24px; }
 
   /* Pitch */
