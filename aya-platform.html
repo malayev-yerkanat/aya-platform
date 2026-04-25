@@ -266,11 +266,17 @@ body.light-theme .about-aitu-light { display: block; }
    HOME — HERO
 ============================================================ */
 .hero {
-  position: relative; height: 400px; overflow: hidden;
+  position: relative; height: 500px; overflow: hidden;
 }
 .hero-bg {
   position: absolute; inset: 0;
   background: linear-gradient(135deg, #0C1808 0%, #111F0A 45%, #0A1A0C 100%);
+}
+.hero-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 70% at 30% 60%, rgba(125,145,88,0.12) 0%, transparent 70%);
+  pointer-events: none;
 }
 /* Film-strip mosaic */
 .hero-mosaic {
@@ -278,7 +284,7 @@ body.light-theme .about-aitu-light { display: block; }
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap: 3px; padding: 3px; opacity: .55;
+  gap: 3px; padding: 3px; opacity: .40;
 }
 .hm { border-radius: 3px; }
 .hm1 { background: linear-gradient(145deg,#1e3518,#0f2009); grid-row:span 2; }
@@ -300,7 +306,7 @@ body.light-theme .about-aitu-light { display: block; }
 }
 .hero-content {
   position: relative; z-index: 2;
-  padding: 56px 36px; max-width: 480px;
+  padding: 72px 44px; max-width: 500px;
 }
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 6px;
@@ -317,8 +323,8 @@ body.light-theme .about-aitu-light { display: block; }
 }
 .hero-title em { color: var(--gold); font-style: normal; }
 .hero-desc {
-  font-size: 14px; color: var(--text2); line-height: 1.65;
-  margin-bottom: 24px; max-width: 380px;
+  font-size: 14px; color: var(--text2); line-height: 1.7;
+  margin-bottom: 28px; max-width: 400px; text-wrap: pretty;
 }
 .hero-actions { display: flex; gap: 10px; flex-wrap: nowrap; align-items: center; }
 
@@ -359,7 +365,9 @@ body.light-theme .about-aitu-light { display: block; }
   /* Spotify's pill filter chip */
 }
 .type-pill:hover { background: var(--bg4); color: var(--text); }
-.type-pill.active { background: var(--gold); color: var(--bg); font-weight: 700; }
+.type-pill.active { background: var(--gold); color: var(--bg); font-weight: 700;
+  box-shadow: 0 2px 0 0 var(--gold);
+}
 
 /* Constructor */
 .constructor-bar {
@@ -367,6 +375,7 @@ body.light-theme .about-aitu-light { display: block; }
   background: var(--bg2); border-radius: var(--r-lg);
   padding: 20px 24px;
   box-shadow: var(--shadow-sm);
+  border-left: 2px solid rgba(125,145,88,0.35);
 }
 .constructor-label {
   font-size: 11px; font-weight: 800; color: var(--text2);
@@ -402,8 +411,8 @@ body.light-theme .about-aitu-light { display: block; }
 .c-result.show { display: flex; }
 
 /* Feed */
-.feed { padding: 8px 28px 60px; }
-.row { margin-bottom: 36px; }
+.feed { padding: 20px 28px 60px; }
+.row { margin-bottom: 48px; }
 .row-head {
   display: flex; align-items: baseline; justify-content: space-between;
   margin-bottom: 16px;
@@ -418,6 +427,8 @@ body.light-theme .about-aitu-light { display: block; }
 .cards-h {
   display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px;
   scrollbar-width: thin;
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
 /* ============================================================
@@ -1214,7 +1225,7 @@ body.role-admin .prof-dots, body.role-moderator .prof-dots { display: flex; }
 /* ── Request cards ── */
 .req-card { background: var(--bg2); border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--bg4); }
 .req-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.req-card-title { font-weight: 700; font-size: 14px; flex: 1; }
+.req-card-title { font-weight: 700; font-size: 14px; flex: 1; display: flex; align-items: center; gap: 6px; }
 .req-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
 .req-status.pending { background: var(--gold-dim); color: var(--gold); }
 .req-status.approved { background: rgba(76,175,80,.15); color: #4caf50; }
@@ -1360,11 +1371,11 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   .tb-upload { padding: 7px 12px; font-size: 11px; letter-spacing: 0; }
 
   /* Hero — updated for new elements */
-  .hero-title-slab { font-size: 30px; }
-  .hero-content { padding: 44px 24px; max-width: 380px; }
-  .hero-watermark { font-size: 180px; right: -10px; }
+  .hero-title-slab { font-size: 38px; }
+  .hero-content { padding: 52px 28px; max-width: 420px; }
+  .hero-watermark { font-size: 200px; right: -10px; }
   .hero-stats { gap: 20px; }
-  .hstat-num { font-size: 18px; }
+  .hstat-num { font-size: 20px; }
 
   /* Content */
   .section-head, .trending-head { padding: 24px 20px 12px; }
@@ -1422,7 +1433,7 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   .hero-content { padding: 28px 16px 24px; max-width: 100%; }
   .hero-watermark { font-size: 110px; right: -4px; bottom: -8px; letter-spacing: -6px; opacity: .06; }
   .hero-stats { gap: 16px; margin-top: 20px; padding-top: 16px; }
-  .hstat-num { font-size: 18px; }
+  .hstat-num { font-size: 20px; }
   .hstat-lbl { font-size: 8px; }
   .btn-sharp-gold, .btn-sharp-ghost { padding: 10px 18px; font-size: 11px; }
   .btn-pill-gold, .btn-pill-ghost { padding: 10px 18px; font-size: 11px; }
@@ -2085,8 +2096,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   font-family: 'Barlow', system-ui, sans-serif;
   font-size: 260px; font-weight: 900; line-height: 0.82;
   color: transparent;
-  -webkit-text-stroke: 1.5px oklch(0.72 0.08 85 / 0.09);
-  letter-spacing: -12px;
+  -webkit-text-stroke: 1.5px oklch(0.72 0.08 85 / 0.13);
+  letter-spacing: -14px;
   pointer-events: none; user-select: none; white-space: nowrap;
 }
 
@@ -2097,7 +2108,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 }
 .hero-eyebrow-edit::before {
   content: ''; display: block;
-  width: 28px; height: 1px; background: var(--gold); flex-shrink: 0;
+  width: 32px; height: 1px; background: var(--gold); flex-shrink: 0;
 }
 .hero-eyebrow-edit span {
   font-size: 9px; font-weight: 800;
@@ -2107,8 +2118,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 /* Podkova slab title for hero */
 .hero-title-slab {
   font-family: 'Podkova', Georgia, serif;
-  font-size: 44px; font-weight: 900; line-height: 1.0;
-  letter-spacing: -0.5px; margin-bottom: 16px;
+  font-size: 54px; font-weight: 900; line-height: 0.97;
+  letter-spacing: -1px; margin-bottom: 18px;
 }
 .hero-title-slab em { color: var(--gold); font-style: normal; }
 
@@ -2135,14 +2146,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
 /* Hero stats strip */
 .hero-stats {
-  display: flex; gap: 28px;
-  margin-top: 28px; padding-top: 20px;
+  display: flex; gap: 32px;
+  margin-top: 32px; padding-top: 22px;
   border-top: 1px solid rgba(255,255,255,.08);
 }
 .hstat { display: flex; flex-direction: column; gap: 2px; }
 .hstat-num {
   font-family: 'Barlow', system-ui, sans-serif;
-  font-size: 22px; font-weight: 900; color: var(--text);
+  font-size: 26px; font-weight: 900; color: var(--text);
   letter-spacing: -.5px; line-height: 1;
 }
 .hstat-num em { color: var(--gold); font-style: normal; }
@@ -2238,19 +2249,49 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 }
 
 /* ── AYA Custom Icon System ─────────────────────────────────────── */
+/* ── AYA Icon System ─────────────────────────────────────────────── */
 .aya-ico {
   display: inline-block;
   vertical-align: -0.15em;
   width: 1em; height: 1em;
   flex-shrink: 0;
   pointer-events: none;
+  transition: opacity .15s;
+  overflow: visible;
 }
-/* Nav sidebar icons live inside .ico spans — give them a bit more room */
+/* Nav sidebar icons inside .ico spans */
 .ico .aya-ico { width: 1.25em; height: 1.25em; vertical-align: -0.2em; }
-/* Type-pill and filter-pill icons sit next to text */
+/* Active nav item: sage accent on duotone fill */
+.nav-item.active .aya-ico path[fill="#7D9158"],
+.nav-item.active .aya-ico circle[fill="#7D9158"],
+.nav-item.active .aya-ico rect[fill="#7D9158"] { fill: var(--teal); }
+/* Type-pill and pitch-filter icons */
 .type-pill .aya-ico, .pf .aya-ico { width: 0.95em; height: 0.95em; vertical-align: -0.12em; }
-/* Section header icons */
+/* Section header label icons */
 .sidebar-label .aya-ico { width: 1em; height: 1em; vertical-align: -0.15em; }
+/* Upload category button icons */
+.up-cat-btn .aya-ico { width: 1.1em; height: 1.1em; vertical-align: -0.18em; margin-right: 1px; }
+/* Active upload button — invert sage fill to dark for contrast on gold bg */
+.up-cat-btn.active .aya-ico path[fill="#7D9158"],
+.up-cat-btn.active .aya-ico rect[fill="#7D9158"],
+.up-cat-btn.active .aya-ico circle[fill="#7D9158"] { fill: rgba(0,0,0,.25); }
+/* Role badge icons */
+.role-badge .aya-ico { width: 0.9em; height: 0.9em; vertical-align: -0.1em; }
+/* Dots-menu item icons — flex child, no need for vertical-align */
+.dots-item .aya-ico { width: 1.1em; height: 1.1em; vertical-align: middle; flex-shrink: 0; }
+/* Card dropdown item icons */
+.card-dropdown-item .aya-ico { width: 1em; height: 1em; vertical-align: middle; flex-shrink: 0; }
+/* Verified badge icon */
+.prof-verified .aya-ico { width: 1.1em; height: 1.1em; vertical-align: -0.12em; }
+/* Search result + bottom-nav icons */
+.c-result .aya-ico { width: 1em; height: 1em; vertical-align: -0.12em; }
+.bn-ico .aya-ico  { width: 1.3em; height: 1.3em; vertical-align: middle; }
+/* Comment like icon */
+.comment-act .aya-ico { width: 0.95em; height: 0.95em; vertical-align: -0.1em; }
+/* Button icons with text — consistent leading gap */
+.btn-sharp-gold .aya-ico { margin-right: 5px; vertical-align: -0.18em; }
+/* Role icon box (registration) */
+.role-icon-box .aya-ico { width: 1.2em; height: 1.2em; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -2383,7 +2424,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <select class="csel" id="cs-feat" aria-label="Особенности контента"><option value="">Особенности…</option><option>Дебют</option><option>Женский взгляд</option><option>Фест. победитель</option><option>Социальная тема</option><option>Молодые авторы</option></select>
       <button class="c-find-btn" onclick="runConstructor()" data-i18n="cs_find">Найти →</button>
     </div>
-    <div class="c-result" id="c-res">🔍 <span>Найдено <strong id="c-count"></strong> работ по запросу <em id="c-query"></em></span></div>
+    <div class="c-result" id="c-res"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="10.5" cy="10.5" r="6" fill="#7D9158" stroke="none" opacity="0.55"/><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15 L20 20"/></g></svg> <span>Найдено <strong id="c-count"></strong> работ по запросу <em id="c-query"></em></span></div>
   </div>
 
   <div class="feed">
@@ -2549,7 +2590,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <div class="profile-top">
         <div class="prof-av" id="prof-av">G</div>
         <div class="prof-main">
-          <div class="prof-verified" id="prof-verified" style="display:none">✦ Верифицированный автор</div>
+          <div class="prof-verified" id="prof-verified" style="display:none"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 2 L14.5 4.5 H18 V8 L20.5 10.5 L18 13 V16.5 H14.5 L12 19 L9.5 16.5 H6 V13 L3.5 10.5 L6 8 V4.5 H9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 2 L14.5 4.5 H18 V8 L20.5 10.5 L18 13 V16.5 H14.5 L12 19 L9.5 16.5 H6 V13 L3.5 10.5 L6 8 V4.5 H9.5 Z"/><path d="M9 10.5 L11 12.5 L15 8.5"/></g></svg> Верифицированный автор</div>
           <div class="prof-name" id="prof-name">Гость</div>
           <div class="prof-handle" id="prof-handle" style="color:var(--text3)">Вы не вошли в аккаунт</div>
           <p class="prof-bio" id="prof-bio" style="color:var(--text3)">Войдите или создайте аккаунт, чтобы загружать контент, поддерживать питч-кампании и общаться с другими авторами.</p>
@@ -2662,11 +2703,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
               <span data-i18n="role_viewer">Зритель</span>
             </div>
             <div class="role-opt" onclick="selectRole(this)" data-role="creator">
-              <div class="role-icon-box">✦</div>
+              <div class="role-icon-box"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg></div>
               <span data-i18n="role_creator">Автор</span>
             </div>
             <div class="role-opt" onclick="selectRole(this)" data-role="studio">
-              <div class="role-icon-box">⬡</div>
+              <div class="role-icon-box"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22"/></g></svg></div>
               <span data-i18n="role_studio">Студия</span>
             </div>
           </div>
@@ -2697,9 +2738,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         </div>
         <div class="role-switcher">
           <span class="role-badge role-user" onclick="demoRole(this,'role-user')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Зритель</span>
-          <span class="role-badge role-creator" onclick="demoRole(this,'role-creator')" style="cursor:pointer">🎬 Автор</span>
-          <span class="role-badge role-moderator" onclick="demoRole(this,'role-moderator')" style="cursor:pointer">🛡 Модератор</span>
-          <span class="role-badge role-admin" onclick="demoRole(this,'role-admin')" style="cursor:pointer">⚡ Админ</span>
+          <span class="role-badge role-creator" onclick="demoRole(this,'role-creator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg> Автор</span>
+          <span class="role-badge role-moderator" onclick="demoRole(this,'role-moderator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> Модератор</span>
+          <span class="role-badge role-admin" onclick="demoRole(this,'role-admin')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> Админ</span>
         </div>
       </div>
       <div class="settings-row">
@@ -2816,19 +2857,19 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       </div>
       <div class="settings-row">
         <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-creator">🎬 Автор</span>
+          <span class="role-badge role-creator"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg> Автор</span>
           <div style="font-size:12px;color:var(--text2)" data-i18n="access_creator">+ Загрузка контента, создание питч-кампаний, Creator Membership</div>
         </div>
       </div>
       <div class="settings-row">
         <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-moderator">🛡 Модератор</span>
+          <span class="role-badge role-moderator"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> Модератор</span>
           <div style="font-size:12px;color:var(--text2)" data-i18n="access_mod">+ Модерация контента и комментариев, верификация авторов</div>
         </div>
       </div>
       <div class="settings-row">
         <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-admin">⚡ Администратор</span>
+          <span class="role-badge role-admin"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> Администратор</span>
           <div style="font-size:12px;color:var(--text2)" data-i18n="access_admin">Полный доступ: управление платформой, пользователями, аналитика</div>
         </div>
       </div>
@@ -3436,7 +3477,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       listEl.innerHTML = fresh.items.map(item => `
         <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bg3)">
           <div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--bg3),var(--bg5));
-            display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎬</div>
+            display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none" opacity="0.5"/><rect x="2" y="5" width="20" height="14" rx="2"/></g></svg></div>
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
             <div style="font-size:11px;color:var(--text2)">${item.author||''}</div>
@@ -3513,7 +3554,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         // — Permanently delete (admin only)
         if (user && user.role === 'admin') {
           items.push({
-            icon: '🗑', label: 'Удалить навсегда', danger: true,
+            icon: '<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"aya-ico\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><path d=\"M5 7 H19 L17.5 20 H6.5 Z\" fill=\"#7D9158\" stroke=\"none\"/><path d=\"M5 7 H19 L17.5 20 H6.5 Z\"/><path d=\"M3 7 H21\"/><path d=\"M9 4 H15 V7\"/><path d=\"M10 11 V16 M14 11 V16\"/></g></svg>', label: 'Удалить навсегда', danger: true,
             action: () => adminDeleteContent(content)
           });
         }
@@ -3579,7 +3620,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
             if (_currentContent && _currentContent.id === content.id) goBack();
 
             renderUserContent();
-            showCollToast('🗑 Видео удалено');
+            showCollToast('Видео удалено');
           }
         }
       ]
@@ -3863,7 +3904,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         const div = document.createElement('div');
         div.className = 'rec-card';
         div.onclick = () => openWatch(c);
-        div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner" style="background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px">🎬</div><div class="rec-play-wrap"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.crew&&c.crew.length?c.crew[0].tag:''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${(c.catLabel||'').toUpperCase()}</span></div>`;
+        div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner" style="background:var(--bg3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;opacity:.5" aria-hidden="true"><g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/></g></svg></div><div class="rec-play-wrap"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.crew&&c.crew.length?c.crew[0].tag:''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${(c.catLabel||'').toUpperCase()}</span></div>`;
         recContainer.appendChild(div);
       });
     }
@@ -4153,7 +4194,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const thumbClass = isPodcast ? 'r-sq' : (isMusic ? 'r-wide' : 'r-film');
       const cardWidth  = isPodcast ? 'w-170' : (isMusic ? 'w-220' : 'w-200 card-feat');
       const thumbStyle = isPodcast ? 'border-radius:12px' : '';
-      const thumb = `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));${thumbStyle ? 'border-radius:12px;' : ''}display:flex;align-items:center;justify-content:center;font-size:28px">🎬</div>`;
+      const thumb = `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));${thumbStyle ? 'border-radius:12px;' : ''}display:flex;align-items:center;justify-content:center"><svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" style=\"width:24px;height:24px;display:block\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\" fill=\"#7D9158\" stroke=\"none\"/><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M7 5 V19 M17 5 V19 M2 12 H22\"/></g></svg></div>`;
 
       const card = document.createElement('div');
       card.className = `card ${cardWidth} uploaded-user-card`;
@@ -4336,7 +4377,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   // ── Profile page: logged-in vs guest ─────────────────────────
   const ROLE_LABELS = { viewer: 'Зритель', creator: 'Автор', studio: 'Студия', moderator: 'Модератор', admin: 'Администратор' };
-  const ROLE_ICONS  = { viewer: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg>', creator: '✦', studio: '⬡', moderator: '🛡', admin: '⚡' };
+  const ROLE_ICONS  = {
+    viewer:    '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg>',
+    creator:   '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg>',
+    studio:    '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22"/></g></svg>',
+    moderator: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg>',
+    admin:     '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg>'
+  };
 
   function updateProfilePage(user) {
     const av        = document.getElementById('prof-av');
@@ -4362,15 +4409,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       av.style.color = '#121212';
 
       name.textContent    = `${user.first_name} ${user.last_name}`;
-      handle.textContent  = `@${user.handle || (user.first_name.toLowerCase() + user.last_name.toLowerCase())} · ${ROLE_ICONS[user.role] || ''} ${ROLE_LABELS[user.role] || user.role}`;
+      handle.innerHTML    = `@${user.handle || (user.first_name.toLowerCase() + user.last_name.toLowerCase())} · ${ROLE_ICONS[user.role] || ''} ${ROLE_LABELS[user.role] || user.role}`;
       handle.style.color  = '';
       bio.textContent     = t('prof_welcome');
       bio.style.color     = '';
 
-      verified.style.display = (user.role === 'creator' || user.role === 'studio') ? 'block' : 'none';
-      if (verified.style.display !== 'none') {
-        verified.textContent = user.role === 'studio' ? '⬡ Студия' : '✦ Автор';
-      }
+      verified.style.display = (user.role === 'creator' || user.role === 'studio') ? 'inline-flex' : 'none';
+      // content is already in the HTML (SVG + text); no overwrite needed
 
       // Skills pills based on role
       const rolePills = {
@@ -4395,7 +4440,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       // Empty state for grid (new user has no uploads yet)
       grid.innerHTML = `
         <div style="grid-column:1/-1;padding:40px 0;text-align:center;opacity:.5">
-          <div style="font-size:36px;margin-bottom:10px">🎬</div>
+          <div style="margin-bottom:10px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px" aria-hidden="true"><g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none" opacity="0.4"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22"/></g></svg></div>
           <div style="font-size:13px;color:var(--text2)">${t('prof_empty')}</div>
         </div>
       `;
@@ -4777,7 +4822,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       row_podcasts: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасттар', row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Фестиваль жеңімпаздары',
       row_see_all: 'Барлығын көру →',
       // WATCH PAGE
-      back_btn: '← Артқа', btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Қарау', btn_review: '💬 Пікір',
+      back_btn: '← Артқа', btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Қарау', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z" fill="#7D9158" stroke="none"/><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z"/></g></svg> Пікір',
       btn_save: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Сақтау', btn_share: '↗ Бөлісу',
       crew_title: 'Түсіру тобы', comments_title: 'Пікірлер мен түсіндірмелер',
       comment_ph: 'Пікір немесе рецензия жазыңыз…', also_rec: 'Сондай-ақ ұсынамыз',
@@ -4890,7 +4935,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       row_podcasts: '🎙 Podcasts', row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Festival Winners',
       row_see_all: 'See all →',
       // WATCH PAGE
-      back_btn: '← Back', btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Watch', btn_review: '💬 Review',
+      back_btn: '← Back', btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Watch', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z" fill="#7D9158" stroke="none"/><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z"/></g></svg> Review',
       btn_save: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Save', btn_share: '↗ Share',
       crew_title: 'Film Crew', comments_title: 'Reviews & Comments',
       comment_ph: 'Write a review or comment…', also_rec: 'Also Recommended',
@@ -5141,27 +5186,27 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   // ── MODERATOR: submit content removal request ─────────────────
   function modReportContent(contentId, contentTitle) {
-    showReasonModal('🗑 Заявка на удаление контента', `Контент: <strong>${contentTitle}</strong>`, reason => {
+    showReasonModal('Заявка на удаление контента', `Контент: <strong>${contentTitle}</strong>`, reason => {
       const user = getUser();
       if (!user) return;
       const reqs = getContentReqs();
       reqs.push({ id:Date.now(), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, contentId, contentTitle, reason, status:'pending', createdAt:new Date().toISOString() });
       saveContentReqs(reqs);
       updateBadges();
-      showModal({ title:'✅ Заявка отправлена', body:'Администратор рассмотрит заявку на удаление контента.', actions:[{label:'OK', style:MODAL_BTN_PRIMARY}] });
+      showModal({ title:'Заявка отправлена', body:'Администратор рассмотрит заявку на удаление контента.', actions:[{label:'OK', style:MODAL_BTN_PRIMARY}] });
     });
   }
 
   // ── MODERATOR: submit ban request ─────────────────────────────
   function modReportUser(targetId, targetName) {
-    showReasonModal('🚫 Заявка на бан пользователя', `Пользователь: <strong>${targetName}</strong>`, reason => {
+    showReasonModal('Заявка на бан пользователя', `Пользователь: <strong>${targetName}</strong>`, reason => {
       const user = getUser();
       if (!user) return;
       const reqs = getBanReqs();
       reqs.push({ id:Date.now(), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, targetId, targetName, reason, status:'pending', createdAt:new Date().toISOString() });
       saveBanReqs(reqs);
       updateBadges();
-      showModal({ title:'✅ Заявка отправлена', body:'Администратор рассмотрит заявку на бан пользователя.', actions:[{label:'OK', style:MODAL_BTN_PRIMARY}] });
+      showModal({ title:'Заявка отправлена', body:'Администратор рассмотрит заявку на бан пользователя.', actions:[{label:'OK', style:MODAL_BTN_PRIMARY}] });
     });
   }
 
@@ -5219,12 +5264,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   // ── ADMIN: direct ban user ────────────────────────────────────
   function adminBanUser(userId, userName) {
     showModal({
-      title:'🚫 Заблокировать пользователя',
+      title:'Заблокировать пользователя',
       body:`Вы уверены, что хотите заблокировать <strong>${userName}</strong>? Пользователь не сможет войти на платформу.`,
       actions:[
         {label:'Отмена',style:MODAL_BTN_CANCEL2},
         {label:'Заблокировать',style:MODAL_BTN_DANGER,
-         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.banned=true;saveUsers(u);} showModal({title:'✅ Готово',body:`${userName} заблокирован.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
+         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.banned=true;saveUsers(u);} showModal({title:'Готово',body:`${userName} заблокирован.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
       ]
     });
   }
@@ -5232,12 +5277,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   // ── ADMIN: delete account ────────────────────────────────────
   function adminDeleteAccount(userId, userName) {
     showModal({
-      title:'⛔ Удалить аккаунт',
+      title:'Удалить аккаунт',
       body:`Вы уверены, что хотите <strong>безвозвратно удалить</strong> аккаунт <strong>${userName}</strong>? Это действие нельзя отменить.`,
       actions:[
         {label:'Отмена',style:MODAL_BTN_CANCEL2},
         {label:'Удалить навсегда',style:MODAL_BTN_DANGER,
-         action:()=>{ let u=getUsers(); u=u.filter(x=>x.id!==userId); saveUsers(u); showModal({title:'✅ Удалено',body:`Аккаунт ${userName} удалён.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
+         action:()=>{ let u=getUsers(); u=u.filter(x=>x.id!==userId); saveUsers(u); showModal({title:'Удалено',body:`Аккаунт ${userName} удалён.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
       ]
     });
   }
@@ -5245,12 +5290,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   // ── ADMIN: assign moderator role ──────────────────────────────
   function adminAssignModerator(userId, userName) {
     showModal({
-      title:'🛡 Назначить модератором',
+      title:'Назначить модератором',
       body:`Назначить <strong>${userName}</strong> модератором платформы?`,
       actions:[
         {label:'Отмена',style:MODAL_BTN_CANCEL2},
         {label:'Назначить',style:MODAL_BTN_TEAL,
-         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.role='moderator';saveUsers(u);} showModal({title:'✅ Готово',body:`${userName} назначен(а) модератором.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
+         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.role='moderator';saveUsers(u);} showModal({title:'Готово',body:`${userName} назначен(а) модератором.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
       ]
     });
   }
@@ -5262,9 +5307,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     event.stopPropagation();
     if (user.role === 'admin') {
       showDotsMenu(anchorEl, [
-        { icon:'🛡', label:'Назначить модератором', warn:true, action:()=>adminAssignModerator(userId,userName) },
-        { icon:'🚫', label:'Заблокировать', danger:true, action:()=>adminBanUser(userId,userName) },
-        { icon:'⛔', label:'Удалить аккаунт', danger:true, action:()=>adminDeleteAccount(userId,userName) },
+        { icon:'<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"aya-ico\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><path d=\"M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z\" fill=\"#7D9158\" stroke=\"none\"/><path d=\"M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z\"/><path d=\"M9 12 L11 14 L15 10\"/></g></svg>', label:'Назначить модератором', warn:true, action:()=>adminAssignModerator(userId,userName) },
+        { icon:'<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"aya-ico\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#7D9158\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M6 12 H18\"/></g></svg>', label:'Заблокировать', danger:true, action:()=>adminBanUser(userId,userName) },
+        { icon:'<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"aya-ico\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><path d=\"M5 7 H19 L17.5 20 H6.5 Z\" fill=\"#7D9158\" stroke=\"none\"/><path d=\"M5 7 H19 L17.5 20 H6.5 Z\"/><path d=\"M3 7 H21\"/><path d=\"M9 4 H15 V7\"/><path d=\"M10 11 V16 M14 11 V16\"/></g></svg>', label:'Удалить аккаунт', danger:true, action:()=>adminDeleteAccount(userId,userName) },
       ]);
     } else if (user.role === 'moderator') {
       showDotsMenu(anchorEl, [
@@ -5280,7 +5325,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     event.stopPropagation();
     if (user.role === 'admin') {
       showDotsMenu(anchorEl, [
-        { icon:'🗑', label:'Удалить контент', danger:true, action:()=>adminRemoveContent(anchorEl, contentId, contentTitle) },
+        { icon:'<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"aya-ico\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><path d=\"M5 7 H19 L17.5 20 H6.5 Z\" fill=\"#7D9158\" stroke=\"none\"/><path d=\"M5 7 H19 L17.5 20 H6.5 Z\"/><path d=\"M3 7 H21\"/><path d=\"M9 4 H15 V7\"/><path d=\"M10 11 V16 M14 11 V16\"/></g></svg>', label:'Удалить контент', danger:true, action:()=>adminRemoveContent(anchorEl, contentId, contentTitle) },
       ]);
     } else if (user.role === 'moderator') {
       showDotsMenu(anchorEl, [
@@ -5299,7 +5344,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
          action:()=>{
            const card = document.querySelector(`[data-content-id="${contentId}"]`);
            if(card) card.style.display='none';
-           showModal({title:'✅ Удалено',body:`"${contentTitle}" удалён с платформы.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]});
+           showModal({title:'Удалено',body:`"${contentTitle}" удалён с платформы.`,actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]});
          }}
       ]
     });
@@ -5314,7 +5359,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     el.innerHTML = reqs.map(r => `
       <div class="req-card">
         <div class="req-card-head">
-          <div class="req-card-title">🗑 ${r.contentTitle}</div>
+          <div class="req-card-title"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> ${r.contentTitle}</div>
           <span class="req-status ${r.status}">${{pending:'На рассмотрении',approved:'Одобрено',declined:'Отклонено'}[r.status]}</span>
         </div>
         <div class="req-meta">Модератор: ${r.moderatorName} · ${new Date(r.createdAt).toLocaleDateString('ru')}</div>
@@ -5331,7 +5376,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     el.innerHTML = reqs.map(r => `
       <div class="req-card">
         <div class="req-card-head">
-          <div class="req-card-title">🚫 ${r.targetName}</div>
+          <div class="req-card-title"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M6 12 H18"/></g></svg> ${r.targetName}</div>
           <span class="req-status ${r.status}">${{pending:'На рассмотрении',approved:'Одобрено',declined:'Отклонено'}[r.status]}</span>
         </div>
         <div class="req-meta">Модератор: ${r.moderatorName} · ${new Date(r.createdAt).toLocaleDateString('ru')}</div>
@@ -5350,7 +5395,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     el.innerHTML = all.map(r => `
       <div class="req-card">
         <div class="req-card-head">
-          <div class="req-card-title">${r.type==='content'?'🗑 '+r.contentTitle:'🚫 '+r.targetName}</div>
+          <div class="req-card-title">${r.type==='content'?'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> '+r.contentTitle:'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M6 12 H18"/></g></svg> '+r.targetName}</div>
           <span class="req-status ${r.status}">${{pending:'На рассмотрении',approved:'Одобрено',declined:'Отклонено'}[r.status]}</span>
         </div>
         <div class="req-meta">${new Date(r.createdAt).toLocaleDateString('ru')} · ${r.type==='content'?'Удаление контента':'Бан пользователя'}</div>
@@ -5480,7 +5525,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <div class="comment-body">
         <div class="comment-name">${name} <span style="color:var(--text3);font-weight:400;font-size:10px">· только что</span></div>
         <div class="comment-text">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-        <div class="comment-acts"><span class="comment-act">👍 0</span><span class="comment-act">Ответить</span></div>
+        <div class="comment-acts"><span class="comment-act"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 22 V11 M2 13 H7 V22 H2 Z" fill="#7D9158" stroke="none"/><path d="M2 13 H7 V22 H2 Z"/><path d="M7 11 L11 3 C12.5 3 14 4 14 6 V9 H20 C21 9 22 10 21.5 11 L19.5 19 C19 21 17 22 15 22 H7"/></g></svg> 0</span><span class="comment-act">Ответить</span></div>
       </div>`;
     if (firstComment) {
       firstComment.parentNode.insertBefore(newComment, firstComment);
@@ -5521,10 +5566,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     <div style="margin-bottom:14px">
       <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Категория</label>
       <div style="display:flex;flex-wrap:wrap;gap:8px">
-        <button class="up-cat-btn active" data-cat="ct-film" onclick="selectUploadCat(this)">🎬 Фильм</button>
-        <button class="up-cat-btn" data-cat="ct-short" onclick="selectUploadCat(this)">🎞 Короткий</button>
+        <button class="up-cat-btn active" data-cat="ct-film" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22 M2 8.5 H7 M17 8.5 H22 M2 15.5 H7 M17 15.5 H22"/></g></svg> Фильм</button>
+        <button class="up-cat-btn" data-cat="ct-short" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22 M2 8.5 H7 M17 8.5 H22 M2 15.5 H7 M17 15.5 H22"/></g></svg> Короткий</button>
         <button class="up-cat-btn" data-cat="ct-doc" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальный</button>
-        <button class="up-cat-btn" data-cat="ct-music" onclick="selectUploadCat(this)">🎵 Клип</button>
+        <button class="up-cat-btn" data-cat="ct-music" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="17" r="3" fill="#7D9158" stroke="none"/><circle cx="8" cy="17" r="3"/><circle cx="18" cy="15" r="3"/><path d="M11 17 V5 L21 3 V15"/></g></svg> Клип</button>
         <button class="up-cat-btn" data-cat="ct-animation" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация</button>
         <button class="up-cat-btn" data-cat="ct-podcast" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст</button>
       </div>
@@ -5541,7 +5586,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">Видеофайл *</div>
       <input id="up-file" type="file" accept="video/*" onchange="handleFileSelect(this)" style="display:none">
       <div onclick="document.getElementById('up-file').click()" id="up-dropzone" style="border:2px dashed var(--bg5);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s">
-        <div style="font-size:28px;margin-bottom:6px">🎬</div>
+        <div style="margin-bottom:8px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:40px;height:40px;opacity:.6" aria-hidden="true"><g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none" opacity="0.4"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22 M2 8.5 H7 M17 8.5 H22 M2 15.5 H7 M17 15.5 H22"/></g></svg></div>
         <div style="font-size:13px;color:var(--text2)">Нажмите или перетащите видеофайл</div>
         <div style="font-size:11px;color:var(--text3);margin-top:4px">MP4, WebM, MOV — до 2 ГБ</div>
       </div>
