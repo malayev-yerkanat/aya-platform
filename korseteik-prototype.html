@@ -3530,51 +3530,42 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     localStorage.setItem('aya_delete_tokens', JSON.stringify(t));
   }
 
-  /* POST content to server; on success store deleteToken locally */
+  /* ---- Firebase Realtime Database (free, persistent across all devices) ---- */
+  const FB = 'https://aya-platform-a3c35-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+  /* POST content to Firebase; store the returned Firebase key so we can delete later */
   async function syncContentToServer(content) {
     try {
-      const user = getUser();
-      const res = await fetch('/api/content', {
+      const res = await fetch(`${FB}/content.json`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title:          content.title,
-          desc:           content.desc,
-          cat:            content.cat,
-          catLabel:       content.catLabel,
-          crew:           content.crew,
-          cast:           content.cast,
-          tags:           content.tags,
-          video_url:      content.video_url,
-          uploaderId:     user ? user.id : null,
-          uploaderHandle: user ? (user.handle || '') : ''
-        })
+        body: JSON.stringify(content)
       });
       if (!res.ok) return;
       const data = await res.json();
-      if (data.deleteToken) saveDeleteToken(data.content.id, data.deleteToken);
-      // Replace local id with server id so they stay in sync
-      const all = getAyaContent();
-      const idx = all.findIndex(c => c.id === content.id);
-      if (idx !== -1) { all[idx].id = data.content.id; saveAyaContent(all); }
-    } catch(e) { /* offline or server unavailable — content already in localStorage */ }
+      // data.name is Firebase's auto-generated key e.g. "-NxYZ123abc"
+      // We reuse the deleteToken slot to store it — that's how delete knows which FB node to hit
+      if (data.name) saveDeleteToken(content.id, data.name);
+    } catch(e) { /* offline — content already in localStorage as fallback */ }
   }
 
-  /* Fetch server content and merge into local storage / re-render */
+  /* Fetch all content from Firebase and merge into local cache / re-render */
   async function loadServerContent() {
     try {
-      const res = await fetch('/api/content');
+      const res = await fetch(`${FB}/content.json`);
       if (!res.ok) return;
-      const { content } = await res.json();
-      if (!content || !content.length) return;
+      const data = await res.json();
+      if (!data) return;
+      // Firebase returns an object keyed by auto-id: { "-Nxyz": {...}, ... }
+      const items = Object.values(data).filter(Boolean);
       const local = getAyaContent();
       const localIds = new Set(local.map(c => c.id));
       let added = false;
-      content.forEach(c => {
-        if (!localIds.has(c.id)) { local.push(c); added = true; }
+      items.forEach(c => {
+        if (c.id && !localIds.has(c.id)) { local.push(c); added = true; }
       });
       if (added) { saveAyaContent(local); renderUserContent(); }
-    } catch(e) { /* server unreachable */ }
+    } catch(e) { /* Firebase unreachable */ }
   }
 
   function getYouTubeId(url) {
@@ -3716,13 +3707,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           label: 'Удалить',
           style: 'padding:9px 20px;border-radius:var(--r-pill);font-weight:700;font-size:13px;cursor:pointer;background:#ff5555;color:#fff',
           action: async () => {
+            // token here is the Firebase key (e.g. "-NxYZ123abc") stored at upload time
             try {
-              await fetch(`/api/content/${_currentContent.id}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ deleteToken: token })
-              });
-            } catch(e) { /* server unreachable — still remove locally */ }
+              await fetch(`${FB}/content/${token}.json`, { method: 'DELETE' });
+            } catch(e) { /* Firebase unreachable — still remove locally */ }
 
             // Remove from localStorage
             const all = getAyaContent().filter(c => c.id !== _currentContent.id);
