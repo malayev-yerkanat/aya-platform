@@ -3800,7 +3800,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const data = await res.json();
       // data.name is Firebase's auto-generated key e.g. "-NxYZ123abc"
       // We reuse the deleteToken slot to store it — that's how delete knows which FB node to hit
-      if (data.name) saveDeleteToken(content.id, data.name);
+      if (data.name) {
+        saveDeleteToken(content.id, data.name);
+        // If the user is currently watching this content, show the delete button now
+        const deleteBtn = document.getElementById('watch-delete-btn');
+        if (deleteBtn && _currentContent && _currentContent.id === content.id) {
+          deleteBtn.style.display = '';
+        }
+      }
     } catch(e) { /* offline — content already in localStorage as fallback */ }
   }
 
@@ -3812,6 +3819,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const data = await res.json();
       if (!data) return;
       // Firebase returns an object keyed by auto-id: { "-Nxyz": {...}, ... }
+      // Save every Firebase key as a delete token so any device can delete
+      Object.entries(data).forEach(([fbKey, c]) => {
+        if (c && c.id && !getDeleteToken(c.id)) saveDeleteToken(c.id, fbKey);
+      });
       const items = Object.values(data).filter(Boolean);
       const local = getAyaContent();
       const localIds = new Set(local.map(c => c.id));
@@ -3936,13 +3947,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       document.querySelector('.action-btn.primary').onclick = startPlay;
     }
 
-    // Show delete button if uploader (has Firebase token) OR admin
+    // Show delete button if uploader (has Firebase token AND owns the content) OR admin
     const deleteBtn = document.getElementById('watch-delete-btn');
     if (deleteBtn) {
       const user = getUser();
       const hasToken = content && content.id && getDeleteToken(content.id);
       const isAdmin  = user && user.role === 'admin';
-      deleteBtn.style.display = (hasToken || isAdmin) ? '' : 'none';
+      const isOwner  = hasToken && user && content.uploaderId && content.uploaderId === user.id;
+      deleteBtn.style.display = (isOwner || isAdmin) ? '' : 'none';
       deleteBtn.textContent = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить';
     }
   }
@@ -3951,11 +3963,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     if (!_currentContent) return;
     const token = getDeleteToken(_currentContent.id);
     const user  = getUser();
-    // Admin can delete any video even without a stored token
-    if (!token) {
-      if (user && user.role === 'admin') { adminDeleteContent(_currentContent); }
-      return;
-    }
+    const isAdmin = user && user.role === 'admin';
+    const isOwner = token && user && _currentContent.uploaderId && _currentContent.uploaderId === user.id;
+    // Admin can always delete; uploader can delete if they own the content
+    if (!isAdmin && !isOwner) return;
+    if (isAdmin && !token) { adminDeleteContent(_currentContent); return; }
 
     showModal({
       title: 'Удалить видео?',
@@ -3991,6 +4003,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   const CLOUDINARY_CLOUD  = 'dmpax008r';
   const CLOUDINARY_PRESET = 'aya_videos';
   let _cloudinaryUrl = null;
+  let _thumbnailUrl    = null;
 
   function openUploadModal() {
     const user = getUser();
@@ -4012,6 +4025,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     document.getElementById('up-progress-label').textContent = '0%';
     document.querySelectorAll('.up-cat-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
     _cloudinaryUrl = null;
+    _thumbnailUrl = null;
+    document.getElementById('up-thumb-preview').style.display = 'none';
+    document.getElementById('up-thumb-file').value = '';
   }
 
   function closeUploadModal() {
@@ -4119,6 +4135,40 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     xhr.send(formData);
   }
 
+  function handleThumbnailSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      const st = document.getElementById('up-thumb-status');
+      st.textContent = 'Файл слишком большой (макс. 5 МБ)';
+      st.style.color = '#ff5555'; st.style.display = 'block'; return;
+    }
+    const statusEl  = document.getElementById('up-thumb-status');
+    const previewEl = document.getElementById('up-thumb-preview');
+    const iconEl    = document.getElementById('up-thumb-icon');
+    statusEl.textContent = 'Загрузка…'; statusEl.style.color = 'var(--text2)'; statusEl.style.display = 'block';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+
+    fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: 'POST', body: formData })
+      .then(r => r.json())
+      .then(data => {
+        _thumbnailUrl = data.secure_url;
+        previewEl.src = _thumbnailUrl;
+        previewEl.style.display = 'block';
+        iconEl.style.display = 'none';
+        document.getElementById('up-thumb-dropzone').style.borderColor = 'var(--teal)';
+        statusEl.textContent = '✔ Обложка загружена';
+        statusEl.style.color = 'var(--teal)';
+      })
+      .catch(() => {
+        statusEl.textContent = '✗ Ошибка загрузки обложки';
+        statusEl.style.color = '#ff5555';
+      });
+  }
+
   function handleUpload() {
     const errEl = document.getElementById('up-error');
     errEl.style.display = 'none';
@@ -4158,6 +4208,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       tags,
       ytId: null,
       video_url: _cloudinaryUrl || null,
+      thumbnail: _thumbnailUrl || null,
       uploaderId: user ? user.id : null,
       ts: _uploadNow,
     };
@@ -4194,7 +4245,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const thumbClass = isPodcast ? 'r-sq' : (isMusic ? 'r-wide' : 'r-film');
       const cardWidth  = isPodcast ? 'w-170' : (isMusic ? 'w-220' : 'w-200 card-feat');
       const thumbStyle = isPodcast ? 'border-radius:12px' : '';
-      const thumb = `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));${thumbStyle ? 'border-radius:12px;' : ''}display:flex;align-items:center;justify-content:center"><svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" style=\"width:24px;height:24px;display:block\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\" fill=\"#7D9158\" stroke=\"none\"/><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M7 5 V19 M17 5 V19 M2 12 H22\"/></g></svg></div>`;
+      const thumb = c.thumbnail
+        ? `<img src="${c.thumbnail}" style="width:100%;height:100%;object-fit:cover;${thumbStyle ? 'border-radius:12px;' : ''}display:block" alt="${c.title}" loading="lazy">`
+        : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));${thumbStyle ? 'border-radius:12px;' : ''}display:flex;align-items:center;justify-content:center"><svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" style=\"width:24px;height:24px;display:block\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\" fill=\"#7D9158\" stroke=\"none\"/><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M7 5 V19 M17 5 V19 M2 12 H22\"/></g></svg></div>`;
 
       const card = document.createElement('div');
       card.className = `card ${cardWidth} uploaded-user-card`;
@@ -5579,6 +5632,22 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     <div style="margin-bottom:14px">
       <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Описание</label>
       <textarea id="up-desc" rows="3" placeholder="Краткое описание…" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;resize:vertical"></textarea>
+    </div>
+
+    <!-- Thumbnail -->
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Обложка (необязательно)</label>
+      <input id="up-thumb-file" type="file" accept="image/*" onchange="handleThumbnailSelect(this)" style="display:none">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div onclick="document.getElementById('up-thumb-file').click()" id="up-thumb-dropzone" style="width:96px;height:64px;border:2px dashed var(--bg5);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color .2s;overflow:hidden;position:relative">
+          <img id="up-thumb-preview" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:6px" alt="Обложка">
+          <svg id="up-thumb-icon" viewBox="0 0 24 24" fill="none" style="width:24px;height:24px;opacity:.4"><g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M3 17 L8 12 L12 16 L16 13 L21 17"/></g></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Загрузите JPG, PNG или WebP.<br>Рекомендуется 16:9, до 5 МБ.</div>
+          <div id="up-thumb-status" style="font-size:11px;margin-top:4px;display:none"></div>
+        </div>
+      </div>
     </div>
 
     <!-- File upload (device only) -->
