@@ -14,7 +14,7 @@
  *   POST   /api/content        – publish a new content item
  *   DELETE /api/content/:id    – remove a content item (deleteToken required)
  *   GET    /assets/*           – serve static assets with long-term cache
- *   GET    /*                  – serve korseteik-prototype.html
+ *   GET    /*                  – serve aya-platform.html
  */
 
 'use strict';
@@ -29,7 +29,7 @@ const crypto = require('crypto');
 const PORT       = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'korseteik_secret_2025_change_in_prod';
 const DB_FILE    = path.join(__dirname, 'korseteik.db.json');
-const HTML_FILE  = path.join(__dirname, 'korseteik-prototype.html');
+const HTML_FILE  = path.join(__dirname, 'aya-platform.html');
 
 const PBKDF2_ITERATIONS = 100_000;
 const PBKDF2_KEY_BYTES  = 64;
