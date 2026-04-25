@@ -86,14 +86,38 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .logo-badge {
   width: 40px; height: 40px; border-radius: 11px;
-  background: var(--gold);
+  background: transparent;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 900; font-style: italic;
-  color: #0F1209; letter-spacing: -.5px; flex-shrink: 0;
+  flex-shrink: 0;
   box-shadow: 0 3px 10px rgba(125,145,88,.35);
   transition: transform .15s, box-shadow .15s;
+  overflow: hidden;
 }
+.logo-badge-theme { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 11px; }
+/* Dark theme shows dark logo, light theme shows light logo */
+.logo-badge-dark  { display: block; }
+.logo-badge-light { display: none; }
+body.light-theme .logo-badge-dark  { display: none; }
+body.light-theme .logo-badge-light { display: block; }
+/* About page logo */
+.about-logo-wrap { display: flex; justify-content: center; margin-bottom: 8px; }
+.about-aya-logo  { width: 200px; height: 200px; object-fit: contain; border-radius: 28px; }
 .logo-badge:hover { transform: scale(1.08); box-shadow: 0 5px 16px rgba(125,145,88,.5); }
+.logo-badge-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; display: block; }
+/* ── Theme-aware about logos ── */
+.about-aya-logo { width: 220px; max-width: 80%; display: block; margin: 0 auto 6px; }
+.about-logo-wrap { text-align: center; }
+.about-qr-section { margin-top: 56px; display: flex; justify-content: center; }
+.about-qr { width: 160px; height: 160px; object-fit: contain; border-radius: 16px; display: block; }
+/* Dark theme: show dark variants, hide light */
+.about-qr-light { display: none; }
+.about-qr-dark  { display: block; }
+.about-aitu-dark  { display: block; }
+.about-aitu-light { display: none; }
+body.light-theme .about-qr-dark   { display: none; }
+body.light-theme .about-qr-light  { display: block; }
+body.light-theme .about-aitu-dark  { display: none; }
+body.light-theme .about-aitu-light { display: block; }
 .logo-slogan {
   display: flex; flex-direction: column; gap: 0px;
 }
@@ -1270,7 +1294,7 @@ body.light-theme .hero-title        { color: var(--text); }
 body.light-theme .profile-cover     { background: linear-gradient(135deg,#B8C9A0,#C8D4A8,#B0C498); }
 body.light-theme .auth-page         { background: radial-gradient(ellipse at 50% 0%,rgba(92,120,64,.10) 0%,transparent 65%); }
 body.light-theme .card              { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
-body.light-theme .logo-badge        { box-shadow: 0 3px 10px rgba(0,0,0,.15); color: #EDE5CC; }
+body.light-theme .logo-badge        { box-shadow: 0 3px 10px rgba(0,0,0,.15); }
 body.light-theme ::-webkit-scrollbar-thumb { background: var(--bg5); }
 
 /* ── Light theme: fix hardcoded dark rgba/oklch values ── */
@@ -2215,6 +2239,21 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+
+/* ── AYA Custom Icon System ─────────────────────────────────────── */
+.aya-ico {
+  display: inline-block;
+  vertical-align: -0.15em;
+  width: 1em; height: 1em;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+/* Nav sidebar icons live inside .ico spans — give them a bit more room */
+.ico .aya-ico { width: 1.25em; height: 1.25em; vertical-align: -0.2em; }
+/* Type-pill and filter-pill icons sit next to text */
+.type-pill .aya-ico, .pf .aya-ico { width: 0.95em; height: 0.95em; vertical-align: -0.12em; }
+/* Section header icons */
+.sidebar-label .aya-ico { width: 1em; height: 1em; vertical-align: -0.15em; }
 </style>
 </head>
 <body>
@@ -2224,7 +2263,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <aside class="sidebar">
 
   <div class="sidebar-logo" onclick="goPage('home',null)">
-    <div class="logo-badge" onclick="event.stopPropagation(); toggleSidebar()" title="Свернуть / развернуть">AYA</div>
+    <div class="logo-badge logo-badge-img-wrap" onclick="event.stopPropagation(); toggleSidebar()" title="Свернуть / развернуть">
+    <img src="assets/logo_dark.png"  class="logo-badge-theme logo-badge-dark"  alt="AYA">
+    <img src="assets/logo_light.png" class="logo-badge-theme logo-badge-light" alt="AYA">
+  </div>
     <div class="logo-slogan">
       <span>Art</span>
       <span>Yearns</span>
@@ -2234,13 +2276,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   <nav aria-label="Основная навигация">
   <div class="sidebar-block">
-    <div class="nav-item active" role="button" tabindex="0" onclick="goPage('home',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('home',this)}"><span class="ico" aria-hidden="true">🏠</span><span data-i18n="nav_home">Главная</span></div>
-    <div class="nav-item" role="button" tabindex="0" onclick="goPage('pitch',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('pitch',this)}"><span class="ico" aria-hidden="true">💡</span><span data-i18n="nav_pitch">Pitching</span><span class="badge">18</span></div>
-    <div class="nav-item" role="button" tabindex="0" onclick="goPage('profile',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this)}"><span class="ico" aria-hidden="true">👤</span><span data-i18n="nav_profile">Профиль</span></div>
-    <div class="nav-item" role="button" tabindex="0" onclick="goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)}"><span class="ico" aria-hidden="true">🔖</span><span data-i18n="saved">Сохранённое</span></div>
-    <div id="nav-auth-btn" class="nav-item" role="button" tabindex="0" onclick="navAuthClick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navAuthClick()}"><span class="ico" aria-hidden="true">🔑</span><span id="nav-auth-label" data-i18n="login">Войти</span></div>
-    <div class="nav-item" role="button" tabindex="0" onclick="goPage('settings',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('settings',this)}"><span class="ico" aria-hidden="true">⚙️</span><span data-i18n="settings">Настройки</span></div>
-    <div class="nav-item" role="button" tabindex="0" onclick="goPage('about',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('about',this)}"><span class="ico" aria-hidden="true">ℹ️</span><span data-i18n="about">О проекте</span></div>
+    <div class="nav-item active" role="button" tabindex="0" onclick="goPage('home',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('home',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3.5 11 L12 4 L20.5 11 V19.5 H3.5 Z"/><path d="M9.5 19.5 V13 H14.5 V19.5 Z" fill="#7D9158" stroke="none"/><path d="M9.5 19.5 V13 H14.5 V19.5"/></g></svg></span><span data-i18n="nav_home">Главная</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('pitch',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('pitch',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9 C13.5 8 9.5 8 9.5 11 C9.5 13.5 14.5 13 14.5 15 C14.5 17.5 10 17.5 9 16.5"/><path d="M12 6 V18"/></g></svg></span><span data-i18n="nav_pitch">Pitching</span><span class="badge">18</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('profile',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg></span><span data-i18n="nav_profile">Профиль</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg></span><span data-i18n="saved">Сохранённое</span></div>
+    <div id="nav-auth-btn" class="nav-item" role="button" tabindex="0" onclick="navAuthClick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navAuthClick()}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg></span><span id="nav-auth-label" data-i18n="login">Войти</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('settings',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('settings',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg></span><span data-i18n="settings">Настройки</span></div>
+    <div class="nav-item" role="button" tabindex="0" onclick="goPage('about',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('about',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 3 H15 L19 7 V21 H5 Z" fill="#7D9158" stroke="none"/><path d="M5 3 H15 L19 7 V21 H5 Z"/><path d="M15 3 V7 H19"/><path d="M8 11 H16 M8 14 H16 M8 17 H13"/></g></svg></span><span data-i18n="about">О проекте</span></div>
   </div>
   </nav>
 
@@ -2257,18 +2299,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   <!-- ADMIN SECTIONS (hidden by default, shown via JS) -->
   <div class="admin-section" id="admin-sidebar" style="display:none">
-    <div class="sidebar-label" style="color:var(--gold)" data-i18n="admin_section">⚡ Администрирование</div>
+    <div class="sidebar-label" style="color:var(--gold)" data-i18n="admin_section"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> Администрирование</div>
     <div class="sidebar-block">
-      <div class="nav-item" onclick="goPage('admin-content',this)"><span class="ico">🗑</span><span data-i18n="admin_content_req">Заявки на удаление</span><span class="badge" id="badge-content-req">0</span></div>
-      <div class="nav-item" onclick="goPage('admin-bans',this)"><span class="ico">🚫</span><span data-i18n="admin_ban_req">Заявки на бан</span><span class="badge" id="badge-ban-req">0</span></div>
+      <div class="nav-item" onclick="goPage('admin-content',this)"><span class="ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg></span><span data-i18n="admin_content_req">Заявки на удаление</span><span class="badge" id="badge-content-req">0</span></div>
+      <div class="nav-item" onclick="goPage('admin-bans',this)"><span class="ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg></span><span data-i18n="admin_ban_req">Заявки на бан</span><span class="badge" id="badge-ban-req">0</span></div>
     </div>
   </div>
 
   <!-- MODERATOR SECTION (hidden by default) -->
   <div class="mod-section" id="mod-sidebar" style="display:none">
-    <div class="sidebar-label" style="color:var(--teal)" data-i18n="mod_section">🛡 Модерация</div>
+    <div class="sidebar-label" style="color:var(--teal)" data-i18n="mod_section"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> Модерация</div>
     <div class="sidebar-block">
-      <div class="nav-item" onclick="goPage('mod-requests',this)"><span class="ico">📋</span><span data-i18n="mod_my_req">Мои заявки</span><span class="badge" id="badge-mod-req">0</span></div>
+      <div class="nav-item" onclick="goPage('mod-requests',this)"><span class="ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 3 H15 L19 7 V21 H5 Z" fill="#7D9158" stroke="none"/><path d="M5 3 H15 L19 7 V21 H5 Z"/><path d="M15 3 V7 H19"/><path d="M8 11 H16 M8 14 H16 M8 17 H13"/></g></svg></span><span data-i18n="mod_my_req">Мои заявки</span><span class="badge" id="badge-mod-req">0</span></div>
     </div>
   </div>
 
@@ -2284,7 +2326,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <header class="topbar">
   <img id="tb-aitu-logo" src="data:image/png;base64,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" alt="Astana IT University" style="height:32px;object-fit:contain;flex-shrink:0;margin-right:4px">
   <div class="search-wrap">
-    <span class="search-ico">🔍</span>
+    <span class="search-ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="10.5" cy="10.5" r="6" fill="#7D9158" stroke="none" opacity="0.55"/><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15 L20 20"/></g></svg></span>
     <input class="search-input" type="text" id="search-input" aria-label="Поиск" data-i18n-placeholder="search_ph" placeholder="Что ищешь? Фильм, клип, подкаст, автор…"/>
   </div>
   <div class="topbar-right">
@@ -2293,7 +2335,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <button class="lang-btn" onclick="setLang('kz',this)" data-lang="kz">KZ</button>
       <button class="lang-btn" onclick="setLang('en',this)" data-lang="en">EN</button>
     </div>
-    <div class="tb-ico"><span>🔔</span><div class="notif"></div></div>
+    <div class="tb-ico"><span><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5.5 17 V11 C5.5 7.5 8.5 4.5 12 4.5 C15.5 4.5 18.5 7.5 18.5 11 V17 L20 19 H4 Z" fill="#7D9158" stroke="none"/><path d="M5.5 17 V11 C5.5 7.5 8.5 4.5 12 4.5 C15.5 4.5 18.5 7.5 18.5 11 V17 L20 19 H4 Z"/><path d="M10 21 C10.5 21.7 11.2 22 12 22 C12.8 22 13.5 21.7 14 21"/></g></svg></span><div class="notif"></div></div>
     <button class="tb-upload" onclick="openUploadModal()" data-i18n="upload">+ Загрузить</button>
     <div id="tb-avatar" class="tb-avatar" onclick="tbAvatarClick()">?</div>
   </div>
@@ -2314,7 +2356,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <h1 class="hero-title-slab" data-i18n="hero_title">Кино, музыка, подкасты — <em>всё своё</em></h1>
       <p class="hero-desc" data-i18n="hero_desc">Единая платформа для независимого казахстанского контента. Смотри, слушай, поддерживай авторов и находи команду.</p>
       <div class="hero-actions">
-        <button class="btn-sharp-gold" onclick="openWatch()" data-i18n="btn_watch_now">▶ Смотреть сейчас</button>
+        <button class="btn-sharp-gold" onclick="openWatch()" data-i18n="btn_watch_now"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть сейчас</button>
         <button class="btn-sharp-ghost" onclick="goPage('pitch',null)" data-i18n="btn_support">Поддержать проект</button>
       </div>
       <div class="hero-stats" id="hero-stats"></div>
@@ -2328,12 +2370,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   <div class="type-strip">
     <div class="type-pill active" onclick="filterType('all',this)" data-i18n="filter_all">Все</div>
-    <div class="type-pill" onclick="filterType('film',this)" data-i18n="filter_films">🎞 Фильмы</div>
-    <div class="type-pill" onclick="filterType('music',this)" data-i18n="filter_music">🎵 Музыкальные клипы</div>
-    <div class="type-pill" onclick="filterType('doc',this)" data-i18n="filter_doc">📺 Документальное</div>
-    <div class="type-pill" onclick="filterType('podcast',this)" data-i18n="filter_podcast">🎙 Подкасты</div>
-    <div class="type-pill" onclick="filterType('social',this)" data-i18n="filter_social">📱 Соц. ролики</div>
-    <div class="type-pill" onclick="filterType('short',this)" data-i18n="filter_short">⚡ Короткий метр</div>
+    <div class="type-pill" onclick="filterType('film',this)" data-i18n="filter_films"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Фильмы</div>
+    <div class="type-pill" onclick="filterType('music',this)" data-i18n="filter_music"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы</div>
+    <div class="type-pill" onclick="filterType('doc',this)" data-i18n="filter_doc"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное</div>
+    <div class="type-pill" onclick="filterType('podcast',this)" data-i18n="filter_podcast"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты</div>
+    <div class="type-pill" onclick="filterType('social',this)" data-i18n="filter_social"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. ролики</div>
+    <div class="type-pill" onclick="filterType('short',this)" data-i18n="filter_short"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="12" r="5.5" fill="#7D9158" stroke="none"/><circle cx="9" cy="12" r="5.5"/><circle cx="16" cy="12" r="5.5"/><path d="M14.5 12 H17.5"/></g></svg> Короткий метр</div>
   </div>
 
   <div class="constructor-bar">
@@ -2371,7 +2413,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
     <!-- Top Collections of the Month -->
     <div id="top-collections-row" class="row" style="display:none">
-      <div class="row-head"><span class="row-title">🗂 Топ коллекции месяца</span><span class="row-more" onclick="switchProfTab && goPage('profile',null)">Смотреть все →</span></div>
+      <div class="row-head"><span class="row-title"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7 H10 L12 9 H21 V19 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 7 H10 L12 9 H21 V19 H3 Z"/></g></svg> Топ коллекции месяца</span><span class="row-more" onclick="switchProfTab && goPage('profile',null)">Смотреть все →</span></div>
       <div id="top-collections-cards" class="cards-h" style="gap:14px"></div>
     </div>
 
@@ -2392,16 +2434,16 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <iframe id="aya-iframe" allowfullscreen allow="autoplay; encrypted-media" style="display:none;width:100%;height:100%;border:none;position:absolute;inset:0"></iframe>
         <!-- YouTube fallback (shown if embedding blocked) -->
         <div id="yt-fallback" style="display:none;position:absolute;inset:0;background:#111;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px">
-          <div style="font-size:40px">▶</div>
+          <div style="font-size:40px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div>
           <div style="color:#fff;font-size:15px;font-weight:700">Видео нельзя встроить</div>
           <div style="color:#aaa;font-size:12px">Автор запретил воспроизведение на других сайтах</div>
-          <a id="yt-fallback-link" href="#" target="_blank" rel="noopener" style="margin-top:8px;padding:10px 24px;background:#FF0000;color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none">▶ Смотреть на YouTube</a>
+          <a id="yt-fallback-link" href="#" target="_blank" rel="noopener" style="margin-top:8px;padding:10px 24px;background:#FF0000;color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть на YouTube</a>
         </div>
         <!-- Placeholder shown for demo content -->
         <div id="player-placeholder">
           <div class="player-bg"></div>
           <div class="player-center">
-            <button class="play-big" onclick="document.getElementById('player-placeholder').style.display='none'">▶</button>
+            <button class="play-big" onclick="document.getElementById('player-placeholder').style.display='none'"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></button>
           </div>
           <div class="player-title-area">
             <div class="player-title-over" id="placeholder-title"></div>
@@ -2412,7 +2454,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
       <!-- YouTube external link (visible only when a YouTube video is loaded) -->
       <a id="yt-open-link" href="#" target="_blank" rel="noopener" style="display:none;margin-bottom:10px;font-size:12px;color:var(--text2);text-decoration:none;align-items:center;gap:6px">
-        <span style="background:#FF0000;color:#fff;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700">▶ YouTube</span>
+        <span style="background:#FF0000;color:#fff;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> YouTube</span>
         <span>Не воспроизводится? Открыть на YouTube →</span>
       </a>
 
@@ -2420,12 +2462,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <h1 class="video-title" id="watch-title"></h1>
       <div class="video-tags" id="watch-tags"></div>
       <div class="action-row">
-        <button class="action-btn primary" onclick="document.getElementById('player-placeholder').querySelector('.play-big').click()" data-i18n="btn_watch">▶ Смотреть</button>
-        <button class="action-btn" id="watch-like-btn" onclick="toggleLikeWatch()">❤️ Нравится</button>
-        <button class="action-btn" data-i18n="btn_review">💬 Рецензия</button>
-        <button class="action-btn" id="watch-save-btn" onclick="openCollectionPicker()" data-i18n="btn_save">🔖 Сохранить</button>
+        <button class="action-btn primary" onclick="document.getElementById('player-placeholder').querySelector('.play-big').click()" data-i18n="btn_watch"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть</button>
+        <button class="action-btn" id="watch-like-btn" onclick="toggleLikeWatch()"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z" fill="#7D9158" stroke="none"/><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z"/></g></svg> Нравится</button>
+        <button class="action-btn" data-i18n="btn_review"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z"/></g></svg> Рецензия</button>
+        <button class="action-btn" id="watch-save-btn" onclick="openCollectionPicker()" data-i18n="btn_save"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Сохранить</button>
         <button class="action-btn" data-i18n="btn_share">↗ Поделиться</button>
-        <button class="action-btn" id="watch-delete-btn" onclick="deleteCurrentContent()" style="display:none;color:#ff5555;border-color:rgba(255,85,85,.3)">🗑 Удалить</button>
+        <button class="action-btn" id="watch-delete-btn" onclick="deleteCurrentContent()" style="display:none;color:#ff5555;border-color:rgba(255,85,85,.3)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить</button>
       </div>
       <div class="desc-box" id="watch-desc" style="display:none"></div>
 
@@ -2475,27 +2517,27 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     </div>
     <div class="pitch-filters">
       <button class="pf active" data-i18n="filter_all" onclick="filterPitch('all',this)">Все</button>
-      <button class="pf" data-i18n="pf_film" onclick="filterPitch('ct-film',this)">🎬 Кино</button>
-      <button class="pf" data-i18n="pf_music" onclick="filterPitch('ct-music',this)">🎵 Музыка</button>
-      <button class="pf" data-i18n="pf_doc" onclick="filterPitch('ct-doc',this)">📺 Документальное</button>
-      <button class="pf" data-i18n="pf_podcast" onclick="filterPitch('ct-podcast',this)">🎙 Подкаст</button>
-      <button class="pf" data-i18n="pf_social" onclick="filterPitch('ct-social',this)">📱 Соц. проект</button>
-      <button class="pf" data-i18n="pf_animation" onclick="filterPitch('ct-animation',this)">🎨 Анимация</button>
+      <button class="pf" data-i18n="pf_film" onclick="filterPitch('ct-film',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Кино</button>
+      <button class="pf" data-i18n="pf_music" onclick="filterPitch('ct-music',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыка</button>
+      <button class="pf" data-i18n="pf_doc" onclick="filterPitch('ct-doc',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное</button>
+      <button class="pf" data-i18n="pf_podcast" onclick="filterPitch('ct-podcast',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст</button>
+      <button class="pf" data-i18n="pf_social" onclick="filterPitch('ct-social',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. проект</button>
+      <button class="pf" data-i18n="pf_animation" onclick="filterPitch('ct-animation',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация</button>
       <button class="pf" data-i18n="pf_almost" onclick="filterPitch('almost',this)">🔥 Почти собрано</button>
     </div>
     <div class="pitch-grid">
 
-      <div class="pc"><div class="pc-thumb p1"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>14</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-film" data-i18n="pc_type_feature">🎬 Полный метр</div><div class="pc-title">Теміртау. 1991</div><div class="pc-author">Нурлан Ахметов</div><p class="pc-desc" data-i18n="pc1_desc">Исторический полный метр о распаде СССР глазами молодого рабочего металлургического комбината.</p><div class="prog-labels"><span class="prog-raised">4 200 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 8 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:52%"></div></div><div class="pc-foot"><span class="pc-backers">👥 83 <span data-i18n="backers">бэкера</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+      <div class="pc"><div class="pc-thumb p1"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>14</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-film" data-i18n="pc_type_feature">🎬 Полный метр</div><div class="pc-title">Теміртау. 1991</div><div class="pc-author">Нурлан Ахметов</div><p class="pc-desc" data-i18n="pc1_desc">Исторический полный метр о распаде СССР глазами молодого рабочего металлургического комбината.</p><div class="prog-labels"><span class="prog-raised">4 200 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 8 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:52%"></div></div><div class="pc-foot"><span class="pc-backers"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="16" cy="9" r="2.5" fill="#7D9158" stroke="none"/><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19 C3 15.5 5 13.5 8 13.5 C11 13.5 13 15.5 13.5 19"/><path d="M14 14 C16.5 14 19 15.5 21 18"/></g></svg> 83 <span data-i18n="backers">бэкера</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
-      <div class="pc"><div class="pc-thumb p2"><div class="pc-badge pb-hot" data-i18n="badge_hot">🔥 Горячий</div><span class="pc-days"><span>5</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-music" data-i18n="pc_type_album">🎵 Музыкальный альбом</div><div class="pc-title">Dala Sounds Vol. II</div><div class="pc-author">Dala Collective</div><p class="pc-desc" data-i18n="pc2_desc">Второй альбом коллектива — фьюжн казахского домбра с электронной музыкой. 12 треков, клип на каждый.</p><div class="prog-labels"><span class="prog-raised">5 800 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 6 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:97%"></div></div><div class="pc-foot"><span class="pc-backers">👥 312 <span data-i18n="backers">бэкеров</span></span><button class="qoldau" style="background:#4caf50">🔥 Qoldau</button></div></div></div>
+      <div class="pc"><div class="pc-thumb p2"><div class="pc-badge pb-hot" data-i18n="badge_hot">🔥 Горячий</div><span class="pc-days"><span>5</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-music" data-i18n="pc_type_album"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальный альбом</div><div class="pc-title">Dala Sounds Vol. II</div><div class="pc-author">Dala Collective</div><p class="pc-desc" data-i18n="pc2_desc">Второй альбом коллектива — фьюжн казахского домбра с электронной музыкой. 12 треков, клип на каждый.</p><div class="prog-labels"><span class="prog-raised">5 800 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 6 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:97%"></div></div><div class="pc-foot"><span class="pc-backers"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="16" cy="9" r="2.5" fill="#7D9158" stroke="none"/><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19 C3 15.5 5 13.5 8 13.5 C11 13.5 13 15.5 13.5 19"/><path d="M14 14 C16.5 14 19 15.5 21 18"/></g></svg> 312 <span data-i18n="backers">бэкеров</span></span><button class="qoldau" style="background:#4caf50">🔥 Qoldau</button></div></div></div>
 
-      <div class="pc"><div class="pc-thumb p8"><div class="pc-badge pb-new" data-i18n="badge_new">✦ Новый</div><span class="pc-days"><span>28</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-podcast" data-i18n="pc_type_podcast_series">🎙 Подкаст-серия</div><div class="pc-title">Тарих дыбыстары</div><div class="pc-author">Айдос Мәмбет</div><p class="pc-desc" data-i18n="pc3_desc">10-серийный подкаст с историками — устная история страны через личные архивы.</p><div class="prog-labels"><span class="prog-raised">750 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 2 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:37%"></div></div><div class="pc-foot"><span class="pc-backers">👥 55 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+      <div class="pc"><div class="pc-thumb p8"><div class="pc-badge pb-new" data-i18n="badge_new">✦ Новый</div><span class="pc-days"><span>28</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-podcast" data-i18n="pc_type_podcast_series"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст-серия</div><div class="pc-title">Тарих дыбыстары</div><div class="pc-author">Айдос Мәмбет</div><p class="pc-desc" data-i18n="pc3_desc">10-серийный подкаст с историками — устная история страны через личные архивы.</p><div class="prog-labels"><span class="prog-raised">750 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 2 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:37%"></div></div><div class="pc-foot"><span class="pc-backers"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="16" cy="9" r="2.5" fill="#7D9158" stroke="none"/><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19 C3 15.5 5 13.5 8 13.5 C11 13.5 13 15.5 13.5 19"/><path d="M14 14 C16.5 14 19 15.5 21 18"/></g></svg> 55 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
-      <div class="pc"><div class="pc-thumb p5"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>20</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-social" data-i18n="pc_type_social">📱 Соц. проект</div><div class="pc-title">Тіл — наш язык</div><div class="pc-author">Zarina Жунусова</div><p class="pc-desc" data-i18n="pc4_desc">20 коротких документальных роликов о людях, возрождающих казахский язык в повседневной жизни.</p><div class="prog-labels"><span class="prog-raised">1 200 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 3 500 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:34%"></div></div><div class="pc-foot"><span class="pc-backers">👥 104 <span data-i18n="backers">бэкера</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+      <div class="pc"><div class="pc-thumb p5"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>20</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-social" data-i18n="pc_type_social"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. проект</div><div class="pc-title">Тіл — наш язык</div><div class="pc-author">Zarina Жунусова</div><p class="pc-desc" data-i18n="pc4_desc">20 коротких документальных роликов о людях, возрождающих казахский язык в повседневной жизни.</p><div class="prog-labels"><span class="prog-raised">1 200 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 3 500 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:34%"></div></div><div class="pc-foot"><span class="pc-backers"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="16" cy="9" r="2.5" fill="#7D9158" stroke="none"/><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19 C3 15.5 5 13.5 8 13.5 C11 13.5 13 15.5 13.5 19"/><path d="M14 14 C16.5 14 19 15.5 21 18"/></g></svg> 104 <span data-i18n="backers">бэкера</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
-      <div class="pc"><div class="pc-thumb p6"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>9</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-animation" style="color:#a0d47a" data-i18n="pf_animation">🎨 Анимация</div><div class="pc-title">Аяз би туралы аңыз</div><div class="pc-author">Zerde Animation</div><p class="pc-desc" data-i18n="pc5_desc">Анимационный фильм об Аяз би. Ручная покадровая анимация, вдохновлённая казахским орнаментом.</p><div class="prog-labels"><span class="prog-raised">3 900 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 5 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:78%"></div></div><div class="pc-foot"><span class="pc-backers">👥 187 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+      <div class="pc"><div class="pc-thumb p6"><div class="pc-badge pb-live" data-i18n="badge_live">● Live</div><span class="pc-days"><span>9</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-animation" style="color:#a0d47a" data-i18n="pf_animation"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация</div><div class="pc-title">Аяз би туралы аңыз</div><div class="pc-author">Zerde Animation</div><p class="pc-desc" data-i18n="pc5_desc">Анимационный фильм об Аяз би. Ручная покадровая анимация, вдохновлённая казахским орнаментом.</p><div class="prog-labels"><span class="prog-raised">3 900 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 5 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:78%"></div></div><div class="pc-foot"><span class="pc-backers"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="16" cy="9" r="2.5" fill="#7D9158" stroke="none"/><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19 C3 15.5 5 13.5 8 13.5 C11 13.5 13 15.5 13.5 19"/><path d="M14 14 C16.5 14 19 15.5 21 18"/></g></svg> 187 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
-      <div class="pc"><div class="pc-thumb p3"><div class="pc-badge pb-new" data-i18n="badge_new">✦ Новый</div><span class="pc-days"><span>30</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-doc" data-i18n="pc_type_doc">📺 Документальный</div><div class="pc-title">Шекара / La Frontera</div><div class="pc-author">Айгерим Бекова</div><p class="pc-desc" data-i18n="pc6_desc">О казахско-китайской границе: жизни семей, разлучённых по обе стороны.</p><div class="prog-labels"><span class="prog-raised">880 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 12 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:7%"></div></div><div class="pc-foot"><span class="pc-backers">👥 29 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
+      <div class="pc"><div class="pc-thumb p3"><div class="pc-badge pb-new" data-i18n="badge_new">✦ Новый</div><span class="pc-days"><span>30</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-doc" data-i18n="pc_type_doc">📺 Документальный</div><div class="pc-title">Шекара / La Frontera</div><div class="pc-author">Айгерим Бекова</div><p class="pc-desc" data-i18n="pc6_desc">О казахско-китайской границе: жизни семей, разлучённых по обе стороны.</p><div class="prog-labels"><span class="prog-raised">880 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 12 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:7%"></div></div><div class="pc-foot"><span class="pc-backers"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="16" cy="9" r="2.5" fill="#7D9158" stroke="none"/><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19 C3 15.5 5 13.5 8 13.5 C11 13.5 13 15.5 13.5 19"/><path d="M14 14 C16.5 14 19 15.5 21 18"/></g></svg> 29 <span data-i18n="backers">бэкеров</span></span><button class="qoldau">Qoldau →</button></div></div></div>
 
     </div>
   </div>
@@ -2516,7 +2558,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           <p class="prof-bio" id="prof-bio" style="color:var(--text3)">Войдите или создайте аккаунт, чтобы загружать контент, поддерживать питч-кампании и общаться с другими авторами.</p>
           <div class="prof-skills" id="prof-skills"></div>
           <div class="prof-links" id="prof-links">
-            <span class="prof-link" onclick="goPage('auth',null)" style="background:var(--gold);color:#121212;font-weight:700" id="prof-cta-btn">🔑 Войти / Регистрация</span>
+            <span class="prof-link" onclick="goPage('auth',null)" style="background:var(--gold);color:#121212;font-weight:700" id="prof-cta-btn"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Войти / Регистрация</span>
           </div>
         </div>
         <div class="prof-stats" id="prof-stats" style="display:none">
@@ -2529,7 +2571,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <button class="ptab active" onclick="switchProfTab('works',this)" data-i18n="tab_works">Мои работы</button>
         <button class="ptab" onclick="switchProfTab('collab',this)" data-i18n="tab_collab">Участие в проектах</button>
         <button class="ptab" onclick="switchProfTab('reviews',this)" data-i18n="tab_reviews">Рецензии</button>
-        <button class="ptab" onclick="switchProfTab('collections',this)">🗂 Коллекции</button>
+        <button class="ptab" onclick="switchProfTab('collections',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7 H10 L12 9 H21 V19 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 7 H10 L12 9 H21 V19 H3 Z"/></g></svg> Коллекции</button>
       </div>
       <div class="profile-grid" id="prof-grid"></div>
       <div id="prof-collections" class="prof-collections" style="display:none">
@@ -2546,7 +2588,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
       <!-- Guest CTA card -->
       <div id="prof-guest-cta" style="padding:40px 0;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
-        <div style="font-size:56px;opacity:.15">👤</div>
+        <div style="font-size:56px;opacity:.15"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg></div>
         <div style="font-size:20px;font-weight:800;letter-spacing:-.5px" data-i18n="guest_title">Войдите в аккаунт</div>
         <div style="font-size:13px;color:var(--text2);max-width:340px;line-height:1.6" data-i18n="guest_sub">Зарегистрируйтесь бесплатно, чтобы загружать контент, участвовать в питч-кампаниях и строить свою команду.</div>
         <button onclick="goPage('auth',null)" class="btn-sharp-gold" data-i18n="guest_btn">ВОЙТИ / РЕГИСТРАЦИЯ</button>
@@ -2608,10 +2650,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           <input id="reg-password" class="form-input" type="password" autocomplete="new-password" placeholder="Минимум 6 символов"/>
         </div>
         <div class="form-group">
+          <label class="form-label">Тег <span style="color:var(--text3);font-weight:400;font-size:11px">— уникальный @username, как в Telegram</span></label>
+          <div style="position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:14px;font-weight:700;pointer-events:none">@</span>
+            <input id="reg-handle" class="form-input" type="text" autocomplete="off" placeholder="your_unique_tag" style="padding-left:28px" oninput="validateHandleInput(this)"/>
+          </div>
+          <div id="handle-status" style="font-size:11px;margin-top:4px;display:none"></div>
+        </div>
+        <div class="form-group">
           <div class="role-label-sm" data-i18n="role_label">Я на платформе как…</div>
           <div class="role-select-row">
             <div class="role-opt active" onclick="selectRole(this)" data-role="viewer">
-              <div class="role-icon-box">▶</div>
+              <div class="role-icon-box"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div>
               <span data-i18n="role_viewer">Зритель</span>
             </div>
             <div class="role-opt" onclick="selectRole(this)" data-role="creator">
@@ -2649,7 +2699,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           <div class="settings-row-desc" data-i18n="role_desc">Определяет уровень доступа на платформе</div>
         </div>
         <div class="role-switcher">
-          <span class="role-badge role-user" onclick="demoRole(this,'role-user')" style="cursor:pointer">👤 Зритель</span>
+          <span class="role-badge role-user" onclick="demoRole(this,'role-user')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Зритель</span>
           <span class="role-badge role-creator" onclick="demoRole(this,'role-creator')" style="cursor:pointer">🎬 Автор</span>
           <span class="role-badge role-moderator" onclick="demoRole(this,'role-moderator')" style="cursor:pointer">🛡 Модератор</span>
           <span class="role-badge role-admin" onclick="demoRole(this,'role-admin')" style="cursor:pointer">⚡ Админ</span>
@@ -2763,7 +2813,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <div class="settings-block-title" data-i18n="access_block">Уровни доступа</div>
       <div class="settings-row">
         <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-user">👤 Зритель</span>
+          <span class="role-badge role-user"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Зритель</span>
           <div style="font-size:12px;color:var(--text2)" data-i18n="access_user">Просмотр контента, комментарии, поддержка питчей</div>
         </div>
       </div>
@@ -2816,7 +2866,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         </div>
       </div>
       <div class="pb-eyebrow" style="margin-bottom:10px"><span>Art Yearns Action — Дипломный проект 2025</span></div>
-      <div class="about-project-title">AYA</div>
+      <div class="about-project-title about-logo-wrap">
+        <img src="assets/logo_dark.png"  class="about-aya-logo logo-badge-dark"  alt="AYA">
+        <img src="assets/logo_light.png" class="about-aya-logo logo-badge-light" alt="AYA">
+      </div>
       <p class="about-tagline" data-i18n="about_tagline">
         Гибридная цифровая экосистема для независимого казахстанского контента. Практический продукт дипломного исследования на тему «Государственное и независимое кино Казахстана 2020–2025: проблемы рентабельности, дистрибуции и вовлечённости аудитории».
       </p>
@@ -2857,6 +2910,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     </div>
 
   </div>
+      <div class="about-qr-section">
+        <img src="assets/qr_code_dark.png"  class="about-qr about-qr-dark"  alt="QR">
+        <img src="assets/qr_code_light.png" class="about-qr about-qr-light" alt="QR">
+      </div>
+    </div>
 </div><!-- /about -->
 
 <!-- ADMIN PAGES -->
@@ -3060,7 +3118,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const liked = user && isLiked(user.id, contentId(_currentContent));
     btn.style.color = liked ? '#e05555' : '';
     btn.style.fontWeight = liked ? '800' : '';
-    btn.textContent = liked ? '❤️ Нравится' : '🤍 Нравится';
+    btn.textContent = liked ? '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z" fill="#7D9158" stroke="none"/><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z"/></g></svg> Нравится' : '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z" fill="#7D9158" stroke="none"/><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z"/></g></svg> Нравится';
   }
 
   function updateCardLikeBtn(_cid, _liked) {
@@ -3191,7 +3249,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     if (!c) return;
     c.isPublic = !c.isPublic;
     saveCollections(all);
-    btn.textContent = c.isPublic ? '🌐 Публичная' : '🔒 Приватная';
+    btn.textContent = c.isPublic ? '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M3 12 H21"/><path d="M12 3 C8.5 7 8.5 17 12 21 M12 3 C15.5 7 15.5 17 12 21"/></g></svg> Публичная' : '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="7" y="11" width="10" height="8" rx="1" fill="#7D9158" stroke="none"/><rect x="7" y="11" width="10" height="8" rx="1"/><path d="M9 11 V8.5 C9 6.5 10.3 5 12 5 C13.7 5 15 6.5 15 8.5 V11"/></g></svg> Приватная';
     btn.style.background = c.isPublic ? 'rgba(125,145,88,.15)' : 'var(--bg4)';
     btn.style.color = c.isPublic ? 'var(--gold)' : 'var(--text3)';
     renderTopCollections();
@@ -3259,7 +3317,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     }).join('');
 
     const privacyBtn = isOwner ? `<button data-coll="${sid}" onclick="event.stopPropagation();_togglePrivacyBtn(this)" style="margin-top:8px;padding:3px 9px;border-radius:8px;border:none;font-size:10px;font-weight:700;cursor:pointer;background:${c.isPublic?'rgba(125,145,88,.15)':'var(--bg4)'};color:${c.isPublic?'var(--gold)':'var(--text3)'}">
-      ${c.isPublic ? '🌐 Публичная' : '🔒 Приватная'}
+      ${c.isPublic ? '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M3 12 H21"/><path d="M12 3 C8.5 7 8.5 17 12 21 M12 3 C15.5 7 15.5 17 12 21"/></g></svg> Публичная' : '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="7" y="11" width="10" height="8" rx="1" fill="#7D9158" stroke="none"/><rect x="7" y="11" width="10" height="8" rx="1"/><path d="M9 11 V8.5 C9 6.5 10.3 5 12 5 C13.7 5 15 6.5 15 8.5 V11"/></g></svg> Приватная'}
     </button>` : '';
     const deleteBtn = isOwner && !c.isDefault ? `<button data-coll="${sid}" onclick="event.stopPropagation();_deleteCollBtn(this)" style="position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:50%;background:rgba(224,85,85,.8);border:none;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>` : '';
     const followBtn = !isOwner ? `<button class="coll-follow-btn following" data-coll="${sid}" onclick="event.stopPropagation();_followCollBtn(this)">✓ Сохранено</button>` : '';
@@ -3314,7 +3372,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       meta.innerHTML =
         `<span>${c.items.length} ${c.items.length === 1 ? 'элемент' : c.items.length < 5 ? 'элемента' : 'элементов'}</span>
          <span style="color:var(--bg5)">·</span>
-         <span>${c.isPublic ? '🌐 Публичная' : '🔒 Приватная'}</span>
+         <span>${c.isPublic ? '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M3 12 H21"/><path d="M12 3 C8.5 7 8.5 17 12 21 M12 3 C15.5 7 15.5 17 12 21"/></g></svg> Публичная' : '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="7" y="11" width="10" height="8" rx="1" fill="#7D9158" stroke="none"/><rect x="7" y="11" width="10" height="8" rx="1"/><path d="M9 11 V8.5 C9 6.5 10.3 5 12 5 C13.7 5 15 6.5 15 8.5 V11"/></g></svg> Приватная'}</span>
          ${isOwn ? `<button data-coll="${safeId(c.id)}" onclick="_detailPrivacyBtn(this)"
            style="padding:2px 8px;border-radius:8px;border:none;font-size:10px;font-weight:700;cursor:pointer;
              background:${c.isPublic?'rgba(125,145,88,.15)':'var(--bg4)'};color:${c.isPublic?'var(--gold)':'var(--text3)'}">
@@ -3366,7 +3424,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     document.getElementById('coll-detail-meta').innerHTML =
       `<span>${c.items.length} ${c.items.length === 1 ? 'элемент' : c.items.length < 5 ? 'элемента' : 'элементов'}</span>
        <span style="color:var(--bg5)">·</span>
-       <span>${c.isPublic ? '🌐 Публичная' : '🔒 Приватная'}</span>
+       <span>${c.isPublic ? '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M3 12 H21"/><path d="M12 3 C8.5 7 8.5 17 12 21 M12 3 C15.5 7 15.5 17 12 21"/></g></svg> Публичная' : '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="7" y="11" width="10" height="8" rx="1" fill="#7D9158" stroke="none"/><rect x="7" y="11" width="10" height="8" rx="1"/><path d="M9 11 V8.5 C9 6.5 10.3 5 12 5 C13.7 5 15 6.5 15 8.5 V11"/></g></svg> Приватная'}</span>
        ${isOwn ? `<button data-coll="${safeId(c.id)}" onclick="_detailPrivacyBtn(this)"
          style="padding:2px 8px;border-radius:8px;border:none;font-size:10px;font-weight:700;cursor:pointer;
            background:${c.isPublic?'rgba(125,145,88,.15)':'var(--bg4)'};color:${c.isPublic?'var(--gold)':'var(--text3)'}">
@@ -3438,16 +3496,16 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
         // — Add to collection (any logged-in user)
         items.push({
-          icon: '🔖', label: 'В коллекцию',
+          icon: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg>', label: 'В коллекцию',
           action: () => { _currentContent = content; openCollectionPicker(); }
         });
 
         // — Report (moderator or admin)
         if (user && (user.role === 'moderator' || user.role === 'admin')) {
           items.push({
-            icon: '🚩', label: 'Пожаловаться',
+            icon: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 4 H17 L14 8.5 L17 13 H5 Z" fill="#7D9158" stroke="none"/><path d="M5 4 H17 L14 8.5 L17 13 H5 Z"/><path d="M5 4 V21"/></g></svg>', label: 'Пожаловаться',
             action: () => showModal({
-              title: '🚩 Пожаловаться на видео',
+              title: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 4 H17 L14 8.5 L17 13 H5 Z" fill="#7D9158" stroke="none"/><path d="M5 4 H17 L14 8.5 L17 13 H5 Z"/><path d="M5 4 V21"/></g></svg> Пожаловаться на видео',
               body: `Подтвердите жалобу на «${title}». Заявка будет направлена администратору.`,
               actions: [
                 { label: 'Отмена', style: MODAL_BTN_CANCEL2 },
@@ -3497,7 +3555,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   /* ── Admin: permanently delete any content (no stored token needed) ── */
   async function adminDeleteContent(content) {
     showModal({
-      title: '🗑 Удалить навсегда?',
+      title: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить навсегда?',
       body: `«${content.title}» будет безвозвратно удалено для всех пользователей.`,
       actions: [
         { label: 'Отмена', style: MODAL_BTN_CANCEL2 },
@@ -3811,7 +3869,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         const div = document.createElement('div');
         div.className = 'rec-card';
         div.onclick = () => openWatch(c);
-        div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner" style="background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px">🎬</div><div class="rec-play-wrap">▶</div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.crew&&c.crew.length?c.crew[0].tag:''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${(c.catLabel||'').toUpperCase()}</span></div>`;
+        div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner" style="background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px">🎬</div><div class="rec-play-wrap"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.crew&&c.crew.length?c.crew[0].tag:''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${(c.catLabel||'').toUpperCase()}</span></div>`;
         recContainer.appendChild(div);
       });
     }
@@ -3850,7 +3908,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const hasToken = content && content.id && getDeleteToken(content.id);
       const isAdmin  = user && user.role === 'admin';
       deleteBtn.style.display = (hasToken || isAdmin) ? '' : 'none';
-      deleteBtn.textContent = '🗑 Удалить';
+      deleteBtn.textContent = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить';
     }
   }
 
@@ -4111,7 +4169,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <div class="thumb ${thumbClass}" style="position:relative${thumbStyle ? ';' + thumbStyle : ''}">
           ${thumb}
           <span class="ct-badge ${c.cat}">${c.catLabel}</span>
-          <div class="thumb-play-wrap"><div class="thumb-play">▶</div></div>
+          <div class="thumb-play-wrap"><div class="thumb-play"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div>
         </div>
         <div class="card-title">${c.title}</div>
         <div class="card-sub">${c.author || ''}</div>`;
@@ -4284,7 +4342,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   // ── Profile page: logged-in vs guest ─────────────────────────
   const ROLE_LABELS = { viewer: 'Зритель', creator: 'Автор', studio: 'Студия', moderator: 'Модератор', admin: 'Администратор' };
-  const ROLE_ICONS  = { viewer: '▶', creator: '✦', studio: '⬡', moderator: '🛡', admin: '⚡' };
+  const ROLE_ICONS  = { viewer: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg>', creator: '✦', studio: '⬡', moderator: '🛡', admin: '⚡' };
 
   function updateProfilePage(user) {
     const av        = document.getElementById('prof-av');
@@ -4310,7 +4368,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       av.style.color = '#121212';
 
       name.textContent    = `${user.first_name} ${user.last_name}`;
-      handle.textContent  = `@${user.first_name.toLowerCase()}${user.last_name.toLowerCase()} · ${ROLE_ICONS[user.role] || ''} ${ROLE_LABELS[user.role] || user.role}`;
+      handle.textContent  = `@${user.handle || (user.first_name.toLowerCase() + user.last_name.toLowerCase())} · ${ROLE_ICONS[user.role] || ''} ${ROLE_LABELS[user.role] || user.role}`;
       handle.style.color  = '';
       bio.textContent     = t('prof_welcome');
       bio.style.color     = '';
@@ -4389,6 +4447,36 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
 
   // ── REGISTER ─────────────────────────────────────────────────
+  /* ── Handle validation (live) ── */
+  function validateHandleInput(input) {
+    const raw = input.value;
+    const cleaned = raw.replace(/[^a-zA-Z0-9_]/g, '');
+    if (cleaned !== raw) input.value = cleaned;
+    const status = document.getElementById('handle-status');
+    if (!cleaned) { status.style.display = 'none'; return; }
+    if (cleaned.length < 3) {
+      status.textContent = 'Минимум 3 символа';
+      status.style.color = '#e05555';
+      status.style.display = 'block';
+      return;
+    }
+    if (cleaned.length > 24) {
+      status.textContent = 'Максимум 24 символа';
+      status.style.color = '#e05555';
+      status.style.display = 'block';
+      return;
+    }
+    const taken = getUsers().some(u => u.handle && u.handle.toLowerCase() === cleaned.toLowerCase());
+    if (taken) {
+      status.textContent = `@${cleaned} уже занят`;
+      status.style.color = '#e05555';
+    } else {
+      status.textContent = `@${cleaned} — свободен ✓`;
+      status.style.color = 'var(--teal)';
+    }
+    status.style.display = 'block';
+  }
+
   async function handleRegister() {
     const errEl   = document.getElementById('register-error');
     const btn     = document.getElementById('register-btn');
@@ -4401,11 +4489,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const password   = document.getElementById('reg-password').value;
     const roleOpt    = document.querySelector('#auth-register .role-opt.active');
     const role       = roleOpt?.dataset?.role || 'viewer';
+    const handleInput = document.getElementById('reg-handle').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
 
     if (!first_name || !last_name) return errShow('Введите имя и фамилию');
     if (!email || !email.includes('@')) return errShow('Введите корректный email');
     if (password.length < 6) return errShow('Пароль — минимум 6 символов');
     if (findUserByEmail(email)) return errShow('Этот email уже зарегистрирован');
+    if (handleInput && handleInput.length < 3) return errShow('Тег должен быть минимум 3 символа');
+    if (handleInput && handleInput.length > 24) return errShow('Тег не должен превышать 24 символа');
 
     btn.disabled = true;
     btn.textContent = '…';
@@ -4413,11 +4504,20 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     try {
       const password_hash = await hashPassword(password);
       const users = getUsers();
-      // Auto-generate unique @handle from name (like Telegram)
-      const baseHandle = (first_name + last_name).toLowerCase().replace(/[^a-z0-9а-яёa-я]/gi,'').replace(/\s+/g,'') || 'user';
-      let handle = baseHandle;
-      let suffix = 1;
-      while (users.find(u => u.handle === handle)) { handle = baseHandle + suffix++; }
+      // Use user-chosen handle or auto-generate from name
+      let handle;
+      if (handleInput) {
+        if (users.find(u => u.handle && u.handle.toLowerCase() === handleInput)) {
+          btn.disabled = false; btn.removeAttribute('data-i18n'); btn.textContent = 'Создать аккаунт';
+          return errShow(`Тег @${handleInput} уже занят — выберите другой`);
+        }
+        handle = handleInput;
+      } else {
+        const baseHandle = (first_name + last_name).toLowerCase().replace(/[^a-z0-9]/gi,'') || 'user';
+        handle = baseHandle;
+        let suffix = 1;
+        while (users.find(u => u.handle === handle)) { handle = baseHandle + suffix++; }
+      }
       const user  = {
         id:           Date.now(),
         first_name,
@@ -4433,9 +4533,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       saveUsers(users);
 
       // Clear form
-      ['reg-first','reg-last','reg-email','reg-password'].forEach(id => {
+      ['reg-first','reg-last','reg-email','reg-password','reg-handle'].forEach(id => {
         document.getElementById(id).value = '';
       });
+      const hs = document.getElementById('handle-status');
+      if (hs) hs.style.display = 'none';
 
       saveSession(user);
       goPage('home', null);
@@ -4554,29 +4656,29 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       hero_eyebrow: '✦ Казахстанский независимый контент',
       hero_title: 'Кино, музыка, подкасты — всё своё',
       hero_desc: 'Единая платформа для независимого казахстанского контента. Смотри, слушай, поддерживай авторов и находи команду.',
-      btn_watch_now: '▶ Смотреть сейчас', btn_support: '💡 Поддержать проект',
+      btn_watch_now: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть сейчас', btn_support: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9 C13.5 8 9.5 8 9.5 11 C9.5 13.5 14.5 13 14.5 15 C14.5 17.5 10 17.5 9 16.5"/><path d="M12 6 V18"/></g></svg> Поддержать проект',
       // FILTERS
-      filter_all: 'Все', filter_films: '🎞 Фильмы', filter_music: '🎵 Музыкальные клипы',
-      filter_doc: '📺 Документальное', filter_podcast: '🎙 Подкасты',
-      filter_social: '📱 Соц. ролики', filter_short: '⚡ Короткий метр',
+      filter_all: 'Все', filter_films: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Фильмы', filter_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы',
+      filter_doc: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное', filter_podcast: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты',
+      filter_social: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. ролики', filter_short: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="12" r="5.5" fill="#7D9158" stroke="none"/><circle cx="9" cy="12" r="5.5"/><circle cx="16" cy="12" r="5.5"/><path d="M14.5 12 H17.5"/></g></svg> Короткий метр',
       // CONSTRUCTOR
       constructor_label: '✦ Конструктор поиска — найди контент под своё настроение',
       cs_find: 'Найти →',
       // ROW TITLES
-      row_trending: '🔥 Трендовое сейчас', row_music: '🎵 Музыкальные клипы',
-      row_podcasts: '🎙 Подкасты', row_festival: '🏆 Фестивальные победители',
+      row_trending: '🔥 Трендовое сейчас', row_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы',
+      row_podcasts: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты', row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Фестивальные победители',
       row_see_all: 'Показать всё →',
       // WATCH PAGE
-      back_btn: '← Назад', btn_watch: '▶ Смотреть', btn_review: '💬 Рецензия',
-      btn_save: '🔖 Сохранить', btn_share: '↗ Поделиться',
+      back_btn: '← Назад', btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z"/></g></svg> Рецензия',
+      btn_save: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Сохранить', btn_share: '↗ Поделиться',
       crew_title: 'Съёмочная группа', comments_title: 'Рецензии и комментарии',
       comment_ph: 'Напиши рецензию или комментарий…', also_rec: 'Также рекомендуем',
       // PITCH PAGE
       pitch_desc: 'Фильмы, клипы, подкасты, соц. проекты — любая идея может найти поддержку. Каждый вклад приближает историю к экрану.',
       pitch_submit: '+ Подать питч',
-      pf_film: '🎬 Кино', pf_music: '🎵 Музыка', pf_doc: '📺 Документальное',
-      pf_podcast: '🎙 Подкаст', pf_social: '📱 Соц. проект',
-      pf_animation: '🎨 Анимация', pf_almost: '🔥 Почти собрано',
+      pf_film: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Кино', pf_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыка', pf_doc: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное',
+      pf_podcast: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст', pf_social: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. проект',
+      pf_animation: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация', pf_almost: '🔥 Почти собрано',
       // PROFILE PAGE
       works: 'Работ', followers: 'Подписчиков', pitches: 'Питч-кампании',
       tab_works: 'Мои работы', tab_collab: 'Участие в проектах', tab_reviews: 'Рецензии',
@@ -4586,7 +4688,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       // PROFILE DYNAMIC (used in updateProfilePage)
       prof_welcome: 'Добро пожаловать на AYA! Заполните информацию о себе в настройках.',
       prof_empty: 'Здесь появятся ваши работы после загрузки',
-      prof_settings_lnk: '⚙ Настройки', prof_logout_lnk: '↩ Выйти',
+      prof_settings_lnk: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg> Настройки', prof_logout_lnk: '↩ Выйти',
       prof_guest_handle: 'Вы не вошли в аккаунт',
       prof_guest_bio: 'Войдите или создайте аккаунт, чтобы загружать контент, поддерживать питч-кампании и общаться с другими авторами.',
       // AUTH
@@ -4624,12 +4726,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       logout_btn: 'Выйти',
       // SIDEBAR
       nav_home: 'Главная', nav_pitch: 'Питчинг', nav_profile: 'Профиль',
-      admin_section: '⚡ Администрирование',
+      admin_section: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> Администрирование',
       admin_content_req: 'Заявки на удаление', admin_ban_req: 'Заявки на бан',
-      admin_content_title: '🗑 Заявки на удаление контента',
-      admin_ban_title: '🚫 Заявки на бан пользователей',
-      mod_section: '🛡 Модерация',
-      mod_my_req: 'Мои заявки', mod_my_req_title: '📋 Мои заявки',
+      admin_content_title: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Заявки на удаление контента',
+      admin_ban_title: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> Заявки на бан пользователей',
+      mod_section: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> Модерация',
+      mod_my_req: 'Мои заявки', mod_my_req_title: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 3 H15 L19 7 V21 H5 Z" fill="#7D9158" stroke="none"/><path d="M5 3 H15 L19 7 V21 H5 Z"/><path d="M15 3 V7 H19"/><path d="M8 11 H16 M8 14 H16 M8 17 H13"/></g></svg> Мои заявки',
       sidebar_content: 'Контент',
       cat_films: 'Фильмы', cat_clips: 'Клипы', cat_doc: 'Документальное',
       cat_podcasts: 'Подкасты', cat_social: 'Соц. ролики', cat_short: 'Короткий метр',
@@ -4641,8 +4743,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       // PITCH CARDS
       badge_live: '● Live', badge_hot: '🔥 Горячий', badge_new: '✦ Новый',
       days_left: 'дней', of_goal: 'из', backers: 'бэкеров',
-      pc_type_feature: '🎬 Полный метр', pc_type_album: '🎵 Музыкальный альбом',
-      pc_type_podcast_series: '🎙 Подкаст-серия', pc_type_social: '📱 Соц. проект',
+      pc_type_feature: '🎬 Полный метр', pc_type_album: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальный альбом',
+      pc_type_podcast_series: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст-серия', pc_type_social: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. проект',
       pc_type_doc: '📺 Документальный',
       pc1_desc: 'Исторический полный метр о распаде СССР глазами молодого рабочего металлургического комбината.',
       pc2_desc: 'Второй альбом коллектива — фьюжн казахского домбра с электронной музыкой. 12 треков, клип на каждый.',
@@ -4668,29 +4770,29 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       hero_eyebrow: '✦ Қазақстандық тәуелсіз контент',
       hero_title: 'Кино, музыка, подкасттар — бәрі өзіміздікі',
       hero_desc: 'Тәуелсіз қазақстандық контентке арналған бірыңғай платформа. Қара, тыңда, авторларды қолда және команда тап.',
-      btn_watch_now: '▶ Қазір қарау', btn_support: '💡 Жобаны қолдау',
+      btn_watch_now: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Қазір қарау', btn_support: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9 C13.5 8 9.5 8 9.5 11 C9.5 13.5 14.5 13 14.5 15 C14.5 17.5 10 17.5 9 16.5"/><path d="M12 6 V18"/></g></svg> Жобаны қолдау',
       // FILTERS
-      filter_all: 'Барлығы', filter_films: '🎞 Фильмдер', filter_music: '🎵 Музыкалық клиптер',
-      filter_doc: '📺 Деректі фильм', filter_podcast: '🎙 Подкасттар',
+      filter_all: 'Барлығы', filter_films: '🎞 Фильмдер', filter_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкалық клиптер',
+      filter_doc: '📺 Деректі фильм', filter_podcast: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасттар',
       filter_social: '📱 Әлеум. роликтер', filter_short: '⚡ Қысқаметражды',
       // CONSTRUCTOR
       constructor_label: '✦ Іздеу конструкторы — өз көңіл-күйіңізге контент тауып алыңыз',
       cs_find: 'Табу →',
       // ROW TITLES
-      row_trending: '🔥 Қазір трендте', row_music: '🎵 Музыкалық клиптер',
-      row_podcasts: '🎙 Подкасттар', row_festival: '🏆 Фестиваль жеңімпаздары',
+      row_trending: '🔥 Қазір трендте', row_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкалық клиптер',
+      row_podcasts: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасттар', row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Фестиваль жеңімпаздары',
       row_see_all: 'Барлығын көру →',
       // WATCH PAGE
-      back_btn: '← Артқа', btn_watch: '▶ Қарау', btn_review: '💬 Пікір',
-      btn_save: '🔖 Сақтау', btn_share: '↗ Бөлісу',
+      back_btn: '← Артқа', btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Қарау', btn_review: '💬 Пікір',
+      btn_save: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Сақтау', btn_share: '↗ Бөлісу',
       crew_title: 'Түсіру тобы', comments_title: 'Пікірлер мен түсіндірмелер',
       comment_ph: 'Пікір немесе рецензия жазыңыз…', also_rec: 'Сондай-ақ ұсынамыз',
       // PITCH PAGE
       pitch_desc: 'Фильмдер, клиптер, подкасттар, әлеум. жобалар — кез келген идея қолдау таба алады. Әр үлес тарихты экранға жақындатады.',
       pitch_submit: '+ Питч беру',
-      pf_film: '🎬 Кино', pf_music: '🎵 Музыка', pf_doc: '📺 Деректі фильм',
-      pf_podcast: '🎙 Подкаст', pf_social: '📱 Әлеум. жоба',
-      pf_animation: '🎨 Анимация', pf_almost: '🔥 Жиналып қалды',
+      pf_film: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Кино', pf_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыка', pf_doc: '📺 Деректі фильм',
+      pf_podcast: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст', pf_social: '📱 Әлеум. жоба',
+      pf_animation: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация', pf_almost: '🔥 Жиналып қалды',
       // PROFILE PAGE
       works: 'Жұмыс', followers: 'Жазылушы', pitches: 'Питч-науқандар',
       tab_works: 'Менің жұмыстарым', tab_collab: 'Жобаларға қатысу', tab_reviews: 'Пікірлер',
@@ -4699,7 +4801,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       guest_btn: 'КІРУ / ТІРКЕЛУ',
       prof_welcome: 'AYA-ға қош келдіңіз! Баптауларда өзіңіз туралы ақпаратты толтырыңыз.',
       prof_empty: 'Жүктегеннен кейін жұмыстарыңыз осында пайда болады',
-      prof_settings_lnk: '⚙ Баптаулар', prof_logout_lnk: '↩ Шығу',
+      prof_settings_lnk: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg> Баптаулар', prof_logout_lnk: '↩ Шығу',
       prof_guest_handle: 'Аккаунтқа кірмедіңіз',
       prof_guest_bio: 'Контент жүктеу, питч-науқандарды қолдау және басқа авторлармен сөйлесу үшін кіріңіз немесе аккаунт жасаңыз.',
       // AUTH
@@ -4741,7 +4843,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       admin_content_req: 'Жою өтінімдері', admin_ban_req: 'Бан өтінімдері',
       admin_content_title: '🗑 Контентті жою өтінімдері',
       admin_ban_title: '🚫 Пайдаланушыны бандау өтінімдері',
-      mod_section: '🛡 Модерация',
+      mod_section: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> Модерация',
       mod_my_req: 'Менің өтінімдерім', mod_my_req_title: '📋 Менің өтінімдерім',
       sidebar_content: 'Контент',
       cat_films: 'Фильмдер', cat_clips: 'Клиптер', cat_doc: 'Деректі фильм',
@@ -4754,8 +4856,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       // PITCH CARDS
       badge_live: '● Live', badge_hot: '🔥 Ыстық', badge_new: '✦ Жаңа',
       days_left: 'күн', of_goal: '/', backers: 'бэкер',
-      pc_type_feature: '🎬 Толық метраж', pc_type_album: '🎵 Музыкалық альбом',
-      pc_type_podcast_series: '🎙 Подкаст-сериясы', pc_type_social: '📱 Әлеум. жоба',
+      pc_type_feature: '🎬 Толық метраж', pc_type_album: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкалық альбом',
+      pc_type_podcast_series: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст-сериясы', pc_type_social: '📱 Әлеум. жоба',
       pc_type_doc: '📺 Деректі фильм',
       pc1_desc: 'Металлургиялық комбинат жас жұмысшысының көзімен КСРО ыдырауы туралы тарихи толық метраж.',
       pc2_desc: 'Ұжымның екінші альбомы — электрондық музыкамен қазақ домбырасының фьюжні. 12 трек, әр біріне клип.',
@@ -4781,7 +4883,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       hero_eyebrow: '✦ Kazakh Independent Content',
       hero_title: 'Films, music, podcasts — all our own',
       hero_desc: 'A unified platform for independent Kazakh content. Watch, listen, support creators, and find your crew.',
-      btn_watch_now: '▶ Watch Now', btn_support: '💡 Support a Project',
+      btn_watch_now: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Watch Now', btn_support: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9 C13.5 8 9.5 8 9.5 11 C9.5 13.5 14.5 13 14.5 15 C14.5 17.5 10 17.5 9 16.5"/><path d="M12 6 V18"/></g></svg> Support a Project',
       // FILTERS
       filter_all: 'All', filter_films: '🎞 Films', filter_music: '🎵 Music Videos',
       filter_doc: '📺 Documentary', filter_podcast: '🎙 Podcasts',
@@ -4791,11 +4893,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       cs_find: 'Find →',
       // ROW TITLES
       row_trending: '🔥 Trending Now', row_music: '🎵 Music Videos',
-      row_podcasts: '🎙 Podcasts', row_festival: '🏆 Festival Winners',
+      row_podcasts: '🎙 Podcasts', row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Festival Winners',
       row_see_all: 'See all →',
       // WATCH PAGE
-      back_btn: '← Back', btn_watch: '▶ Watch', btn_review: '💬 Review',
-      btn_save: '🔖 Save', btn_share: '↗ Share',
+      back_btn: '← Back', btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Watch', btn_review: '💬 Review',
+      btn_save: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Save', btn_share: '↗ Share',
       crew_title: 'Film Crew', comments_title: 'Reviews & Comments',
       comment_ph: 'Write a review or comment…', also_rec: 'Also Recommended',
       // PITCH PAGE
@@ -4812,7 +4914,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       guest_btn: 'SIGN IN / REGISTER',
       prof_welcome: 'Welcome to AYA! Fill in your info in Settings.',
       prof_empty: 'Your works will appear here after uploading',
-      prof_settings_lnk: '⚙ Settings', prof_logout_lnk: '↩ Sign out',
+      prof_settings_lnk: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg> Settings', prof_logout_lnk: '↩ Sign out',
       prof_guest_handle: 'You are not signed in',
       prof_guest_bio: 'Sign in or create an account to upload content, support pitch campaigns, and connect with other creators.',
       // AUTH
@@ -5172,7 +5274,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       ]);
     } else if (user.role === 'moderator') {
       showDotsMenu(anchorEl, [
-        { icon:'🚩', label:'Пожаловаться (бан)', warn:true, action:()=>modReportUser(userId,userName) },
+        { icon:'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 4 H17 L14 8.5 L17 13 H5 Z" fill="#7D9158" stroke="none"/><path d="M5 4 H17 L14 8.5 L17 13 H5 Z"/><path d="M5 4 V21"/></g></svg>', label:'Пожаловаться (бан)', warn:true, action:()=>modReportUser(userId,userName) },
       ]);
     }
   }
@@ -5188,14 +5290,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       ]);
     } else if (user.role === 'moderator') {
       showDotsMenu(anchorEl, [
-        { icon:'🚩', label:'Заявка на удаление', warn:true, action:()=>modReportContent(contentId, contentTitle) },
+        { icon:'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 4 H17 L14 8.5 L17 13 H5 Z" fill="#7D9158" stroke="none"/><path d="M5 4 H17 L14 8.5 L17 13 H5 Z"/><path d="M5 4 V21"/></g></svg>', label:'Заявка на удаление', warn:true, action:()=>modReportContent(contentId, contentTitle) },
       ]);
     }
   }
 
   function adminRemoveContent(cardEl, contentId, contentTitle) {
     showModal({
-      title:'🗑 Удалить контент',
+      title:'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить контент',
       body:`Удалить "<strong>${contentTitle}</strong>" с платформы?`,
       actions:[
         {label:'Отмена',style:MODAL_BTN_CANCEL2},
@@ -5412,7 +5514,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <div id="upload-overlay" onclick="closeUploadModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1100;align-items:center;justify-content:center">
   <div id="upload-box" onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:32px;width:90%;max-width:520px;box-shadow:var(--shadow-lg);position:relative;max-height:90vh;overflow-y:auto">
     <button onclick="closeUploadModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1">✕</button>
-    <div style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text)">📤 Загрузить контент</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 15 V20 H19 V15" fill="#7D9158" stroke="none" opacity="0.5"/><path d="M5 15 V20 H19 V15"/><path d="M12 3 V14"/><path d="M7.5 7.5 L12 3 L16.5 7.5"/></g></svg> Загрузить контент</div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:24px">Видео воспроизводится прямо в браузере — ничего не уходит на сервер</div>
 
     <!-- Title -->
@@ -5427,10 +5529,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <div style="display:flex;flex-wrap:wrap;gap:8px">
         <button class="up-cat-btn active" data-cat="ct-film" onclick="selectUploadCat(this)">🎬 Фильм</button>
         <button class="up-cat-btn" data-cat="ct-short" onclick="selectUploadCat(this)">🎞 Короткий</button>
-        <button class="up-cat-btn" data-cat="ct-doc" onclick="selectUploadCat(this)">📷 Документальный</button>
+        <button class="up-cat-btn" data-cat="ct-doc" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальный</button>
         <button class="up-cat-btn" data-cat="ct-music" onclick="selectUploadCat(this)">🎵 Клип</button>
-        <button class="up-cat-btn" data-cat="ct-animation" onclick="selectUploadCat(this)">✨ Анимация</button>
-        <button class="up-cat-btn" data-cat="ct-podcast" onclick="selectUploadCat(this)">🎙 Подкаст</button>
+        <button class="up-cat-btn" data-cat="ct-animation" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация</button>
+        <button class="up-cat-btn" data-cat="ct-podcast" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст</button>
       </div>
     </div>
 
@@ -5495,11 +5597,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <nav class="bottom-nav" aria-label="Навигация">
   <div class="bn-items">
     <button class="bn-item active" id="bn-home" onclick="goPage('home',null);setBottomNav('bn-home')" aria-label="Главная">
-      <span class="bn-ico">🏠</span>
+      <span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3.5 11 L12 4 L20.5 11 V19.5 H3.5 Z"/><path d="M9.5 19.5 V13 H14.5 V19.5 Z" fill="#7D9158" stroke="none"/><path d="M9.5 19.5 V13 H14.5 V19.5"/></g></svg></span>
       <span class="bn-label" data-i18n="nav_home">Главная</span>
     </button>
     <button class="bn-item" id="bn-pitch" onclick="goPage('pitch',null);setBottomNav('bn-pitch')" aria-label="Pitching">
-      <span class="bn-ico">💡</span>
+      <span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9 C13.5 8 9.5 8 9.5 11 C9.5 13.5 14.5 13 14.5 15 C14.5 17.5 10 17.5 9 16.5"/><path d="M12 6 V18"/></g></svg></span>
       <span class="bn-label">Pitching</span>
     </button>
     <button class="bn-item" id="bn-upload" onclick="openUploadModal()" aria-label="Загрузить" style="color:var(--gold)">
@@ -5507,11 +5609,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <span class="bn-label" style="color:var(--gold)">Upload</span>
     </button>
     <button class="bn-item" id="bn-profile" onclick="goPage('profile',null);setBottomNav('bn-profile')" aria-label="Профиль">
-      <span class="bn-ico">👤</span>
+      <span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg></span>
       <span class="bn-label" data-i18n="nav_profile">Профиль</span>
     </button>
     <button class="bn-item" id="bn-settings" onclick="goPage('settings',null);setBottomNav('bn-settings')" aria-label="Настройки">
-      <span class="bn-ico">⚙️</span>
+      <span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg></span>
       <span class="bn-label" data-i18n="settings">Ещё</span>
     </button>
   </div>
@@ -5535,7 +5637,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <div id="coll-picker-overlay" onclick="closeCollectionPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1200;align-items:center;justify-content:center">
   <div onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:28px;width:90%;max-width:420px;box-shadow:var(--shadow-lg);position:relative;max-height:80vh;display:flex;flex-direction:column">
     <button onclick="closeCollectionPicker()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
-    <div style="font-size:16px;font-weight:800;margin-bottom:4px">🔖 Сохранить в коллекцию</div>
+    <div style="font-size:16px;font-weight:800;margin-bottom:4px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Сохранить в коллекцию</div>
     <div id="coll-picker-content-name" style="font-size:12px;color:var(--text2);margin-bottom:16px"></div>
     <div id="coll-picker-list" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px"></div>
     <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bg4)">
@@ -5593,7 +5695,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 <div id="team-modal-overlay" onclick="closeAddTeamMember()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1100;align-items:center;justify-content:center">
   <div onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px;padding:32px;width:90%;max-width:440px;box-shadow:var(--shadow-lg);position:relative">
     <button onclick="closeAddTeamMember()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer">✕</button>
-    <div style="font-size:17px;font-weight:800;margin-bottom:20px;color:var(--text)">👤 Добавить участника</div>
+    <div style="font-size:17px;font-weight:800;margin-bottom:20px;color:var(--text)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Добавить участника</div>
 
     <div style="margin-bottom:14px">
       <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Имя *</label>
@@ -5628,7 +5730,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 </div>
 
 <style>
-.up-cat-btn { padding:6px 12px;border-radius:20px;border:1px solid var(--bg5);background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s; }
+.up-cat-btn { padding:6px 12px;border-radius:20px;border:1px solid var(--bg5);background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap; }
 .up-cat-btn.active { background:var(--gold);color:var(--bg);border-color:var(--gold); }
 .up-add-person-btn { display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1.5px dashed var(--bg5);background:transparent;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s; }
 .up-add-person-btn:hover { border-color:var(--teal);color:var(--teal); }
