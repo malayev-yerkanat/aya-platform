@@ -1527,21 +1527,39 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 /* ── Collections ─────────────────────────────────────────── */
 /* Card like overlay */
 .card { position: relative; }
-.card-like-btn {
+/* ── Card three-dots menu button ── */
+.card-menu-btn {
   display: none;
   position: absolute; top: 8px; right: 8px;
   width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(0,0,0,.6); border: none;
-  color: #fff; font-size: 14px; line-height: 1;
+  background: rgba(0,0,0,.65); border: none;
+  color: #fff; font-size: 18px; line-height: 1;
   cursor: pointer; align-items: center; justify-content: center;
-  z-index: 5; transition: transform .15s, background .15s;
-  backdrop-filter: blur(4px);
+  z-index: 5; transition: transform .12s, background .12s;
+  backdrop-filter: blur(4px); font-weight: 700;
+  letter-spacing: .5px;
 }
-.card:hover .card-like-btn { display: flex; }
-.card-like-btn.liked { color: #e05555; background: rgba(0,0,0,.75); }
-.card-like-btn:hover { transform: scale(1.15); }
-@keyframes heartPop { 0%{transform:scale(1)} 40%{transform:scale(1.6)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
-.card-like-btn.pop { animation: heartPop .4s cubic-bezier(.36,.07,.19,.97); }
+.card:hover .card-menu-btn { display: flex; }
+.card-menu-btn:hover { background: rgba(0,0,0,.85); transform: scale(1.1); }
+/* ── Card context dropdown ── */
+.card-dropdown {
+  position: absolute; top: 44px; right: 8px;
+  background: var(--bg2); border: 1px solid var(--bg5);
+  border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.55);
+  z-index: 20; min-width: 180px; overflow: hidden;
+  animation: dropIn .13s ease;
+}
+@keyframes dropIn { from { opacity:0; transform:translateY(-6px) scale(.97); } to { opacity:1; transform:none; } }
+.card-dropdown-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 11px 14px;
+  background: none; border: none; color: var(--text);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  text-align: left; transition: background .1s;
+}
+.card-dropdown-item:hover { background: var(--bg3); }
+.card-dropdown-item.danger { color: #e05555; }
+.card-dropdown-item.danger:hover { background: rgba(224,85,85,.1); }
 /* Saved toast */
 #coll-toast { position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg2);border:1px solid var(--bg5);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:2000;white-space:nowrap;box-shadow:var(--shadow-lg); }
 #coll-toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
@@ -1637,10 +1655,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   display: flex; flex-direction: column; gap: 8px; flex: 1;
 }
 
-/* ── Touch device like button (always show on non-hover devices) ── */
+/* ── Touch device: always show the menu button ── */
 @media (hover: none) {
-  .card-like-btn { display: flex; }
-  .card-like-btn:not(.liked) { background: rgba(0,0,0,.5); }
+  .card-menu-btn { display: flex; }
 }
 
 /* ── Topbar scroll-aware shadow ─────────────────────────── */
@@ -3046,10 +3063,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     btn.textContent = liked ? '❤️ Нравится' : '🤍 Нравится';
   }
 
-  function updateCardLikeBtn(cid, liked) {
-    document.querySelectorAll('.card-like-btn').forEach(btn => {
-      if (btn.dataset.cid === cid) btn.classList.toggle('liked', liked);
-    });
+  function updateCardLikeBtn(_cid, _liked) {
+    // Like state now only reflected in the watch page button and collection picker
   }
 
   /* ── Collection Picker ── */
@@ -3387,10 +3402,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     document.getElementById('coll-detail-overlay').style.display = 'none';
   }
 
-  /* ── Inject like buttons on all home page cards ── */
-  function initCardLikeButtons() {
+  /* ── Inject three-dots menu buttons on all home page cards ── */
+  function initCardMenuButtons() {
     document.querySelectorAll('.card').forEach(card => {
-      if (card.querySelector('.card-like-btn')) return;
+      if (card.querySelector('.card-menu-btn')) return;
       const title = card.querySelector('.card-title')?.textContent?.trim();
       const author = card.querySelector('.card-sub')?.textContent?.trim();
       if (!title) return;
@@ -3399,32 +3414,123 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const catLabel = catEl?.textContent?.trim() || '';
       const thumbCls = card.querySelector('.thumb-inner')?.className?.match(/\bp\d+\b/)?.[0] || 'p1';
       const cid = contentId({title, author});
+
       const btn = document.createElement('button');
-      btn.className = 'card-like-btn';
+      btn.className = 'card-menu-btn';
       btn.dataset.cid = cid;
-      btn.title = 'Нравится';
-      btn.innerHTML = '❤';
+      btn.title = 'Действия';
+      btn.textContent = '⋮';
+
       btn.onclick = (e) => {
         e.stopPropagation();
+        // Close any already-open dropdown
+        document.querySelectorAll('.card-dropdown').forEach(d => d.remove());
+
         const user = getUser();
-        if (!user) { showModal({ title:'Войдите', body:'Нужно войти, чтобы ставить лайки.', actions:[{label:'Войти', style:MODAL_BTN_PRIMARY, action:()=>goPage('auth',null)}] }); return; }
-        ensureDefaultCollections(user);
-        const all = getCollections();
-        const likes = all.find(c => c.userId === user.id && c.isDefault);
-        if (!likes) return;
-        const already = likes.items.some(i => i.id === cid);
-        if (already) { likes.items = likes.items.filter(i => i.id !== cid); }
-        else { likes.items.unshift({ id: cid, title, author, cat, catLabel, thumb: thumbCls }); }
-        saveCollections(all);
-        btn.classList.toggle('liked', !already);
-        btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop');
-        if (!already) showCollToast('❤️ Добавлено в «Понравилось»');
-        renderTopCollections();
+
+        // Resolve content object (uploaded content or synthetic)
+        const content = getAyaContent().find(c => {
+          const a = c.author || (c.crew && c.crew.length ? c.crew[0].tag : '');
+          return contentId({ title: c.title, author: a }) === cid;
+        }) || { id: cid, title, author, cat, catLabel, thumb: thumbCls };
+
+        const items = [];
+
+        // — Add to collection (any logged-in user)
+        items.push({
+          icon: '🔖', label: 'В коллекцию',
+          action: () => { _currentContent = content; openCollectionPicker(); }
+        });
+
+        // — Report (moderator or admin)
+        if (user && (user.role === 'moderator' || user.role === 'admin')) {
+          items.push({
+            icon: '🚩', label: 'Пожаловаться',
+            action: () => showModal({
+              title: '🚩 Пожаловаться на видео',
+              body: `Подтвердите жалобу на «${title}». Заявка будет направлена администратору.`,
+              actions: [
+                { label: 'Отмена', style: MODAL_BTN_CANCEL2 },
+                { label: 'Отправить жалобу', style: MODAL_BTN_PRIMARY,
+                  action: () => showCollToast('✅ Жалоба отправлена администратору') }
+              ]
+            })
+          });
+        }
+
+        // — Permanently delete (admin only)
+        if (user && user.role === 'admin') {
+          items.push({
+            icon: '🗑', label: 'Удалить навсегда', danger: true,
+            action: () => adminDeleteContent(content)
+          });
+        }
+
+        // Build dropdown
+        const dropdown = document.createElement('div');
+        dropdown.className = 'card-dropdown';
+        items.forEach(item => {
+          const el = document.createElement('button');
+          el.className = 'card-dropdown-item' + (item.danger ? ' danger' : '');
+          el.innerHTML = `<span>${item.icon}</span>${item.label}`;
+          el.onclick = (e2) => { e2.stopPropagation(); dropdown.remove(); item.action(); };
+          dropdown.appendChild(el);
+        });
+
+        card.style.position = 'relative';
+        card.appendChild(dropdown);
+
+        // Flip upward if near bottom of viewport
+        requestAnimationFrame(() => {
+          const r = dropdown.getBoundingClientRect();
+          if (r.bottom > window.innerHeight - 16) {
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = '44px';
+          }
+        });
       };
+
       card.appendChild(btn);
-      // Reflect existing liked state
-      const user = getUser();
-      if (user && isLiked(user.id, cid)) btn.classList.add('liked');
+    });
+  }
+
+  /* ── Admin: permanently delete any content (no stored token needed) ── */
+  async function adminDeleteContent(content) {
+    showModal({
+      title: '🗑 Удалить навсегда?',
+      body: `«${content.title}» будет безвозвратно удалено для всех пользователей.`,
+      actions: [
+        { label: 'Отмена', style: MODAL_BTN_CANCEL2 },
+        {
+          label: 'Удалить навсегда', style: MODAL_BTN_DANGER,
+          action: async () => {
+            // Find and delete the Firebase entry by matching content.id
+            try {
+              const res = await fetch(`${FB}/content.json`);
+              if (res.ok) {
+                const data = await res.json();
+                if (data) {
+                  const entry = Object.entries(data).find(([, v]) => v && v.id === content.id);
+                  if (entry) {
+                    await fetch(`${FB}/content/${entry[0]}.json`, { method: 'DELETE' });
+                  }
+                }
+              }
+            } catch(e) { /* Firebase unreachable — still remove locally */ }
+
+            // Remove from localStorage
+            const all = getAyaContent().filter(c => c.id !== content.id);
+            saveAyaContent(all);
+            removeDeleteToken(content.id);
+
+            // If currently watching this content, navigate back
+            if (_currentContent && _currentContent.id === content.id) goBack();
+
+            renderUserContent();
+            showCollToast('🗑 Видео удалено');
+          }
+        }
+      ]
     });
   }
 
@@ -3437,11 +3543,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     if (tab === 'collections') renderProfileCollections();
   }
 
+  /* ── Close card dropdowns on outside click ── */
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.card-menu-btn') && !e.target.closest('.card-dropdown')) {
+      document.querySelectorAll('.card-dropdown').forEach(d => d.remove());
+    }
+  });
+
   /* ── Set current content when opening watch page ── */
   // Intercept card clicks to capture demo content
   document.addEventListener('click', function(e) {
     const card = e.target.closest('.card');
-    if (card && !e.target.closest('.card-like-btn')) {
+    if (card && !e.target.closest('.card-menu-btn') && !e.target.closest('.card-dropdown')) {
       const title = card.querySelector('.card-title')?.textContent?.trim();
       const author = card.querySelector('.card-sub')?.textContent?.trim();
       if (!title) return;
@@ -3730,18 +3843,26 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       document.querySelector('.action-btn.primary').onclick = startPlay;
     }
 
-    // Show delete button only if this device uploaded the content (has the delete token)
+    // Show delete button if uploader (has Firebase token) OR admin
     const deleteBtn = document.getElementById('watch-delete-btn');
     if (deleteBtn) {
+      const user = getUser();
       const hasToken = content && content.id && getDeleteToken(content.id);
-      deleteBtn.style.display = hasToken ? '' : 'none';
+      const isAdmin  = user && user.role === 'admin';
+      deleteBtn.style.display = (hasToken || isAdmin) ? '' : 'none';
+      deleteBtn.textContent = '🗑 Удалить';
     }
   }
 
   async function deleteCurrentContent() {
     if (!_currentContent) return;
     const token = getDeleteToken(_currentContent.id);
-    if (!token) return;
+    const user  = getUser();
+    // Admin can delete any video even without a stored token
+    if (!token) {
+      if (user && user.role === 'admin') { adminDeleteContent(_currentContent); }
+      return;
+    }
 
     showModal({
       title: 'Удалить видео?',
@@ -3998,6 +4119,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       // Prepend so newest uploads appear first in the row
       container.insertBefore(card, container.firstChild);
     });
+
+    // Re-attach menu buttons to newly created uploaded cards
+    initCardMenuButtons();
   }
   function goBack() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -4153,7 +4277,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     renderTeamGrid();
     const _authUser = getUser();
     if (_authUser) ensureDefaultCollections(_authUser);
-    initCardLikeButtons();
+    initCardMenuButtons();
     renderTopCollections();
     updateWatchLikeBtn();
   }
@@ -5225,7 +5349,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     // Collections init
     const _u = getUser();
     if (_u) ensureDefaultCollections(_u);
-    initCardLikeButtons();
+    initCardMenuButtons();
     renderTopCollections();
 
     // ── Topbar scroll-aware shadow ──────────────────────────
