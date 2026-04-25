@@ -100,14 +100,11 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 body.light-theme .logo-badge-dark  { display: none; }
 body.light-theme .logo-badge-light { display: block; }
 /* About page logo */
-.about-logo-wrap { display: flex; justify-content: center; margin-bottom: 8px; }
-.about-aya-logo  { width: 200px; height: 200px; object-fit: contain; border-radius: 28px; }
+
 .logo-badge:hover { transform: scale(1.08); box-shadow: 0 5px 16px rgba(125,145,88,.5); }
 .logo-badge-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; display: block; }
 /* ── Theme-aware about logos ── */
-.about-aya-logo { width: 220px; max-width: 80%; display: block; margin: 0 auto 6px; }
-.about-logo-wrap { text-align: center; }
-.about-qr-section { margin-top: 56px; display: flex; justify-content: center; }
+.about-qr-section { margin-top: 32px; display: flex; justify-content: center; }
 .about-qr { width: 160px; height: 160px; object-fit: contain; border-radius: 16px; display: block; }
 /* Dark theme: show dark variants, hide light */
 .about-qr-light { display: none; }
@@ -1119,14 +1116,14 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 /* ============================================================
    ABOUT PAGE
 ============================================================ */
-.about-page { padding: 32px 28px 60px; max-width: 860px; }
+.about-page { padding: 20px 28px 40px; max-width: 860px; }
 .about-hero {
   background: linear-gradient(135deg, #0C1808, #111F0C, #0f1a09);
-  border-radius: var(--r-lg); padding: 40px 44px; margin-bottom: 32px;
+  border-radius: var(--r-lg); padding: 28px 36px; margin-bottom: 20px;
   box-shadow: var(--shadow-md);
 }
 .about-uni {
-  display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
 }
 .uni-logo {
   width: 52px; height: 52px; border-radius: var(--r-md);
@@ -1144,11 +1141,11 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 }
 .about-tagline { font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 560px; }
 .about-research {
-  background: var(--bg2); border-radius: var(--r-lg); padding: 24px 28px; margin-bottom: 24px;
+  background: var(--bg2); border-radius: var(--r-lg); padding: 20px 24px; margin-bottom: 16px;
 }
 .about-research-title { font-size: 14px; font-weight: 800; margin-bottom: 8px; }
 .about-research-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
-.about-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+.about-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
 .about-stat {
   background: var(--bg2); border-radius: var(--r-lg); padding: 20px 24px; flex: 1; min-width: 140px;
 }
@@ -2866,10 +2863,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         </div>
       </div>
       <div class="pb-eyebrow" style="margin-bottom:10px"><span>Art Yearns Action — Дипломный проект 2025</span></div>
-      <div class="about-project-title about-logo-wrap">
-        <img src="assets/logo_dark.png"  class="about-aya-logo logo-badge-dark"  alt="AYA">
-        <img src="assets/logo_light.png" class="about-aya-logo logo-badge-light" alt="AYA">
-      </div>
+      <div class="about-project-title">AYA</div>
       <p class="about-tagline" data-i18n="about_tagline">
         Гибридная цифровая экосистема для независимого казахстанского контента. Практический продукт дипломного исследования на тему «Государственное и независимое кино Казахстана 2020–2025: проблемы рентабельности, дистрибуции и вовлечённости аудитории».
       </p>
