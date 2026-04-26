@@ -32,7 +32,7 @@
   /* Text */
   --text:     #EDE5CC;   /* warm cream — softer than pure white */
   --text2:    #96A878;   /* muted sage */
-  --text3:    #536045;   /* dark muted olive */
+  --text3:    #7A9060;   /* accessible muted olive — ≥4.5:1 on --bg */
 
   /* Shadows — Spotify's "floating in darkness" */
   --shadow-sm: 0 2px 8px rgba(0,0,0,.5);
@@ -1295,7 +1295,7 @@ body.light-theme {
   --teal-dim: rgba(62,84,40,.12);
   --text:     #18200E;
   --text2:    #445228;
-  --text3:    #748058;
+  --text3:    #4C6839;   /* accessible — ≥4.5:1 on light --bg */
   --shadow-sm: 0 2px 8px rgba(0,0,0,.10);
   --shadow-md: 0 8px 24px rgba(0,0,0,.12);
   --shadow-lg: 0 16px 48px rgba(0,0,0,.15);
@@ -2428,14 +2428,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     <div class="ticker-track" id="ticker-track"></div>
   </div>
 
-  <div class="type-strip">
-    <div class="type-pill active" onclick="filterType('all',this)" data-i18n="filter_all">Все</div>
-    <div class="type-pill" onclick="filterType('film',this)" data-i18n="filter_films"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Фильмы</div>
-    <div class="type-pill" onclick="filterType('music',this)" data-i18n="filter_music"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы</div>
-    <div class="type-pill" onclick="filterType('doc',this)" data-i18n="filter_doc"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное</div>
-    <div class="type-pill" onclick="filterType('podcast',this)" data-i18n="filter_podcast"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты</div>
-    <div class="type-pill" onclick="filterType('social',this)" data-i18n="filter_social"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. ролики</div>
-    <div class="type-pill" onclick="filterType('short',this)" data-i18n="filter_short"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="12" r="5.5" fill="#7D9158" stroke="none"/><circle cx="9" cy="12" r="5.5"/><circle cx="16" cy="12" r="5.5"/><path d="M14.5 12 H17.5"/></g></svg> Короткий метр</div>
+  <div class="type-strip" role="group" aria-label="Фильтр по типу контента">
+    <div class="type-pill active" role="button" tabindex="0" aria-pressed="true"  onclick="filterType('all',this)"     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('all',this)}"     data-i18n="filter_all">Все</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('film',this)"    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('film',this)}"    data-i18n="filter_films"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Фильмы</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('music',this)"   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('music',this)}"   data-i18n="filter_music"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('doc',this)"     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('doc',this)}"     data-i18n="filter_doc"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('podcast',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('podcast',this)}" data-i18n="filter_podcast"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('social',this)"  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('social',this)}"  data-i18n="filter_social"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. ролики</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('short',this)"   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('short',this)}"   data-i18n="filter_short"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="12" r="5.5" fill="#7D9158" stroke="none"/><circle cx="9" cy="12" r="5.5"/><circle cx="16" cy="12" r="5.5"/><path d="M14.5 12 H17.5"/></g></svg> Короткий метр</div>
   </div>
 
   <div class="constructor-bar">
@@ -2503,7 +2503,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         <div id="player-placeholder">
           <div class="player-bg"></div>
           <div class="player-center">
-            <button class="play-big" onclick="document.getElementById('player-placeholder').style.display='none'"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></button>
+            <button class="play-big" aria-label="Воспроизвести видео" onclick="document.getElementById('player-placeholder').style.display='none'"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></button>
           </div>
           <div class="player-title-area">
             <div class="player-title-over" id="placeholder-title"></div>
@@ -3994,7 +3994,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const isAdmin  = user && user.role === 'admin';
       const isOwner  = hasToken && user && content.uploaderId && content.uploaderId === user.id;
       deleteBtn.style.display = (isOwner || isAdmin) ? '' : 'none';
-      deleteBtn.textContent = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить';
+      deleteBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить';
     }
   }
 
@@ -4334,9 +4334,15 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     });
   }
   function filterType(type, el) {
-    document.querySelectorAll('.type-pill, .cat-item').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.type-pill, .cat-item').forEach(p => {
-      if (p.textContent.trim().replace(/^[^\s]+\s/,'').trim() === el.textContent.trim().replace(/^[^\s]+\s/,'').trim() || p === el) p.classList.add('active');
+      p.classList.remove('active');
+      if (p.hasAttribute('aria-pressed')) p.setAttribute('aria-pressed', 'false');
+    });
+    document.querySelectorAll('.type-pill, .cat-item').forEach(p => {
+      if (p.textContent.trim().replace(/^[^\s]+\s/,'').trim() === el.textContent.trim().replace(/^[^\s]+\s/,'').trim() || p === el) {
+        p.classList.add('active');
+        if (p.hasAttribute('aria-pressed')) p.setAttribute('aria-pressed', 'true');
+      }
     });
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-home').classList.add('active');
