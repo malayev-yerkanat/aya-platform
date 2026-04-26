@@ -104,8 +104,30 @@ body.light-theme .logo-badge-light { display: block; }
 .logo-badge:hover { transform: scale(1.08); box-shadow: 0 5px 16px rgba(125,145,88,.5); }
 .logo-badge-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; display: block; }
 /* ── Theme-aware about logos ── */
-.about-qr-section { margin-top: 32px; display: flex; justify-content: center; }
-.about-qr { width: 160px; height: 160px; object-fit: contain; border-radius: 16px; display: block; }
+.about-qr-section { margin-top: 40px; display: flex; justify-content: center; }
+.about-qr-card {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  background: var(--bg2); border: 1px solid var(--bg4);
+  border-radius: 24px; padding: 28px 36px;
+  max-width: 320px; width: 100%;
+  position: relative; overflow: hidden;
+}
+.about-qr-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.6;
+}
+.about-qr-card-icon {
+  width: 36px; height: 36px;
+  background: rgba(125,145,88,.15); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.about-qr-card-title { font-size: 15px; font-weight: 700; color: var(--text1); text-align: center; }
+.about-qr-card-sub { font-size: 12px; color: var(--text2); text-align: center; line-height: 1.5; margin-top: -6px; }
+.about-qr-wrap { position: relative; }
+.about-qr { width: 148px; height: 148px; object-fit: contain; border-radius: 14px; display: block; }
+.about-qr-url { font-size: 11px; color: var(--text3); letter-spacing: 0.3px; text-align: center; }
 /* Dark theme: show dark variants, hide light */
 .about-qr-light { display: none; }
 .about-qr-dark  { display: block; }
@@ -2946,8 +2968,25 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   </div>
       <div class="about-qr-section">
-        <img src="assets/qr_code_dark.png"  class="about-qr about-qr-dark"  alt="QR">
-        <img src="assets/qr_code_light.png" class="about-qr about-qr-light" alt="QR">
+        <div class="about-qr-card">
+          <div class="about-qr-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="aya-ico" aria-hidden="true">
+              <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <path d="M4 12 C4 7.5 7.5 4 12 4 C14.5 4 16.7 5.1 18.2 6.8" fill="none"/>
+                <path d="M20 12 C20 16.5 16.5 20 12 20 C9.5 20 7.3 18.9 5.8 17.2" fill="none"/>
+                <path d="M15 12 L12 9 L9 12" fill="none"/>
+                <path d="M12 9 L12 15" fill="none"/>
+              </g>
+            </svg>
+          </div>
+          <div class="about-qr-card-title">Расскажи друзьям об AYA</div>
+          <div class="about-qr-card-sub">Отсканируй код — и они сразу окажутся на платформе</div>
+          <div class="about-qr-wrap">
+            <img src="assets/qr_code_dark.png"  class="about-qr about-qr-dark"  alt="QR-код AYA">
+            <img src="assets/qr_code_light.png" class="about-qr about-qr-light" alt="QR-код AYA">
+          </div>
+          <div class="about-qr-url">aya-platform.vercel.app</div>
+        </div>
       </div>
     </div>
 </div><!-- /about -->
@@ -5162,9 +5201,26 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   async function seedTestAccounts() {
     const users = getUsers();
     const seeds = [
-      { email:'admin@korseteik.kz',     password:'admin',     first_name:'Admin',  last_name:'Korseteik', role:'admin',      handle:'adminkorseteik' },
-      { email:'moderator@korseteik.kz', password:'moderator', first_name:'Moder',  last_name:'Ator',      role:'moderator',  handle:'moderator' },
-      { email:'user123@korseteik.kz',   password:'user123',   first_name:'User',   last_name:'Test',      role:'viewer',     handle:'usertest' },
+      { email:'admin@korseteik.kz',           password:'admin',           first_name:'Admin',    last_name:'Korseteik',   role:'admin',     handle:'adminkorseteik'   },
+      { email:'moderator@korseteik.kz',        password:'moderator',       first_name:'Moder',    last_name:'Ator',        role:'moderator', handle:'moderator'        },
+      { email:'user123@korseteik.kz',          password:'user123',         first_name:'User',     last_name:'Test',        role:'viewer',    handle:'usertest'         },
+      // ── Platform creators ────────────────────────────────────────────────
+      { email:'aidar_nausha@gmail.com',        password:'Aidar123',        first_name:'Aidar',    last_name:'Nausha',      role:'creator',   handle:'aidar_nausha'     },
+      { email:'aziz_ernatov@gmail.com',        password:'Aziz123',         first_name:'Aziz',     last_name:'Ernatov',     role:'creator',   handle:'aziz_ernatov'     },
+      { email:'nurtay_baimagambetov@gmail.com',password:'Nurtay123',       first_name:'Nurtay',   last_name:'Baimagambetov',role:'creator',  handle:'nurtay_baimagambetov'},
+      { email:'nurasyl_kairkhanov@gmail.com',  password:'Nurasyl123',      first_name:'Nurasyl',  last_name:'Kairkhanov',  role:'creator',   handle:'nurasyl_kairkhanov'},
+      { email:'akezhan_meirkhanov@gmail.com',  password:'Akezhan123',      first_name:'Akezhan',  last_name:'Meirkhanov',  role:'creator',   handle:'akezhan_meirkhanov'},
+      { email:'akerke_nursadyk@gmail.com',     password:'Akerke123',       first_name:'Akerke',   last_name:'Nursadyk',    role:'creator',   handle:'akerke_nursadyk'  },
+      { email:'yerkanat_malayev@gmail.com',    password:'Yerkanat123',     first_name:'Yerkanat', last_name:'Malayev',     role:'creator',   handle:'yerkanat_malayev' },
+      { email:'asan_muratov@gmail.com',        password:'Asan123',         first_name:'Asan',     last_name:'Muratov',     role:'creator',   handle:'asan_muratov'     },
+      { email:'bekzhan_kozhamseit@gmail.com',  password:'Bekzhan123',      first_name:'Bekzhan',  last_name:'Kozhamseit',  role:'creator',   handle:'bekzhan_kozhamseit'},
+      { email:'aizada_utepova@gmail.com',      password:'Aizada123',       first_name:'Aizada',   last_name:'Utepova',     role:'creator',   handle:'aizada_utepova'   },
+      { email:'dariya_batyrbek@gmail.com',     password:'Dariya123',       first_name:'Dariya',   last_name:'Batyrbek',    role:'creator',   handle:'dariya_batyrbek'  },
+      { email:'nurtotre_abilkhan@gmail.com',   password:'Nurtotre123',     first_name:'Nurtotre', last_name:'Abilkhan',    role:'creator',   handle:'nurtotre_abilkhan'},
+      { email:'aiyaulym_aslan@gmail.com',      password:'Aiyaulym123',     first_name:'Aiyaulym', last_name:'Aslan',       role:'creator',   handle:'aiyaulym_aslan'   },
+      { email:'tolkyn_sagidulina@gmail.com',   password:'Tolkyn123',       first_name:'Tolkyn',   last_name:'Sagidulina',  role:'creator',   handle:'tolkyn_sagidulina'},
+      { email:'alisher_kassymov@gmail.com',    password:'Alisher123',      first_name:'Alisher',  last_name:'Kassymov',    role:'creator',   handle:'alisher_kassymov' },
+      { email:'madina_karimova@gmail.com',     password:'Madina123',       first_name:'Madina',   last_name:'Karimova',    role:'creator',   handle:'madina_karimova'  },
     ];
     let changed = false;
     for (const s of seeds) {
