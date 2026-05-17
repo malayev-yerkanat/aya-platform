@@ -3287,7 +3287,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
 
   function closeCreateCollection() {
-    document.getElementById('create-coll-overlay').style.display = 'none';
+    document.getElementById('create-coll-overlay').style.setProperty('display', 'none', 'important');
     if (_fromPicker) openCollectionPicker();
   }
 
@@ -3685,6 +3685,20 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.card-menu-btn') && !e.target.closest('.card-dropdown')) {
       document.querySelectorAll('.card-dropdown').forEach(d => d.remove());
+    }
+  });
+
+  /* ── Close modals on ESC key ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const overlay = document.getElementById('create-coll-overlay');
+      if (overlay && overlay.style.display !== 'none') {
+        closeCreateCollection();
+      }
+      const picker = document.getElementById('coll-picker-overlay');
+      if (picker && picker.style.display !== 'none') {
+        closeCollectionPicker();
+      }
     }
   });
 
