@@ -4110,6 +4110,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
     if (!content) content = AYA_FEATURED_VIDEO;
     _currentContent = content;
+    // Update comment input avatar with current user initials
+    const commentAvEl = document.getElementById('comment-av-user');
+    if (commentAvEl) {
+      const cu = getUser();
+      commentAvEl.textContent = cu ? (cu.first_name||'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'А';
+    }
     const loadToken = ++watchLoadToken;
 
     // Update title and meta overlays
@@ -6780,7 +6786,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const countEl = document.getElementById('watch-comment-count');
     if (!list) return;
     list.innerHTML = '';
-    const all = getAyaComments().filter(c => c.videoId === videoId);
+    const altId = _currentContent ? contentId(_currentContent) : null;
+    const all = getAyaComments().filter(c => c.videoId === videoId || String(c.videoId) === String(videoId) || (altId && c.videoId === altId));
     // Newest first
     all.sort((a,b) => b.timestamp - a.timestamp);
     if (countEl) countEl.textContent = all.length ? `(${all.length})` : '';
@@ -6816,7 +6823,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     if (!ta || !ta.value.trim()) return;
     const text = ta.value.trim();
     const initials = user ? (user.name || user.first_name || 'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'АН';
-    const name = user ? (user.name || user.first_name || t('comment_guest')) : t('comment_guest');
+    const name = user ? (user.handle ? '@' + user.handle : (user.first_name || t('comment_guest'))) : t('comment_guest');
     const grad = user ? 'linear-gradient(135deg,var(--teal),var(--gold))' : 'linear-gradient(135deg,#7a8848,#d4c9a0)';
     const comment = {
       id: 'c-' + Date.now(),
@@ -6825,7 +6832,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       authorName: name,
       authorInitials: initials,
       authorGrad: grad,
-      text: text.replace(/</g,'&lt;').replace(/>/g,'&gt;'),
+      text: text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'),
       timestamp: Date.now(),
       likes: 0,
       likedBy: [],
@@ -6889,7 +6896,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       authorName: name,
       authorInitials: initials,
       authorGrad: grad,
-      text: text.replace(/</g,'&lt;').replace(/>/g,'&gt;'),
+      text: text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'),
       timestamp: Date.now(),
       likes: 0,
       likedBy: []
