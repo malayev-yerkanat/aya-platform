@@ -4348,8 +4348,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     }
 
     // Render persisted comments for this video, then hydrate from Firebase.
-    renderComments(content.id);
-    loadCommentsForContent(content.id).then(() => renderComments(content.id));
+    // Use the stable content hash (title::author) so the Firebase path matches across all devices.
+    const _cKey = contentId(content);
+    renderComments(_cKey);
+    loadCommentsForContent(_cKey).then(() => renderComments(_cKey));
 
     // Sidebar recommendations (other uploaded content, excluding current)
     const recContainer = document.getElementById('watch-recommendations');
@@ -7336,14 +7338,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     _ayaCommentReportsCache = arr || [];
     _ayaCommentReportsCache.forEach(r => fbSet(`moderation/${r.id}`, normalizeModerationRecord(r)).catch(e => fbWarn('comment report save failed', e)));
   }
-  async function updateContentEngagementCounts(contentId) {
-    if (!contentId || contentId === 'unknown') return;
+  async function updateContentEngagementCounts(contentObj) {
+    if (!contentObj) return;
+    const cKey = (typeof contentObj === 'object') ? contentId(contentObj) : contentObj;
+    const recordId = (typeof contentObj === 'object') ? (String(contentObj.id || cKey)) : String(contentObj);
+    if (!cKey || cKey === 'unknown') return;
     try {
       const [commentData, likeData] = await Promise.all([
-        fbGet(`comments/${contentId}`).catch(() => null),
-        fbGet(`likes/${contentId}`).catch(() => null)
+        fbGet(`comments/${cKey}`).catch(() => null),
+        fbGet(`likes/${recordId}`).catch(() => null)
       ]);
-      await fbUpdate(`content/${contentId}`, {
+      await fbUpdate(`content/${recordId}`, {
         commentsCount: objectToArray(commentData).length,
         likesCount: objectToArray(likeData).length,
         updatedAt: new Date().toISOString()
@@ -7445,8 +7450,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const grad = user ? 'linear-gradient(135deg,var(--teal),var(--gold))' : 'linear-gradient(135deg,#7a8848,#d4c9a0)';
     const comment = {
       id: ayaId('comment'),
-      videoId: _currentContent ? (_currentContent.id || 'unknown') : 'unknown',
-      contentId: _currentContent ? (_currentContent.id || 'unknown') : 'unknown',
+      videoId: _currentContent ? contentId(_currentContent) : 'unknown',
+      contentId: _currentContent ? contentId(_currentContent) : 'unknown',
       userId: user.id,
       userName: name,
       userAvatar: user.avatar_url || null,
@@ -7465,7 +7470,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     _ayaCommentsCache = all.map(c => normalizeCommentRecord(c, c.contentId || c.videoId));
     try {
       await fbSet(`comments/${comment.contentId}/${comment.id}`, normalizeCommentRecord(comment, comment.contentId));
-      await updateContentEngagementCounts(comment.contentId);
+      await updateContentEngagementCounts(_currentContent);
     } catch(e) {
       fbWarn('comment post failed', e);
     }
