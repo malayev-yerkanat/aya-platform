@@ -924,8 +924,11 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 ============================================================ */
 .profile-page { padding: 0 0 60px; }
 .profile-cover {
-  height: 200px; overflow: hidden; position: relative;
-  background: linear-gradient(135deg, #0C1A08, #111F0C, #0A1A0A);
+  height: 240px; overflow: hidden; position: relative;
+  background:
+    radial-gradient(ellipse 65% 130% at 13% 62%, rgba(125,145,88,.28) 0%, transparent 58%),
+    radial-gradient(ellipse 40% 80% at 88% 20%, rgba(125,145,88,.09) 0%, transparent 50%),
+    linear-gradient(160deg, #08160A 0%, #111F0C 50%, #0A1A08 100%);
 }
 .profile-cover::after {
   content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 100px;
@@ -934,12 +937,12 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 .profile-body { padding: 0 28px 0; }
 .profile-top { display: flex; gap: 22px; align-items: flex-start; margin-top: -48px; margin-bottom: 24px; }
 .prof-av {
-  width: 96px; height: 96px; border-radius: 50%; flex-shrink: 0;
+  width: 96px; height: 96px; border-radius: 22px; flex-shrink: 0;
   background: linear-gradient(135deg, var(--teal), var(--gold));
   display: flex; align-items: center; justify-content: center;
-  font-size: 34px; font-weight: 900; color: #000;
+  font-size: 34px; font-weight: 900; color: #0f1209; letter-spacing: -.5px;
   border: 4px solid var(--bg);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 0 0 2px rgba(125,145,88,.40), 0 8px 24px rgba(0,0,0,.55);
   position: relative; z-index: 1;
   margin-top: 0;
 }
@@ -951,7 +954,7 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 }
 .prof-name { font-family: 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 3px; }
 .prof-handle { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
-.prof-bio { font-size: 13px; color: var(--text2); line-height: 1.6; max-width: 480px; margin-bottom: 14px; }
+.prof-bio { font-size: 14px; color: var(--text2); line-height: 1.65; max-width: 500px; margin-bottom: 14px; text-wrap: pretty; }
 .prof-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
 .skill-pill {
   background: var(--bg2); color: var(--text);
@@ -966,9 +969,9 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
   cursor: pointer; transition: all .15s;
 }
 .prof-link:hover { background: var(--bg4); color: var(--text); }
-.prof-stats { display: flex; gap: 28px; padding: 0; margin-left: auto; padding-top: 54px; align-self: flex-start; }
-.pstat-v { font-family: 'Barlow', system-ui, sans-serif; font-size: 24px; font-weight: 900; letter-spacing: -.3px; }
-.pstat-l { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
+.prof-stats { display: flex; gap: 32px; padding: 0; margin-left: auto; padding-top: 54px; align-self: flex-start; text-align: center; }
+.pstat-v { font-family: 'Barlow', system-ui, sans-serif; font-size: 28px; font-weight: 900; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+.pstat-l { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .8px; margin-top: 3px; }
 
 .profile-tabs {
   display: flex; gap: 2px;
@@ -985,8 +988,8 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px; padding-bottom: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 14px; padding-bottom: 20px;
 }
 .pgcard {
   background: var(--bg2); border-radius: var(--r-lg); overflow: hidden;
@@ -994,7 +997,7 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
   padding: 12px;
 }
 .pgcard:hover { background: var(--bg4); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.pgcard-thumb { height: 100px; border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
+.pgcard-thumb { height: 120px; border-radius: var(--r-md); margin-bottom: 10px; overflow: hidden; }
 .pgcard-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
 .pgcard-meta { font-size: 10px; color: var(--text2); }
 .pgcard-role {
@@ -1141,51 +1144,54 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 .settings-title { font-family: 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 28px; }
 .settings-block {
   background: var(--bg2); border-radius: var(--r-lg);
-  margin-bottom: 16px; overflow: hidden;
+  margin-bottom: 20px; overflow: hidden;
   box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255,255,255,.055);
 }
 .settings-block-title {
-  padding: 16px 20px;
+  padding: 15px 22px;
   font-size: 11px; font-weight: 800; color: var(--text2);
   text-transform: uppercase; letter-spacing: 1px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.07);
 }
 .settings-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,.04);
+  padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .settings-row:last-child { border-bottom: none; }
 .settings-row-info { }
-.settings-row-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-.settings-row-desc { font-size: 11px; color: var(--text2); }
+.settings-row-label { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.settings-row-desc { font-size: 12px; color: var(--text2); line-height: 1.4; }
 .toggle {
-  width: 42px; height: 24px; border-radius: var(--r-pill);
+  width: 44px; height: 26px; border-radius: var(--r-pill);
   background: var(--bg5); position: relative; cursor: pointer;
-  transition: background .2s; flex-shrink: 0;
+  transition: background .22s; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,.08);
 }
-.toggle.on { background: var(--gold); }
+.toggle.on { background: var(--gold); border-color: transparent; }
 .toggle::after {
   content: ''; position: absolute; top: 3px; left: 3px;
   width: 18px; height: 18px; border-radius: 50%; background: #fff;
-  transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.4);
+  transition: transform .22s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 1px 5px rgba(0,0,0,.45);
 }
 .toggle.on::after { transform: translateX(18px); }
-.lang-group { display: flex; gap: 6px; }
+.lang-group { display: flex; gap: 4px; background: var(--bg3); border-radius: 6px; padding: 3px; }
 .lang-opt {
-  background: var(--bg3); color: var(--text2);
+  background: transparent; color: var(--text2);
   font-size: 12px; font-weight: 700;
-  padding: 6px 14px; border-radius: var(--r-pill);
+  padding: 6px 16px; border-radius: 4px;
   cursor: pointer; transition: all .15s;
-  text-transform: uppercase; letter-spacing: .5px;
+  text-transform: uppercase; letter-spacing: .6px;
 }
 .lang-opt:hover { background: var(--bg4); color: var(--text); }
-.lang-opt.active { background: var(--gold); color: var(--bg); }
+.lang-opt.active { background: var(--gold); color: var(--bg); box-shadow: 0 1px 4px rgba(0,0,0,.3); }
 
 /* Role badge */
 .role-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 14px; border-radius: var(--r-pill);
-  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px;
+  padding: 6px 12px; border-radius: 5px;
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
 }
 .role-user     { background: var(--bg3); color: var(--text2); }
 .role-creator  { background: var(--gold-dim); color: var(--gold); }
@@ -1312,18 +1318,18 @@ body.role-admin .prof-dots, body.role-moderator .prof-dots { display: flex; }
 /* ── Theme toggle button ── */
 .theme-toggle {
   display: flex; align-items: center; gap: 0;
-  background: var(--bg3); border-radius: var(--r-pill);
+  background: var(--bg3); border-radius: 8px;
   padding: 3px; border: 1px solid var(--bg5);
 }
 .theme-btn {
-  padding: 7px 18px; border-radius: var(--r-pill);
+  padding: 7px 18px; border-radius: 6px;
   font-size: 12px; font-weight: 700; cursor: pointer;
   color: var(--text3); transition: all .2s;
   display: flex; align-items: center; gap: 6px;
 }
 .theme-btn.active {
   background: var(--gold); color: #0F1209;
-  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  box-shadow: 0 2px 8px rgba(125,145,88,.40);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1368,7 +1374,12 @@ body.light-theme .hm11 { background: linear-gradient(145deg,#98BA80,#769C60); }
 body.light-theme .hm12 { background: linear-gradient(145deg,#86AE72,#649052); }
 body.light-theme .hero-gradient     { background: linear-gradient(90deg,rgba(240,233,214,.85) 35%,rgba(240,233,214,.2) 75%,transparent 100%); }
 body.light-theme .hero-title        { color: var(--text); }
-body.light-theme .profile-cover     { background: linear-gradient(135deg,#B8C9A0,#C8D4A8,#B0C498); }
+body.light-theme .profile-cover {
+  background:
+    radial-gradient(ellipse 65% 130% at 13% 62%, rgba(94,122,64,.22) 0%, transparent 58%),
+    radial-gradient(ellipse 40% 80% at 88% 20%, rgba(94,122,64,.08) 0%, transparent 50%),
+    linear-gradient(160deg, #C6D8AC 0%, #BDD0A4 50%, #B8CC9A 100%);
+}
 body.light-theme .auth-page         { background: radial-gradient(ellipse at 50% 0%,rgba(92,120,64,.10) 0%,transparent 65%); }
 body.light-theme .card              { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
 body.light-theme .logo-badge        { box-shadow: 0 3px 10px rgba(0,0,0,.15); }
@@ -1553,9 +1564,11 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
   /* Profile */
   .profile-body { padding: 0 14px; }
   .profile-page { padding-bottom: 16px; } /* main already has bottom padding for nav */
-  .prof-name { font-size: 20px; }
+  .prof-name { font-size: 24px !important; }
   .profile-tabs { gap: 0; }
   .ptab { padding: 10px 12px; font-size: 12px; }
+  .prof-stats { gap: 20px !important; }
+  .prof-stats > div + div { padding-left: 20px; }
 
   /* Fix over-scrolling: body's flex+min-height:100vh was stretching .main to full viewport height
      even when content was short. Remove the forced height and stop flex-stretch. */
@@ -1676,7 +1689,7 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 }
 .coll-card:hover { transform: translateY(-2px); border-color: var(--gold); }
 .coll-thumb {
-  height: 100px; display: grid;
+  height: 120px; display: grid;
   grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
   gap: 2px; background: var(--bg3);
 }
@@ -2080,20 +2093,48 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
 /* ── Settings page editorial headers ── */
 .settings-title {
-  font-size: 28px !important; letter-spacing: 1px !important;
+  font-size: 34px !important; letter-spacing: -.2px !important;
+  line-height: 1.1 !important;
   position: relative;
-  padding-bottom: 20px;
+  padding-bottom: 22px;
   margin-bottom: 32px !important;
 }
 .settings-title::after {
   content: ''; position: absolute; bottom: 0; left: 0;
-  width: 40px; height: 2px; background: var(--gold);
+  width: 52px; height: 2px; background: var(--gold);
+  border-radius: 1px;
 }
 .settings-block-title {
-  font-size: 10px !important; font-weight: 900 !important;
-  text-transform: uppercase; letter-spacing: 2px !important;
-  color: var(--gold) !important; margin-bottom: 16px !important;
+  font-size: 11px !important; font-weight: 900 !important;
+  text-transform: uppercase; letter-spacing: 1.6px !important;
+  color: var(--gold) !important; margin-bottom: 0 !important;
 }
+
+/* ── Settings page — finishing polish ── */
+/* Left-edge accent on each section block header */
+.settings-block-title {
+  border-left: 3px solid var(--gold) !important;
+  padding-left: 19px !important;
+}
+/* Active role badge gets a ring to distinguish the selected state */
+.role-badge.active-role {
+  box-shadow: 0 0 0 2px var(--gold) !important;
+}
+/* Role switcher gap */
+.role-switcher { gap: 8px !important; }
+/* Settings row label weight bump for better hierarchy vs desc */
+.settings-row-label { letter-spacing: .1px; }
+/* "Change" button and inline action buttons: square corner, hover state */
+.settings-row button {
+  border-radius: 4px !important;
+  transition: opacity .15s, background .15s !important;
+}
+.settings-row button:hover { opacity: .8; }
+/* Light theme adjustments */
+body.light-theme .settings-block { border-color: rgba(0,0,0,.07) !important; }
+body.light-theme .settings-row { border-bottom-color: rgba(0,0,0,.06) !important; }
+body.light-theme .settings-block-title { border-left-color: var(--gold) !important; }
+body.light-theme .toggle { border-color: rgba(0,0,0,.10) !important; }
 
 /* ── About page editorial ── */
 .about-project-title {
@@ -2136,14 +2177,42 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 /* ── Profile name in Podkova ── */
 .prof-name {
   font-family: 'Podkova', Georgia, serif !important;
-  font-size: 30px !important; letter-spacing: 0px !important;
+  font-size: 36px !important; letter-spacing: -.3px !important;
+  line-height: 1.1 !important;
 }
 
 /* ── Profile tab buttons sharp ── */
-.ptab { border-radius: 3px !important; }
+.ptab { border-radius: 4px !important; }
+.ptab.active { background: rgba(125,145,88,.10) !important; }
+.ptab:hover:not(.active) { background: rgba(255,255,255,.04) !important; }
 
 /* ── Tech tags square corners ── */
 .tech-tag { border-radius: 2px !important; }
+
+/* ── Profile page — finishing polish ── */
+.skill-pill {
+  border: 1px solid var(--bg5) !important;
+  font-size: 11px; font-weight: 600; letter-spacing: .2px;
+}
+/* Dividers between stat items */
+.prof-stats > div + div {
+  padding-left: 32px;
+  border-left: 1px solid var(--bg5);
+}
+/* Slightly tighter prof-top gap on the left side */
+.prof-main { padding-top: 56px; }
+/* Profile grid card border for more defined surface */
+.pgcard {
+  border: 1px solid var(--bg4) !important;
+}
+.pgcard:hover { border-color: var(--bg5) !important; }
+/* Collection card name slightly bigger */
+.coll-name { font-size: 14px !important; font-weight: 800 !important; }
+/* Profile tabs border-bottom slightly more prominent */
+.profile-tabs { border-bottom-color: rgba(255,255,255,.10) !important; }
+/* Light theme ptab hover */
+body.light-theme .ptab:hover:not(.active) { background: rgba(0,0,0,.04) !important; }
+body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
 /* ── Type strip pills stay pill (filter chips, not CTAs) ── */
 /* .type-pill keeps --r-pill intentionally */
@@ -2302,6 +2371,40 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   background: var(--gold); color: #0f120a;
   font-size: 8px; font-weight: 900; padding: 3px 8px;
   border-radius: 2px; text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+/* ============================================================
+   CATEGORY PAGE — full-genre grid view (activated by sidebar filter)
+============================================================ */
+#category-page {
+  padding: 0 24px 40px;
+}
+.cat-page-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 0 16px;
+  border-bottom: 1px solid var(--bg4);
+  margin-bottom: 24px;
+}
+.cat-page-header h2 {
+  font-size: 22px; font-weight: 800; color: var(--text);
+  letter-spacing: -.4px; margin: 0;
+}
+.cat-page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.cat-grid-card {
+  flex-shrink: unset;
+  width: 100%;
+  min-width: 0;
+}
+.cat-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text3);
+  font-size: 15px;
+  padding: 60px 0;
 }
 
 .skip-link {
@@ -2541,6 +2644,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     </div>
 
 
+  </div>
+
+  <div id="category-page" style="display:none">
+    <div class="cat-page-header"><h2 id="cat-page-title"></h2></div>
+    <div id="cat-page-grid" class="cat-page-grid"></div>
   </div>
 </div><!-- /home -->
 
@@ -2817,6 +2925,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           <span class="role-badge role-creator" onclick="demoRole(this,'role-creator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg> <span data-i18n="role_creator_name">Автор</span></span>
           <span class="role-badge role-moderator" onclick="demoRole(this,'role-moderator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> <span data-i18n="role_moderator_name">Модератор</span></span>
           <span class="role-badge role-admin" onclick="demoRole(this,'role-admin')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> <span data-i18n="role_admin_name">Администратор</span></span>
+          <span class="role-badge role-creator" onclick="demoRole(this,'role-yerkanat')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Yerkanat M.</span>
         </div>
       </div>
       <div class="settings-row">
@@ -4744,8 +4853,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
       const isPodcast = c.cat === 'ct-podcast';
       const isMusic   = c.cat === 'ct-music';
-      const thumbClass = isPodcast ? 'r-sq' : (isMusic ? 'r-wide' : 'r-film');
-      const cardWidth  = isPodcast ? 'w-170' : (isMusic ? 'w-220' : 'w-200 card-feat');
+      const thumbClass = isPodcast ? 'r-sq' : 'r-film';
+      const cardWidth  = isPodcast ? 'w-170' : 'w-200 card-feat';
       const thumbStyle = isPodcast ? 'border-radius:12px' : '';
       const thumb = c.thumbnail
         ? `<img src="${c.thumbnail}" style="width:100%;height:100%;object-fit:cover;${thumbStyle ? 'border-radius:12px;' : ''}display:block" alt="${c.title}" loading="lazy">`
@@ -4803,19 +4912,77 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     });
   }
   function filterType(type, el) {
+    // Sync active state — match by onclick attribute so both pills and cat-items stay in sync
     document.querySelectorAll('.type-pill, .cat-item').forEach(p => {
       p.classList.remove('active');
       if (p.hasAttribute('aria-pressed')) p.setAttribute('aria-pressed', 'false');
-    });
-    document.querySelectorAll('.type-pill, .cat-item').forEach(p => {
-      if (p.textContent.trim().replace(/^[^\s]+\s/,'').trim() === el.textContent.trim().replace(/^[^\s]+\s/,'').trim() || p === el) {
+      const oc = p.getAttribute('onclick') || '';
+      const m = oc.match(/filterType\('([^']+)'/);
+      const pType = m ? m[1] : null;
+      if (p === el || pType === type) {
         p.classList.add('active');
         if (p.hasAttribute('aria-pressed')) p.setAttribute('aria-pressed', 'true');
       }
     });
+    // Navigate to home page
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-home').classList.add('active');
+    // Show feed (All) or category page (specific type)
+    const feed = document.querySelector('#page-home .feed');
+    const catPage = document.getElementById('category-page');
+    if (type === 'all') {
+      if (feed) feed.style.display = '';
+      if (catPage) catPage.style.display = 'none';
+    } else {
+      if (feed) feed.style.display = 'none';
+      renderCategoryPage('ct-' + type);
+      if (catPage) catPage.style.display = '';
+    }
   }
+  function renderCategoryPage(catCode) {
+    const ROW_TITLE_KEY = {
+      'ct-film':    'row_films',
+      'ct-music':   'row_music',
+      'ct-doc':     'row_doc',
+      'ct-podcast': 'row_podcasts',
+      'ct-social':  'row_social',
+      'ct-short':   'row_short'
+    };
+    const titleEl = document.getElementById('cat-page-title');
+    const grid    = document.getElementById('cat-page-grid');
+    if (!grid) return;
+    if (titleEl) titleEl.innerHTML = t(ROW_TITLE_KEY[catCode] || catCode);
+    grid.innerHTML = '';
+    const items = getAyaContent().filter(c => c.cat === catCode);
+    if (!items.length) {
+      const emptyMsg = currentLang === 'en' ? 'No content in this category yet'
+                     : currentLang === 'kz' ? 'Бұл санатта әлі контент жоқ'
+                     : 'В этой категории пока нет контента';
+      grid.innerHTML = `<div class="cat-empty">${emptyMsg}</div>`;
+      return;
+    }
+    items.forEach(c => {
+      const isPodcast = c.cat === 'ct-podcast';
+      const thumbClass = isPodcast ? 'r-sq' : 'r-film';
+      const thumb = c.thumbnail
+        ? `<img src="${c.thumbnail}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${c.title}" loading="lazy">`
+        : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));display:flex;align-items:center;justify-content:center">${I.feature}</div>`;
+      const card = document.createElement('div');
+      card.className = 'card cat-grid-card uploaded-user-card';
+      card.style.cssText = 'animation:pageFadeIn .3s ease';
+      card.onclick = () => openWatch(c);
+      card.innerHTML = `
+        <div class="thumb ${thumbClass}" style="position:relative">
+          ${thumb}
+          <span class="ct-badge ${c.cat}">${categoryLabel(c.cat)}</span>
+          <div class="thumb-play-wrap"><div class="thumb-play">${I.play || '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg>'}</div></div>
+        </div>
+        <div class="card-title">${c.title || ''}</div>
+        <div class="card-sub">${c.author || ''}</div>`;
+      grid.appendChild(card);
+    });
+  }
+
   function runConstructor() {
     const parts = [document.getElementById('cs-type').value, document.getElementById('cs-loc').value, document.getElementById('cs-feat').value].filter(Boolean);
     if (!parts.length) return;
@@ -5383,6 +5550,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       'role-moderator': 'moderator@korseteik.kz',
       'role-user':      'user123@korseteik.kz',
       'role-creator':   'user123@korseteik.kz',
+      'role-yerkanat':  'yerkanat_malayev@gmail.com',
     };
     const email = map[cls];
     if (!email) return;
