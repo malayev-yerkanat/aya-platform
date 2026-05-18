@@ -7368,13 +7368,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
 
   /* Build the HTML for a single comment or reply row */
-  function _buildCommentHTML(c, isReply) {
+  function _buildCommentHTML(c, isReply, parentId) {
     const user = getUser();
     const uid = user ? user.id : null;
     const liked = uid && c.likedBy && c.likedBy.includes(uid);
     const likeClass = liked ? 'comment-act liked' : 'comment-act';
     const replyLabel = isReply ? '' : `<span class="comment-act" onclick="toggleReplyCompose('${c.id}')">${t('comment_reply')}</span>`;
     const reportLabel = `<span class="comment-act report-act" onclick="openCommentReportModal('${c.id}')" title="${currentLang==='en'?'Report':'Пожаловаться'}">⚑</span>`;
+    const canDelete = uid && (uid === c.authorId || (user && (user.role === 'moderator' || user.role === 'admin')));
+    const deleteLabel = canDelete
+      ? `<span class="comment-act" onclick="deleteComment('${c.id}',${!!isReply}${parentId ? `,'${parentId}'` : ''})" title="${currentLang==='en'?'Delete':currentLang==='kz'?'Жою':'Удалить'}" style="color:#e05555;margin-left:2px">✕</span>`
+      : '';
     return `
       <div class="comment-av" style="background:${c.authorGrad}">${c.authorInitials}</div>
       <div class="comment-body">
@@ -7387,6 +7391,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           </span>
           ${replyLabel}
           ${reportLabel}
+          ${deleteLabel}
         </div>
         ${!isReply ? `<div class="comment-replies" id="replies-${c.id}" style="display:${(c.replies&&c.replies.length)?'flex':'none'}"></div>
         <div class="reply-compose" id="reply-compose-${c.id}" style="display:none">
@@ -7426,7 +7431,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
             const rdiv = document.createElement('div');
             rdiv.className = 'comment';
             rdiv.dataset.commentId = r.id;
-            rdiv.innerHTML = _buildCommentHTML(r, true);
+            rdiv.innerHTML = _buildCommentHTML(r, true, c.id);
             repliesEl.appendChild(rdiv);
           });
         }
@@ -7587,6 +7592,52 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         });
       });
     }, 50);
+  }
+
+  /* Delete a comment (author or moderator/admin only) with confirmation */
+  async function deleteComment(commentId, isReply, parentId) {
+    const user = getUser();
+    if (!user) return;
+    const all = getAyaComments();
+    let target = null;
+    if (!isReply) {
+      target = all.find(c => c.id === commentId);
+    } else {
+      const par = parentId ? all.find(c => c.id === parentId) : null;
+      if (par) target = (par.replies || []).find(r => r.id === commentId);
+    }
+    if (!target) return;
+    const canDelete = user.id === target.authorId || user.role === 'moderator' || user.role === 'admin';
+    if (!canDelete) return;
+    const dlgTitle = currentLang==='en' ? 'Delete comment?' : currentLang==='kz' ? 'Пікірді жою?' : 'Удалить комментарий?';
+    const dlgBody  = currentLang==='en' ? 'This cannot be undone.' : currentLang==='kz' ? 'Бұл әрекетті кері қайтару мүмкін емес.' : 'Это действие нельзя отменить.';
+    const dlgBtn   = currentLang==='en' ? 'Delete' : currentLang==='kz' ? 'Жою' : 'Удалить';
+    showModal({
+      title: dlgTitle,
+      body: dlgBody,
+      actions: [
+        { label: t('modal_cancel'), style: MODAL_BTN_CANCEL2 },
+        { label: dlgBtn, style: MODAL_BTN_DANGER, action: async () => {
+          if (!isReply) {
+            _ayaCommentsCache = all.filter(c => c.id !== commentId);
+            const contentKey = target.contentId || target.videoId;
+            try {
+              await fbDelete(`comments/${contentKey}/${commentId}`);
+              await updateContentEngagementCounts(_currentContent);
+            } catch(e) { fbWarn('comment delete failed', e); }
+          } else {
+            const par = parentId ? all.find(c => c.id === parentId) : null;
+            if (par) {
+              par.replies = (par.replies || []).filter(r => r.id !== commentId);
+              _ayaCommentsCache = all.map(c => normalizeCommentRecord(c, c.contentId || c.videoId));
+              saveCommentRecord(par);
+            }
+          }
+          const cKey = _currentContent ? contentId(_currentContent) : null;
+          if (cKey) renderComments(cKey);
+        }}
+      ]
+    });
   }
 
   /* Persist a comment report */
