@@ -2499,24 +2499,39 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   <div class="feed">
 
-    <div class="row">
+    <div class="row genre-row" id="genre-row-trending" style="display:none">
       <div class="row-head-edit"><span class="row-num">01</span><span class="row-title-edit" data-i18n="row_trending">Трендовое сейчас</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-trending-cards"></div>
     </div>
 
-    <div class="row">
-      <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+    <div class="row genre-row" id="genre-row-films" style="display:none">
+      <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_films">Фильмы</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-films-cards"></div>
+    </div>
+
+    <div class="row genre-row" id="genre-row-music" style="display:none">
+      <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-music-cards"></div>
     </div>
 
-    <div class="row">
-      <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+    <div class="row genre-row" id="genre-row-doc" style="display:none">
+      <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_doc">Документальное</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-doc-cards"></div>
+    </div>
+
+    <div class="row genre-row" id="genre-row-podcasts" style="display:none">
+      <div class="row-head-edit"><span class="row-num">05</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-podcasts-cards"></div>
     </div>
 
-    <div class="row">
-      <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_festival">Фестивальные победители</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
-      <div class="cards-h" id="row-festival-cards"></div>
+    <div class="row genre-row" id="genre-row-social" style="display:none">
+      <div class="row-head-edit"><span class="row-num">06</span><span class="row-title-edit" data-i18n="row_social">Соц. ролики</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-social-cards"></div>
+    </div>
+
+    <div class="row genre-row" id="genre-row-short" style="display:none">
+      <div class="row-head-edit"><span class="row-num">07</span><span class="row-title-edit" data-i18n="row_short">Короткий метр</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-short-cards"></div>
     </div>
 
     <!-- Top Collections of the Month -->
@@ -3078,11 +3093,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   /** Map content category → home-page row container id. Used by renderUserContent(). */
   const ROW_MAP = {
+    'ct-film':      'row-films-cards',
     'ct-music':     'row-music-cards',
+    'ct-doc':       'row-doc-cards',
     'ct-podcast':   'row-podcasts-cards',
-    'ct-film':      'row-trending-cards',
-    'ct-short':     'row-trending-cards',
-    'ct-doc':       'row-trending-cards',
+    'ct-social':    'row-social-cards',
+    'ct-short':     'row-short-cards',
     'ct-animation': 'row-trending-cards',
   };
 
@@ -4754,6 +4770,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
     // Re-attach menu buttons to newly created uploaded cards
     initCardMenuButtons();
+
+    // Show genre rows that have content; hide empty ones
+    document.querySelectorAll('.genre-row').forEach(row => {
+      const cards = row.querySelector('.cards-h');
+      row.style.display = (cards && cards.children.length > 0) ? '' : 'none';
+    });
   }
   function goBack() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -5442,8 +5464,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       constructor_label: withIcon('ornament', 'Конструктор поиска — найди контент под своё настроение'),
       cs_find: withIcon('arrowRight', 'Найти'),
       // ROW TITLES
-      row_trending: withIcon('hot', 'Трендовое сейчас'), row_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы',
-      row_podcasts: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты', row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Фестивальные победители',
+      row_trending: withIcon('hot', 'Трендовое сейчас'), row_films: withIcon('feature', 'Фильмы'),
+      row_music: withIcon('music', 'Музыкальные клипы'), row_doc: withIcon('doc', 'Документальное'),
+      row_podcasts: withIcon('podcast', 'Подкасты'), row_social: withIcon('social', 'Соц. ролики'),
+      row_short: withIcon('short', 'Короткий метр'),
       row_see_all: withIcon('arrowRight', 'Показать всё'),
       // WATCH PAGE
       back_btn: withIcon('back', 'Назад'), btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z"/></g></svg> Рецензия',
@@ -5556,8 +5580,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       constructor_label: withIcon('ornament', 'Іздеу конструкторы — өз көңіл-күйіңізге контент тауып алыңыз'),
       cs_find: withIcon('arrowRight', 'Табу'),
       // ROW TITLES
-      row_trending: withIcon('hot', 'Қазір трендте'), row_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкалық клиптер',
-      row_podcasts: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасттар', row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Фестиваль жеңімпаздары',
+      row_trending: withIcon('hot', 'Қазір трендте'), row_films: withIcon('feature', 'Фильмдер'),
+      row_music: withIcon('music', 'Музыкалық клиптер'), row_doc: withIcon('doc', 'Деректі фильм'),
+      row_podcasts: withIcon('podcast', 'Подкасттар'), row_social: withIcon('social', 'Соц. роликтер'),
+      row_short: withIcon('short', 'Қысқа метраж'),
       row_see_all: withIcon('arrowRight', 'Барлығын көру'),
       // WATCH PAGE
       back_btn: withIcon('back', 'Артқа'), btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Қарау', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z" fill="#7D9158" stroke="none"/><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z"/></g></svg> Пікір',
@@ -5669,8 +5695,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       constructor_label: withIcon('ornament', 'Search Constructor — find content that matches your mood'),
       cs_find: withIcon('arrowRight', 'Find'),
       // ROW TITLES
-      row_trending: withIcon('hot', 'Trending Now'), row_music: withIcon('music', 'Music Videos'),
-      row_podcasts: withIcon('podcast', 'Podcasts'), row_festival: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z" fill="#7D9158" stroke="none"/><path d="M6 4 H18 V11 C18 14 15 16 12 16 C9 16 6 14 6 11 Z"/><path d="M6 6 H3 V8 C3 10 5 11 6 11"/><path d="M18 6 H21 V8 C21 10 19 11 18 11"/><path d="M9 16 V20 H15 V16"/><path d="M8 21 H16"/></g></svg> Festival Winners',
+      row_trending: withIcon('hot', 'Trending Now'), row_films: withIcon('feature', 'Films'),
+      row_music: withIcon('music', 'Music Videos'), row_doc: withIcon('doc', 'Documentary'),
+      row_podcasts: withIcon('podcast', 'Podcasts'), row_social: withIcon('social', 'Social Videos'),
+      row_short: withIcon('short', 'Short Films'),
       row_see_all: withIcon('arrowRight', 'See all'),
       // WATCH PAGE
       back_btn: withIcon('back', 'Back'), btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Watch', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z" fill="#7D9158" stroke="none"/><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z"/></g></svg> Review',
