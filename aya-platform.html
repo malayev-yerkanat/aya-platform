@@ -3194,11 +3194,63 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     return 'c' + Math.abs(h).toString(36);
   }
 
-  /* ── Storage ── */
-  function getCollections() {
-    try { return JSON.parse(localStorage.getItem('aya_colls')) || []; } catch { return []; }
+  /* ── Storage: Firebase source of truth, memory cache for synchronous UI rendering ── */
+  let _ayaCollectionsCache = [];
+  function normalizeCollectionRecord(c) {
+    return {
+      id: c.id,
+      userId: c.userId,
+      title: c.title || c.name || 'Collection',
+      name: c.name || c.title || 'Collection',
+      description: c.description || '',
+      emoji: c.emoji || '🎬',
+      isPublic: !!c.isPublic,
+      isDefault: !!c.isDefault,
+      itemIds: c.itemIds || (c.items || []).map(i => i.id),
+      items: c.items || [],
+      followers: c.followers || [],
+      createdAt: c.createdAt || Date.now(),
+      updatedAt: Date.now()
+    };
   }
-  function saveCollections(arr) { localStorage.setItem('aya_colls', JSON.stringify(arr)); }
+  function getCollections() {
+    return _ayaCollectionsCache || [];
+  }
+  async function loadCollectionsFromFirebase(uid) {
+    try {
+      const [own, allCollections] = await Promise.all([
+        uid ? fbGet(`collections/${uid}`).catch(() => null) : Promise.resolve(null),
+        fbGet('collections').catch(() => null)
+      ]);
+      const ownList = objectToArray(own);
+      const publicFollowable = [];
+      if (allCollections) {
+        Object.values(allCollections).forEach(group => {
+          objectToArray(group).forEach(c => {
+            if (c && c.isPublic && String(c.userId) !== String(uid)) publicFollowable.push(c);
+          });
+        });
+      }
+      _ayaCollectionsCache = [...ownList, ...publicFollowable].map(normalizeCollectionRecord);
+    } catch(e) {
+      fbWarn('collections load failed', e);
+      try { _ayaCollectionsCache = (JSON.parse(localStorage.getItem('aya_colls')) || []).map(normalizeCollectionRecord); }
+      catch { _ayaCollectionsCache = []; }
+    }
+    return _ayaCollectionsCache;
+  }
+  function saveCollections(arr) {
+    _ayaCollectionsCache = (arr || []).map(normalizeCollectionRecord);
+    const byUser = {};
+    _ayaCollectionsCache.forEach(c => {
+      if (!c.userId) return;
+      byUser[c.userId] = byUser[c.userId] || {};
+      byUser[c.userId][c.id] = c;
+    });
+    Object.entries(byUser).forEach(([uid, colls]) => {
+      fbSet(`collections/${uid}`, colls).catch(e => fbWarn('collections save failed', e));
+    });
+  }
 
   /* ── Ensure every logged-in user has a "Likes" collection ── */
   function ensureDefaultCollections(user) {
@@ -3244,16 +3296,21 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         thumb: content.thumb || null });
     }
     saveCollections(all);
+    fbSet(`saved/${coll.userId}/${content.id || cid}`, { userId: coll.userId, contentId: content.id || cid, createdAt: Date.now() }).catch(e => fbWarn('saved item sync failed', e));
   }
 
   function removeFromCollById(collId, cid) {
     const all = getCollections();
     const coll = all.find(c => c.id === collId);
-    if (coll) { coll.items = coll.items.filter(i => i.id !== cid); saveCollections(all); }
+    if (coll) {
+      coll.items = coll.items.filter(i => i.id !== cid);
+      saveCollections(all);
+      fbDelete(`saved/${coll.userId}/${cid}`).catch(e => fbWarn('saved item delete failed', e));
+    }
   }
 
   /* ── Like / Unlike from watch page ── */
-  function toggleLikeWatch() {
+  async function toggleLikeWatch() {
     const user = getUser();
     if (!user) { showModal({ title:t('modal_signin_title'), body:t('modal_like_body'), actions:[{label:t('modal_login_btn'), style:MODAL_BTN_PRIMARY, action:()=>goPage('auth',null)}] }); return; }
     ensureDefaultCollections(user);
@@ -3267,6 +3324,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     if (already) { likes.items = likes.items.filter(i => i.id !== cid); }
     else { likes.items.unshift({ id: cid, title: c.title, author: c.author, cat: c.cat, catLabel: c.catLabel, thumb: c.thumb || null }); }
     saveCollections(all);
+    try {
+      if (already) await fbDelete(`likes/${c.id || cid}/${user.id}`);
+      else await fbSet(`likes/${c.id || cid}/${user.id}`, { userId: user.id, contentId: c.id || cid, createdAt: Date.now() });
+      const likeData = await fbGet(`likes/${c.id || cid}`).catch(() => null);
+      await fbUpdate(`content/${c.id || cid}`, { likesCount: objectToArray(likeData).length, updatedAt: new Date().toISOString() });
+    } catch(e) {
+      fbWarn('like sync failed', e);
+    }
     updateWatchLikeBtn();
     updateCardLikeBtn(cid, !already);
     if (!already) showCollToast(t('coll_added_likes'));
@@ -3284,6 +3349,25 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     btn.style.color = liked ? '#e05555' : '';
     btn.style.fontWeight = liked ? '800' : '';
     btn.innerHTML = withIcon('like', t('like_btn'));
+  }
+
+  async function syncWatchLikeStateFromFirebase(content) {
+    const user = getUser();
+    if (!user || !content) return;
+    const cid = contentId(content);
+    try {
+      const liked = await fbGet(`likes/${content.id || cid}/${user.id}`);
+      ensureDefaultCollections(user);
+      const all = getCollections();
+      const likes = all.find(col => col.userId === user.id && col.isDefault);
+      if (liked && likes && !likes.items.some(i => i.id === cid)) {
+        likes.items.unshift({ id: cid, title: content.title, author: content.author, cat: content.cat, catLabel: content.catLabel, thumb: content.thumb || null });
+        _ayaCollectionsCache = all;
+      }
+      updateWatchLikeBtn();
+    } catch(e) {
+      updateWatchLikeBtn();
+    }
   }
 
   function updateCardLikeBtn(_cid, _liked) {
@@ -3924,9 +4008,36 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     renderTeamGrid();
   }
 
-  /* ---- Content storage helpers ---- */
-  function getAyaContent() { try { return JSON.parse(localStorage.getItem('aya_content'))||[]; } catch{return[];} }
-  function saveAyaContent(arr) { localStorage.setItem('aya_content', JSON.stringify(arr)); }
+  /* ---- Content storage helpers: Firebase source of truth, memory cache fallback ---- */
+  let _ayaContentCache = [];
+  function normalizeContentRecord(c) {
+    const now = new Date().toISOString();
+    const id = c.id || Date.now();
+    return {
+      ...c,
+      id,
+      type: c.type || c.cat || 'ct-film',
+      description: c.description || c.desc || '',
+      creatorId: c.creatorId || c.uploaderId || null,
+      creatorName: c.creatorName || c.author || '',
+      video_public_id: c.video_public_id || c.cloudinary_public_id || getCloudinaryPublicId(c.video_url),
+      video_url: c.video_url || null,
+      poster_public_id: c.poster_public_id || getCloudinaryPublicId(c.poster_url || c.thumbnail),
+      poster_url: c.poster_url || c.thumbnail || null,
+      cloudinary_folder: c.cloudinary_folder || 'aya',
+      status: c.status || 'approved',
+      likesCount: c.likesCount || 0,
+      commentsCount: c.commentsCount || 0,
+      savesCount: c.savesCount || 0,
+      createdAt: c.createdAt || c.ts || now,
+      updatedAt: c.updatedAt || now
+    };
+  }
+  function getAyaContent() { return _ayaContentCache || []; }
+  function saveAyaContent(arr) {
+    _ayaContentCache = (arr || []).map(normalizeContentRecord);
+    fbSet('content', keyById(_ayaContentCache, 'id')).catch(e => fbWarn('content cache save failed', e));
+  }
 
   /* Deleted IDs blacklist — prevents Firebase from re-merging deleted content on reload */
   function getDeletedIds() { try { return JSON.parse(localStorage.getItem('aya_deleted_ids'))||[]; } catch{return[];} }
@@ -3944,30 +4055,89 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     localStorage.setItem('aya_delete_tokens', JSON.stringify(t));
   }
 
-  /* ---- Firebase Realtime Database (free, persistent across all devices) ---- */
-  const FB = 'https://aya-platform-a3c35-default-rtdb.asia-southeast1.firebasedatabase.app';
+  /* ---- Firebase Realtime Database (prototype shared dynamic data store) ---- */
+  const FIREBASE_DB_URL = 'https://aya-platform-a3c35-default-rtdb.asia-southeast1.firebasedatabase.app';
+  const FB = FIREBASE_DB_URL; // Backwards-compatible alias for older content helpers.
+  const AYA_FIREBASE_MIGRATION_KEY = 'aya_firebase_migrated_v1';
+  const AYA_CURRENT_USER_KEY = 'aya_current_user_id';
 
-  /* POST content to Firebase; store the returned Firebase key so we can delete later */
+  function fbPath(path) {
+    return String(path || '').replace(/^\/+|\/+$/g, '');
+  }
+  async function fbGet(path) {
+    const clean = fbPath(path);
+    const res = await fetch(`${FIREBASE_DB_URL}/${clean}.json`);
+    if (!res.ok) throw new Error(`Firebase GET failed: ${clean}`);
+    return await res.json();
+  }
+  async function fbSet(path, data) {
+    const clean = fbPath(path);
+    const res = await fetch(`${FIREBASE_DB_URL}/${clean}.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error(`Firebase SET failed: ${clean}`);
+    return await res.json();
+  }
+  async function fbUpdate(path, data) {
+    const clean = fbPath(path);
+    const res = await fetch(`${FIREBASE_DB_URL}/${clean}.json`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error(`Firebase UPDATE failed: ${clean}`);
+    return await res.json();
+  }
+  async function fbPush(path, data) {
+    const clean = fbPath(path);
+    const res = await fetch(`${FIREBASE_DB_URL}/${clean}.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error(`Firebase PUSH failed: ${clean}`);
+    return await res.json();
+  }
+  async function fbDelete(path) {
+    const clean = fbPath(path);
+    const res = await fetch(`${FIREBASE_DB_URL}/${clean}.json`, { method: 'DELETE' });
+    if (!res.ok) throw new Error(`Firebase DELETE failed: ${clean}`);
+    return await res.json();
+  }
+  function fbWarn(label, err) {
+    console.warn(`[AYA Firebase] ${label}`, err);
+  }
+  function objectToArray(obj) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) return obj.filter(Boolean);
+    return Object.values(obj).filter(Boolean);
+  }
+  function keyById(items, idKey = 'id') {
+    const out = {};
+    (items || []).forEach(item => {
+      if (!item) return;
+      const id = item[idKey] || item.uid;
+      if (id != null) out[id] = item;
+    });
+    return out;
+  }
+  function currentUid() {
+    try { return localStorage.getItem(AYA_CURRENT_USER_KEY) || null; } catch { return null; }
+  }
+
+  /* Save content metadata to Firebase. Cloudinary stores media files only. */
   async function syncContentToServer(content) {
     try {
-      const res = await fetch(`${FB}/content.json`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(content)
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      // data.name is Firebase's auto-generated key e.g. "-NxYZ123abc"
-      // We reuse the deleteToken slot to store it — that's how delete knows which FB node to hit
-      if (data.name) {
-        saveDeleteToken(content.id, data.name);
-        // If the user is currently watching this content, show the delete button now
-        const deleteBtn = document.getElementById('watch-delete-btn');
-        if (deleteBtn && _currentContent && _currentContent.id === content.id) {
-          deleteBtn.style.display = '';
-        }
+      const record = normalizeContentRecord(content);
+      await fbSet(`content/${record.id}`, record);
+      saveDeleteToken(record.id, record.id);
+      const deleteBtn = document.getElementById('watch-delete-btn');
+      if (deleteBtn && _currentContent && _currentContent.id === record.id) {
+        deleteBtn.style.display = '';
       }
-    } catch(e) { /* offline — content already in localStorage as fallback */ }
+    } catch(e) { fbWarn('content sync failed', e); }
   }
 
   /* Fetch all content from Firebase and merge into local cache / re-render */
@@ -3977,21 +4147,25 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       if (!res.ok) return;
       const data = await res.json();
       if (!data) return;
-      // Firebase returns an object keyed by auto-id: { "-Nxyz": {...}, ... }
-      // Save every Firebase key as a delete token so any device can delete
+      // Firebase returns an object keyed by content ID.
       Object.entries(data).forEach(([fbKey, c]) => {
         if (c && c.id && !getDeleteToken(c.id)) saveDeleteToken(c.id, fbKey);
       });
-      const items = Object.values(data).filter(Boolean);
+      const items = Object.values(data).filter(Boolean).map(normalizeContentRecord);
       const local = getAyaContent();
-      const localIds = new Set(local.map(c => c.id));
+      const localIds = new Set(local.map(c => String(c.id)));
       const deletedIds = new Set(getDeletedIds());
       let added = false;
       items.forEach(c => {
-        if (c.id && !localIds.has(c.id) && !deletedIds.has(c.id)) { local.push(c); added = true; }
+        if (c.id && !localIds.has(String(c.id)) && !deletedIds.has(c.id)) { local.push(c); added = true; }
       });
-      if (added) { saveAyaContent(local); renderUserContent(); }
-    } catch(e) { /* Firebase unreachable */ }
+      _ayaContentCache = local.map(normalizeContentRecord);
+      if (added) renderUserContent();
+    } catch(e) {
+      fbWarn('content load failed', e);
+      try { _ayaContentCache = (JSON.parse(localStorage.getItem('aya_content')) || []).map(normalizeContentRecord); }
+      catch { _ayaContentCache = []; }
+    }
   }
 
   const AYA_FEATURED_VIDEO = {
@@ -4164,8 +4338,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       crewPanel.style.display = 'none';
     }
 
-    // Render persisted comments for this video
+    // Render persisted comments for this video, then hydrate from Firebase.
     renderComments(content.id);
+    loadCommentsForContent(content.id).then(() => renderComments(content.id));
 
     // Sidebar recommendations (other uploaded content, excluding current)
     const recContainer = document.getElementById('watch-recommendations');
@@ -4224,6 +4399,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       deleteBtn.style.display = (isOwner || isAdmin) ? '' : 'none';
       deleteBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить';
     }
+    syncWatchLikeStateFromFirebase(content);
 
     // Re-render comments after all async work completes.
     // Ensures comments are always visible even if the Cloudinary player SDK
@@ -4643,9 +4819,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
 
   /* ============================================================
-     AUTH — localStorage + Web Crypto (PBKDF2-SHA256)
-     Works standalone in any browser, no server needed.
-     Users DB stored in localStorage['korseteik_users']
+     AUTH — prototype Firebase user records + Web Crypto (PBKDF2-SHA256)
+     TODO production: replace with Firebase Auth and database Security Rules.
+     Current session stores only aya_current_user_id in localStorage.
   ============================================================ */
 
   // ── Crypto helpers (Web Crypto API — built into every browser) ──
@@ -4674,34 +4850,135 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     return attempt === hashHex;
   }
 
-  // ── localStorage DB ──────────────────────────────────────────
+  // ── Prototype identity records: Firebase source of truth, memory cache for sync UI ──
+  // TODO production: replace this prototype identity layer with Firebase Auth
+  // and Security Rules/custom claims. Password hashes remain unsuitable for
+  // client-owned production auth even though plain text passwords are not stored.
+  let _ayaUsersCache = [];
+  let _ayaCurrentUserCache = null;
+
+  function normalizeUserRecord(user) {
+    if (!user) return null;
+    const uid = String(user.uid || user.id || Date.now());
+    const first = user.first_name || (user.name ? String(user.name).split(' ')[0] : '') || '';
+    const last = user.last_name || (user.name ? String(user.name).split(' ').slice(1).join(' ') : '') || '';
+    return {
+      ...user,
+      uid,
+      id: uid,
+      first_name: first,
+      last_name: last,
+      name: user.name || `${first} ${last}`.trim(),
+      role: user.role || 'viewer',
+      handle: user.handle || user.username || (first + last).toLowerCase().replace(/[^a-z0-9_]/g, ''),
+      avatar_url: user.avatar_url || user.avatarUrl || null,
+      avatar_public_id: user.avatar_public_id || null,
+      createdAt: user.createdAt || user.created_at || new Date().toISOString(),
+      updatedAt: user.updatedAt || new Date().toISOString()
+    };
+  }
+
+  async function loadUsersFromFirebase() {
+    try {
+      const data = await fbGet('users');
+      _ayaUsersCache = objectToArray(data).map(normalizeUserRecord).filter(Boolean);
+    } catch(e) {
+      fbWarn('users load failed; using local migration cache when available', e);
+      try {
+        _ayaUsersCache = (JSON.parse(localStorage.getItem('korseteik_users')) || []).map(normalizeUserRecord).filter(Boolean);
+      } catch { _ayaUsersCache = []; }
+    }
+    return _ayaUsersCache;
+  }
+
   function getUsers() {
-    try { return JSON.parse(localStorage.getItem('korseteik_users')) || []; }
-    catch { return []; }
+    return _ayaUsersCache || [];
   }
   function saveUsers(users) {
-    localStorage.setItem('korseteik_users', JSON.stringify(users));
+    _ayaUsersCache = (users || []).map(normalizeUserRecord).filter(Boolean);
+    fbSet('users', keyById(_ayaUsersCache, 'uid')).catch(e => fbWarn('users save failed', e));
   }
   function findUserByEmail(email) {
     return getUsers().find(u => u.email === email.trim().toLowerCase());
   }
   function getUserById(userId) {
-    return getUsers().find(u => u.id === userId);
+    return getUsers().find(u => String(u.id) === String(userId) || String(u.uid) === String(userId));
   }
 
   // ── Session helpers ──────────────────────────────────────────
   function getUser() {
-    try { return JSON.parse(localStorage.getItem('korseteik_user')); } catch { return null; }
+    if (_ayaCurrentUserCache) return _ayaCurrentUserCache;
+    const uid = currentUid();
+    return uid ? getUserById(uid) || null : null;
   }
   function saveSession(user) {
     // Store a clean copy (no password hash)
-    const { password_hash, ...safe } = user;
-    localStorage.setItem('korseteik_user', JSON.stringify(safe));
+    const { password_hash, password, ...safe } = normalizeUserRecord(user);
+    _ayaCurrentUserCache = safe;
+    localStorage.setItem(AYA_CURRENT_USER_KEY, safe.uid);
+    localStorage.removeItem('korseteik_user');
     updateAuthUI(safe);
   }
   function clearSession() {
+    _ayaCurrentUserCache = null;
+    localStorage.removeItem(AYA_CURRENT_USER_KEY);
     localStorage.removeItem('korseteik_user');
     updateAuthUI(null);
+  }
+
+  function userToProfile(user) {
+    const u = normalizeUserRecord(user);
+    return {
+      uid: u.uid,
+      displayName: u.name || `${u.first_name} ${u.last_name}`.trim(),
+      username: u.handle || '',
+      bio: u.bio || '',
+      avatar_public_id: u.avatar_public_id || null,
+      avatar_url: u.avatar_url || null,
+      role: u.role || 'viewer',
+      location: u.location || '',
+      links: u.links || {},
+      stats: u.stats || {},
+      createdAt: u.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  async function saveUserAndProfile(user) {
+    const normalized = normalizeUserRecord(user);
+    await Promise.all([
+      fbSet(`users/${normalized.uid}`, normalized),
+      fbSet(`profiles/${normalized.uid}`, userToProfile(normalized))
+    ]);
+    const existing = getUsers().filter(u => String(u.uid) !== String(normalized.uid));
+    _ayaUsersCache = [...existing, normalized];
+    return normalized;
+  }
+
+  async function loadProfileFromFirebase(uid) {
+    if (!uid) return null;
+    try {
+      const profile = await fbGet(`profiles/${uid}`);
+      if (!profile) return null;
+      const idx = _ayaUsersCache.findIndex(u => String(u.uid) === String(uid));
+      if (idx > -1) {
+        _ayaUsersCache[idx] = normalizeUserRecord({
+          ..._ayaUsersCache[idx],
+          handle: profile.username || _ayaUsersCache[idx].handle,
+          bio: profile.bio || _ayaUsersCache[idx].bio,
+          avatar_url: profile.avatar_url || _ayaUsersCache[idx].avatar_url,
+          avatar_public_id: profile.avatar_public_id || _ayaUsersCache[idx].avatar_public_id,
+          role: profile.role || _ayaUsersCache[idx].role
+        });
+        if (_ayaCurrentUserCache && String(_ayaCurrentUserCache.uid) === String(uid)) {
+          _ayaCurrentUserCache = _ayaUsersCache[idx];
+        }
+      }
+      return profile;
+    } catch(e) {
+      fbWarn('profile load failed', e);
+      return null;
+    }
   }
 
   // ── Update ALL UI based on auth state ───────────────────────
@@ -4786,7 +5063,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       name.textContent    = `${user.first_name} ${user.last_name}`;
       handle.innerHTML    = `@${user.handle || (user.first_name.toLowerCase() + user.last_name.toLowerCase())} · ${ROLE_ICONS[user.role] || ''} ${t(ROLE_LABEL_KEYS[user.role] || '') || user.role}`;
       handle.style.color  = '';
-      bio.textContent     = t('prof_welcome');
+      bio.textContent     = user.bio || t('prof_welcome');
       bio.style.color     = '';
 
       verified.style.display = (user.role === 'creator' || user.role === 'studio') ? 'inline-flex' : 'none';
@@ -4927,6 +5204,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const role       = roleOpt?.dataset?.role || 'viewer';
     const handleInput = document.getElementById('reg-handle').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
 
+    await loadUsersFromFirebase();
+
     if (!first_name || !last_name) return errShow(t('auth_name_required'));
     if (!email || !email.includes('@')) return errShow(t('auth_email_required'));
     if (password.length < 6) return errShow(t('auth_password_min'));
@@ -4954,19 +5233,24 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         let suffix = 1;
         while (users.find(u => u.handle === handle)) { handle = baseHandle + suffix++; }
       }
+      const uid = 'u_' + Date.now();
       const user  = {
-        id:           Date.now(),
+        uid,
+        id:           uid,
         first_name,
         last_name,
+        name:         `${first_name} ${last_name}`.trim(),
         email,
         password_hash,
         role,
         handle,
         avatar_url:   null,
-        created_at:   new Date().toISOString()
+        avatar_public_id: null,
+        created_at:   new Date().toISOString(),
+        createdAt:    new Date().toISOString(),
+        updatedAt:    new Date().toISOString()
       };
-      users.push(user);
-      saveUsers(users);
+      const savedUser = await saveUserAndProfile(user);
 
       // Clear form
       ['reg-first','reg-last','reg-email','reg-password','reg-handle'].forEach(id => {
@@ -4975,7 +5259,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const hs = document.getElementById('handle-status');
       if (hs) hs.style.display = 'none';
 
-      saveSession(user);
+      saveSession(savedUser);
       goPage('home', null);
     } catch (e) {
       errShow(tf('auth_register_error', { message: e.message }));
@@ -5003,6 +5287,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     btn.textContent = '…';
 
     try {
+      await loadUsersFromFirebase();
       const user = findUserByEmail(email);
       if (!user) return errShow(t('auth_login_invalid'));
 
@@ -5065,6 +5350,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   function setTheme(theme) {
     document.body.classList.toggle('light-theme', theme === 'light');
     localStorage.setItem('aya_theme', theme);
+    const settingsUser = getUser();
+    if (settingsUser) fbUpdate(`settings/${settingsUser.uid || settingsUser.id}`, { theme, updatedAt: new Date().toISOString() }).catch(e => fbWarn('theme setting sync failed', e));
     document.getElementById('theme-btn-dark').classList.toggle('active', theme === 'dark');
     document.getElementById('theme-btn-light').classList.toggle('active', theme === 'light');
     const tbLogo = document.getElementById('tb-aitu-logo');
@@ -5078,6 +5365,21 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     document.querySelectorAll('.lang-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.lang === lang);
     });
+  }
+
+  async function loadUserSettingsFromFirebase(uid) {
+    if (!uid) return;
+    try {
+      const settings = await fbGet(`settings/${uid}`);
+      if (!settings) return;
+      if (settings.theme) setTheme(settings.theme);
+      if (settings.language) {
+        const btn = document.querySelector(`.lang-btn[data-lang="${settings.language}"]`);
+        setLang(settings.language, btn);
+      }
+    } catch(e) {
+      fbWarn('settings load failed', e);
+    }
   }
 
   /* ============================================================
@@ -6265,7 +6567,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     });
     // Update html[lang] for screen readers (IETF BCP 47: Kazakh = 'kk')
     document.documentElement.lang = lang === 'kz' ? 'kk' : lang;
-    try { window.localStorage && window.localStorage.setItem('aya_lang', lang); } catch {}
+    try {
+      if (window.localStorage) {
+        window.localStorage.setItem('aya_lang', lang);
+        window.localStorage.setItem('aya_language', lang);
+      }
+    } catch {}
+    const settingsUser = getUser();
+    if (settingsUser) fbUpdate(`settings/${settingsUser.uid || settingsUser.id}`, { language: lang, updatedAt: new Date().toISOString() }).catch(e => fbWarn('language setting sync failed', e));
     applyLang(lang);
   }
 
@@ -6273,11 +6582,51 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
      ROLE SYSTEM & MODERATION
   ============================================================ */
 
-  // ── Storage helpers ──────────────────────────────────────────
-  function getContentReqs() { try { return JSON.parse(localStorage.getItem('korseteik_content_reqs'))||[]; } catch{return[];} }
-  function saveContentReqs(r) { localStorage.setItem('korseteik_content_reqs', JSON.stringify(r)); }
-  function getBanReqs()     { try { return JSON.parse(localStorage.getItem('korseteik_ban_reqs'))||[]; } catch{return[];} }
-  function saveBanReqs(r)   { localStorage.setItem('korseteik_ban_reqs', JSON.stringify(r)); }
+  // ── Storage helpers: Firebase-backed moderation queue ────────
+  let _ayaContentReqsCache = [];
+  let _ayaBanReqsCache = [];
+  function normalizeModerationRecord(r) {
+    const type = r.type || (r.commentId ? 'comment' : r.targetId ? 'ban' : 'content');
+    return {
+      id: r.id || Date.now(),
+      type,
+      contentId: r.contentId || r.videoId || null,
+      commentId: r.commentId || null,
+      targetId: r.targetId || null,
+      submittedBy: r.submittedBy || r.moderatorId || r.reporterId || null,
+      moderatorId: r.moderatorId || r.submittedBy || null,
+      moderatorName: r.moderatorName || '',
+      targetName: r.targetName || '',
+      contentTitle: r.contentTitle || '',
+      status: r.status || 'pending',
+      reason: r.reason || '',
+      customReason: r.customReason || '',
+      reviewedBy: r.reviewedBy || null,
+      createdAt: r.createdAt || r.timestamp || new Date().toISOString(),
+      reviewedAt: r.reviewedAt || null
+    };
+  }
+  async function loadModerationFromFirebase() {
+    try {
+      const data = await fbGet('moderation');
+      const all = objectToArray(data).map(normalizeModerationRecord);
+      _ayaContentReqsCache = all.filter(r => r.type === 'content');
+      _ayaBanReqsCache = all.filter(r => r.type === 'ban');
+      _ayaCommentReportsCache = all.filter(r => r.type === 'comment');
+    } catch(e) {
+      fbWarn('moderation load failed', e);
+    }
+  }
+  function getContentReqs() { return _ayaContentReqsCache || []; }
+  function saveContentReqs(r) {
+    _ayaContentReqsCache = r || [];
+    _ayaContentReqsCache.forEach(req => fbSet(`moderation/${req.id}`, normalizeModerationRecord({...req, type:'content'})).catch(e => fbWarn('content moderation save failed', e)));
+  }
+  function getBanReqs() { return _ayaBanReqsCache || []; }
+  function saveBanReqs(r) {
+    _ayaBanReqsCache = r || [];
+    _ayaBanReqsCache.forEach(req => fbSet(`moderation/${req.id}`, normalizeModerationRecord({...req, type:'ban'})).catch(e => fbWarn('ban moderation save failed', e)));
+  }
 
   // ── Apply role class to body so CSS shows dots ───────────────
   function applyRoleToBody(user) {
@@ -6335,7 +6684,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     for (const s of seeds) {
       if (!users.find(u=>u.email===s.email)) {
         const password_hash = await hashPassword(s.password);
-        users.push({ id: Date.now()+Math.random(), first_name:s.first_name, last_name:s.last_name, email:s.email, password_hash, role:s.role, handle:s.handle, avatar_url:null, created_at:new Date().toISOString(), banned:false });
+        const uid = 'seed_' + s.handle;
+        users.push({ uid, id: uid, first_name:s.first_name, last_name:s.last_name, name:`${s.first_name} ${s.last_name}`, email:s.email, password_hash, role:s.role, handle:s.handle, avatar_url:null, avatar_public_id:null, created_at:new Date().toISOString(), createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(), banned:false });
         changed = true;
       } else {
         // Migrate existing seed accounts to add handle if missing
@@ -6343,7 +6693,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         if (!existing.handle) { existing.handle = s.handle; changed = true; }
       }
     }
-    if (changed) saveUsers(users);
+    if (changed) {
+      saveUsers(users);
+      Promise.all(users.map(u => fbSet(`profiles/${u.uid || u.id}`, userToProfile(u)).catch(e => fbWarn('seed profile save failed', e))));
+    }
   }
 
   // ── Modal helpers ────────────────────────────────────────────
@@ -6692,22 +7045,75 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     }, 100);
   }
 
+  async function migrateLocalAyaDataToFirebase() {
+    try {
+      if (localStorage.getItem(AYA_FIREBASE_MIGRATION_KEY) === 'true') return;
+      const oldUsers = JSON.parse(localStorage.getItem('korseteik_users') || '[]').map(normalizeUserRecord).filter(Boolean);
+      const oldContent = JSON.parse(localStorage.getItem('aya_content') || '[]').filter(Boolean);
+      const oldComments = JSON.parse(localStorage.getItem('aya_comments') || '[]').filter(Boolean);
+      const oldCollections = JSON.parse(localStorage.getItem('aya_colls') || '[]').filter(Boolean);
+      const oldContentReqs = JSON.parse(localStorage.getItem('korseteik_content_reqs') || '[]').filter(Boolean);
+      const oldBanReqs = JSON.parse(localStorage.getItem('korseteik_ban_reqs') || '[]').filter(Boolean);
+      const oldCommentReports = JSON.parse(localStorage.getItem('korseteik_comment_reports') || '[]').filter(Boolean);
+      const oldSession = JSON.parse(localStorage.getItem('korseteik_user') || 'null');
+
+      await Promise.all(oldUsers.map(u => Promise.all([
+        fbSet(`users/${u.uid}`, u),
+        fbSet(`profiles/${u.uid}`, userToProfile(u))
+      ])));
+      await Promise.all(oldContent.map(c => fbSet(`content/${c.id}`, normalizeContentRecord(c)).catch(e => fbWarn('content migration item failed', e))));
+      await Promise.all(oldComments.map(c => {
+        const contentKey = c.videoId || c.contentId || 'unknown';
+        return fbSet(`comments/${contentKey}/${c.id}`, normalizeCommentRecord(c, contentKey)).catch(e => fbWarn('comment migration item failed', e));
+      }));
+      await Promise.all(oldCollections.map(c => {
+        const uid = c.userId || 'unknown';
+        return fbSet(`collections/${uid}/${c.id}`, normalizeCollectionRecord(c)).catch(e => fbWarn('collection migration item failed', e));
+      }));
+      await Promise.all([...oldContentReqs, ...oldBanReqs, ...oldCommentReports].map(r => {
+        const id = r.id || Date.now();
+        return fbSet(`moderation/${id}`, normalizeModerationRecord(r)).catch(e => fbWarn('moderation migration item failed', e));
+      }));
+      if (oldSession && (oldSession.uid || oldSession.id)) {
+        localStorage.setItem(AYA_CURRENT_USER_KEY, String(oldSession.uid || oldSession.id));
+      }
+      localStorage.setItem(AYA_FIREBASE_MIGRATION_KEY, 'true');
+    } catch(e) {
+      fbWarn('local migration failed', e);
+    }
+  }
+
   // ── On page load: restore session (must run AFTER i18n is declared) ──
-  (function restoreSession() {
+  (async function restoreSession() {
     resetCreateCollectionModalOnStartup();
+    await migrateLocalAyaDataToFirebase();
+    await loadUsersFromFirebase();
     const user = getUser();
-    if (user) updateAuthUI(user);
-    seedTestAccounts();
+    if (user) {
+      _ayaCurrentUserCache = user;
+      updateAuthUI(user);
+      loadProfileFromFirebase(user.uid).then(() => updateProfilePage(getUser()));
+    }
+    await seedTestAccounts();
     // Restore theme
     const savedTheme = localStorage.getItem('aya_theme') || 'dark';
     setTheme(savedTheme);
     let savedLang = 'ru';
-    try { savedLang = window.localStorage?.getItem('aya_lang') || 'ru'; } catch {}
+    try { savedLang = window.localStorage?.getItem('aya_language') || window.localStorage?.getItem('aya_lang') || 'ru'; } catch {}
     const savedLangBtn = document.querySelector(`.lang-btn[data-lang="${savedLang}"]`);
     setLang(savedLang, savedLangBtn);
     // Render any previously uploaded community content (local cache first, then sync from server)
+    await loadServerContent();
+    await loadModerationFromFirebase();
     renderUserContent();
-    loadServerContent();
+    if (user) {
+      loadCollectionsFromFirebase(user.uid).then(() => {
+        ensureDefaultCollections(getUser());
+        renderTopCollections();
+        renderProfileCollections();
+      });
+      loadUserSettingsFromFirebase(user.uid);
+    }
     // Render team grid
     renderTeamGrid();
     // Collections init
@@ -6734,10 +7140,64 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   // ── Comments system — persistent, per-video, with likes / replies / reports ──
 
-  function getAyaComments() { try { return JSON.parse(localStorage.getItem('aya_comments'))||[]; } catch{return[];} }
-  function saveAyaComments(arr) { localStorage.setItem('aya_comments', JSON.stringify(arr)); }
-  function getCommentReports() { try { return JSON.parse(localStorage.getItem('korseteik_comment_reports'))||[]; } catch{return[];} }
-  function saveCommentReports(arr) { localStorage.setItem('korseteik_comment_reports', JSON.stringify(arr)); }
+  let _ayaCommentsCache = [];
+  let _ayaCommentReportsCache = [];
+  function normalizeCommentRecord(c, contentId) {
+    return {
+      id: c.id || ('c-' + Date.now()),
+      contentId: contentId || c.contentId || c.videoId || 'unknown',
+      videoId: contentId || c.videoId || c.contentId || 'unknown',
+      userId: c.userId || c.authorId || null,
+      userName: c.userName || c.authorName || t('comment_guest'),
+      userAvatar: c.userAvatar || null,
+      authorId: c.authorId || c.userId || null,
+      authorName: c.authorName || c.userName || t('comment_guest'),
+      authorInitials: c.authorInitials || 'А',
+      authorGrad: c.authorGrad || 'linear-gradient(135deg,#7a8848,#d4c9a0)',
+      text: c.text || '',
+      createdAt: c.createdAt || c.timestamp || Date.now(),
+      updatedAt: c.updatedAt || c.timestamp || Date.now(),
+      timestamp: c.timestamp || c.createdAt || Date.now(),
+      likes: c.likes || 0,
+      likedBy: c.likedBy || [],
+      replies: c.replies || []
+    };
+  }
+  function getAyaComments() { return _ayaCommentsCache || []; }
+  async function loadCommentsForContent(contentId) {
+    if (!contentId) return [];
+    try {
+      const data = await fbGet(`comments/${contentId}`);
+      const comments = objectToArray(data).map(c => normalizeCommentRecord(c, contentId));
+      _ayaCommentsCache = [
+        ..._ayaCommentsCache.filter(c => String(c.contentId || c.videoId) !== String(contentId)),
+        ...comments
+      ];
+      return comments;
+    } catch(e) {
+      fbWarn('comments load failed', e);
+      try { _ayaCommentsCache = (JSON.parse(localStorage.getItem('aya_comments')) || []).map(c => normalizeCommentRecord(c, c.videoId)); }
+      catch { _ayaCommentsCache = []; }
+      return [];
+    }
+  }
+  function saveAyaComments(arr) {
+    _ayaCommentsCache = (arr || []).map(c => normalizeCommentRecord(c, c.contentId || c.videoId));
+    const byContent = {};
+    _ayaCommentsCache.forEach(c => {
+      const cid = c.contentId || c.videoId || 'unknown';
+      byContent[cid] = byContent[cid] || {};
+      byContent[cid][c.id] = c;
+    });
+    Object.entries(byContent).forEach(([cid, comments]) => {
+      fbSet(`comments/${cid}`, comments).catch(e => fbWarn('comments save failed', e));
+    });
+  }
+  function getCommentReports() { return _ayaCommentReportsCache || []; }
+  function saveCommentReports(arr) {
+    _ayaCommentReportsCache = arr || [];
+    _ayaCommentReportsCache.forEach(r => fbSet(`moderation/${r.id}`, normalizeModerationRecord(r)).catch(e => fbWarn('comment report save failed', e)));
+  }
 
   /* Format a stored timestamp into a relative label */
   function _commentTimeLabel(ts) {
@@ -6816,10 +7276,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
 
   /* Submit a new top-level comment */
-  function submitComment() {
+  async function submitComment() {
     const ta = document.getElementById('comment-textarea');
     const btn = document.getElementById('comment-submit-btn');
     const user = getUser();
+    if (!user) {
+      showModal({ title:t('modal_signin_title'), body:t('modal_like_body'), actions:[{label:t('modal_login_btn'), style:MODAL_BTN_PRIMARY, action:()=>goPage('auth',null)}] });
+      return;
+    }
     if (!ta || !ta.value.trim()) return;
     const text = ta.value.trim();
     const initials = user ? (user.name || user.first_name || 'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'АН';
@@ -6828,7 +7292,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const comment = {
       id: 'c-' + Date.now(),
       videoId: _currentContent ? (_currentContent.id || 'unknown') : 'unknown',
-      authorId: user ? user.id : null,
+      contentId: _currentContent ? (_currentContent.id || 'unknown') : 'unknown',
+      userId: user.id,
+      userName: name,
+      userAvatar: user.avatar_url || null,
+      authorId: user.id,
       authorName: name,
       authorInitials: initials,
       authorGrad: grad,
@@ -6841,6 +7309,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const all = getAyaComments();
     all.push(comment);
     saveAyaComments(all);
+    try {
+      await fbSet(`comments/${comment.contentId}/${comment.id}`, normalizeCommentRecord(comment, comment.contentId));
+      const count = all.filter(c => String(c.contentId || c.videoId) === String(comment.contentId)).length;
+      await fbUpdate(`content/${comment.contentId}`, { commentsCount: count, updatedAt: new Date().toISOString() });
+    } catch(e) {
+      fbWarn('comment post failed', e);
+    }
     ta.value = '';
     ta.rows = 1;
     if (btn) btn.style.display = 'none';
