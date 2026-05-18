@@ -4218,6 +4218,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       deleteBtn.style.display = (isOwner || isAdmin) ? '' : 'none';
       deleteBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить';
     }
+
+    // Re-render comments after all async work completes.
+    // Ensures comments are always visible even if the Cloudinary player SDK
+    // (or any other async operation) interfered with the DOM during init.
+    if (_currentContent) renderComments(_currentContent.id);
   }
 
   /* Attempt to delete a video asset from Cloudinary.
