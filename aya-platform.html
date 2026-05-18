@@ -3193,6 +3193,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
     return 'c' + Math.abs(h).toString(36);
   }
+  function contentStorageId(c) {
+    if (!c) return null;
+    return String(c.id || c.contentId || contentId(c));
+  }
 
   /* ── Storage: Firebase source of truth, memory cache for synchronous UI rendering ── */
   let _ayaCollectionsCache = [];
@@ -3218,38 +3222,44 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
   async function loadCollectionsFromFirebase(uid) {
     try {
-      const [own, allCollections] = await Promise.all([
+      const [own, publicCollections] = await Promise.all([
         uid ? fbGet(`collections/${uid}`).catch(() => null) : Promise.resolve(null),
-        fbGet('collections').catch(() => null)
+        fbGet('publicCollections').catch(() => null)
       ]);
       const ownList = objectToArray(own);
-      const publicFollowable = [];
-      if (allCollections) {
-        Object.values(allCollections).forEach(group => {
-          objectToArray(group).forEach(c => {
-            if (c && c.isPublic && String(c.userId) !== String(uid)) publicFollowable.push(c);
-          });
-        });
-      }
+      const publicFollowable = objectToArray(publicCollections)
+        .filter(c => c && c.isPublic && String(c.userId) !== String(uid));
       _ayaCollectionsCache = [...ownList, ...publicFollowable].map(normalizeCollectionRecord);
     } catch(e) {
       fbWarn('collections load failed', e);
-      try { _ayaCollectionsCache = (JSON.parse(localStorage.getItem('aya_colls')) || []).map(normalizeCollectionRecord); }
-      catch { _ayaCollectionsCache = []; }
+      _ayaCollectionsCache = [];
     }
     return _ayaCollectionsCache;
   }
   function saveCollections(arr) {
     _ayaCollectionsCache = (arr || []).map(normalizeCollectionRecord);
+    const activeUid = currentUid() || getUser()?.id || null;
     const byUser = {};
     _ayaCollectionsCache.forEach(c => {
       if (!c.userId) return;
+      if (activeUid && String(c.userId) !== String(activeUid)) return;
       byUser[c.userId] = byUser[c.userId] || {};
       byUser[c.userId][c.id] = c;
     });
     Object.entries(byUser).forEach(([uid, colls]) => {
-      fbSet(`collections/${uid}`, colls).catch(e => fbWarn('collections save failed', e));
+      Object.values(colls).forEach(saveCollectionRecord);
     });
+  }
+  function saveCollectionRecord(c) {
+    const normalized = normalizeCollectionRecord(c);
+    if (!normalized.userId || !normalized.id) return;
+    fbSet(`collections/${normalized.userId}/${normalized.id}`, normalized).catch(e => fbWarn('collection save failed', e));
+    const publicPath = `publicCollections/${normalized.id}`;
+    if (normalized.isPublic) {
+      fbSet(publicPath, normalized).catch(e => fbWarn('public collection save failed', e));
+    } else {
+      fbDelete(publicPath).catch(e => fbWarn('public collection delete failed', e));
+    }
   }
 
   /* ── Ensure every logged-in user has a "Likes" collection ── */
@@ -3290,13 +3300,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const coll = all.find(c => c.id === collId);
     if (!coll) return;
     const cid = contentId(content);
+    const storedContentId = contentStorageId(content) || cid;
     if (!coll.items.some(i => i.id === cid)) {
-      coll.items.unshift({ id: cid, title: content.title, author: content.author,
+      coll.items.unshift({ id: cid, contentId: storedContentId, title: content.title, author: content.author,
         cat: content.cat, catLabel: content.catLabel,
         thumb: content.thumb || null });
     }
     saveCollections(all);
-    fbSet(`saved/${coll.userId}/${content.id || cid}`, { userId: coll.userId, contentId: content.id || cid, createdAt: Date.now() }).catch(e => fbWarn('saved item sync failed', e));
+    fbSet(`saved/${coll.userId}/${cid}`, { userId: coll.userId, itemId: cid, contentId: storedContentId, collectionId: coll.id, createdAt: Date.now() }).catch(e => fbWarn('saved item sync failed', e));
   }
 
   function removeFromCollById(collId, cid) {
@@ -3305,7 +3316,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     if (coll) {
       coll.items = coll.items.filter(i => i.id !== cid);
       saveCollections(all);
-      fbDelete(`saved/${coll.userId}/${cid}`).catch(e => fbWarn('saved item delete failed', e));
+      const stillSaved = all.some(c => c.userId === coll.userId && c.items && c.items.some(i => i.id === cid));
+      if (!stillSaved) fbDelete(`saved/${coll.userId}/${cid}`).catch(e => fbWarn('saved item delete failed', e));
     }
   }
 
@@ -3327,8 +3339,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     try {
       if (already) await fbDelete(`likes/${c.id || cid}/${user.id}`);
       else await fbSet(`likes/${c.id || cid}/${user.id}`, { userId: user.id, contentId: c.id || cid, createdAt: Date.now() });
-      const likeData = await fbGet(`likes/${c.id || cid}`).catch(() => null);
-      await fbUpdate(`content/${c.id || cid}`, { likesCount: objectToArray(likeData).length, updatedAt: new Date().toISOString() });
+      await updateContentEngagementCounts(c.id || cid);
     } catch(e) {
       fbWarn('like sync failed', e);
     }
@@ -3482,7 +3493,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const emoji = document.querySelector('.coll-emoji-opt.active')?.textContent || '🎬';
     const all = getCollections();
     const _collNow = Date.now();
-    const newColl = { id: _collNow, userId: user.id, name, emoji,
+    const newColl = { id: ayaId('collection'), userId: user.id, name, emoji,
       isPublic: _collPublicNew, isDefault: false, items: [], followers: [], createdAt: _collNow };
     all.push(newColl);
     saveCollections(all);
@@ -3511,7 +3522,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         { label:t('modal_cancel'), style:MODAL_BTN_CANCEL },
         { label:t('modal_delete'), style:MODAL_BTN_DANGER,
           action: () => {
+            const removed = getCollections().find(c => c.id === collId);
             const all = getCollections().filter(c => c.id !== collId);
+            if (removed && removed.userId) {
+              fbDelete(`collections/${removed.userId}/${removed.id}`).catch(e => fbWarn('collection delete failed', e));
+              fbDelete(`publicCollections/${removed.id}`).catch(e => fbWarn('public collection delete failed', e));
+            }
             saveCollections(all);
             renderProfileCollections();
             renderTopCollections();
@@ -3531,7 +3547,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const idx = (c.followers || []).indexOf(user.id);
     if (idx > -1) { c.followers.splice(idx, 1); btn.innerHTML = withIcon('plus', t('coll_save')); btn.classList.remove('following'); }
     else { c.followers = c.followers || []; c.followers.push(user.id); btn.innerHTML = withIcon('check', t('coll_saved')); btn.classList.add('following'); }
-    saveCollections(all);
+    _ayaCollectionsCache = all.map(normalizeCollectionRecord);
+    saveCollectionRecord(c);
     renderTopCollections();
   }
 
@@ -3811,25 +3828,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         {
           label: t('card_delete_forever'), style: MODAL_BTN_DANGER,
           action: async () => {
-            // Find and delete the Firebase entry by matching content.id
-            try {
-              const res = await fetch(`${FB}/content.json`);
-              if (res.ok) {
-                const data = await res.json();
-                if (data) {
-                  const entry = Object.entries(data).find(([, v]) => v && v.id === content.id);
-                  if (entry) {
-                    await fetch(`${FB}/content/${entry[0]}.json`, { method: 'DELETE' });
-                  }
-                }
-              }
-            } catch(e) { /* Firebase unreachable — still remove locally */ }
-
-            // Remove from localStorage and blacklist so Firebase won't re-merge it
-            const all = getAyaContent().filter(c => c.id !== content.id);
-            saveAyaContent(all);
-            removeDeleteToken(content.id);
-            addDeletedId(content.id);
+            await deleteContentRecordFromFirebase(content.id);
+            removeContentFromLocalCache(content.id);
 
             // Attempt Cloudinary asset cleanup (requires server-side credentials for full deletion)
             deleteFromCloudinary(
@@ -4012,7 +4012,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   let _ayaContentCache = [];
   function normalizeContentRecord(c) {
     const now = new Date().toISOString();
-    const id = c.id || Date.now();
+    const id = c.id || ayaId('content');
     return {
       ...c,
       id,
@@ -4036,7 +4036,6 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   function getAyaContent() { return _ayaContentCache || []; }
   function saveAyaContent(arr) {
     _ayaContentCache = (arr || []).map(normalizeContentRecord);
-    fbSet('content', keyById(_ayaContentCache, 'id')).catch(e => fbWarn('content cache save failed', e));
   }
 
   /* Deleted IDs blacklist — prevents Firebase from re-merging deleted content on reload */
@@ -4123,8 +4122,19 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     });
     return out;
   }
+  function firebaseKey(value) {
+    return btoa(unescape(encodeURIComponent(String(value || '').trim().toLowerCase())))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+  }
   function currentUid() {
     try { return localStorage.getItem(AYA_CURRENT_USER_KEY) || null; } catch { return null; }
+  }
+  function ayaId(prefix) {
+    const safePrefix = prefix || 'id';
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return `${safePrefix}_${window.crypto.randomUUID()}`;
+    }
+    return `${safePrefix}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
   }
 
   /* Save content metadata to Firebase. Cloudinary stores media files only. */
@@ -4163,8 +4173,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       if (added) renderUserContent();
     } catch(e) {
       fbWarn('content load failed', e);
-      try { _ayaContentCache = (JSON.parse(localStorage.getItem('aya_content')) || []).map(normalizeContentRecord); }
-      catch { _ayaContentCache = []; }
+      _ayaContentCache = [];
     }
   }
 
@@ -4446,16 +4455,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
           label: t('modal_delete'),
           style: MODAL_BTN_DANGER,
           action: async () => {
-            // token here is the Firebase key (e.g. "-NxYZ123abc") stored at upload time
-            try {
-              await fetch(`${FB}/content/${token}.json`, { method: 'DELETE' });
-            } catch(e) { /* Firebase unreachable — still remove locally */ }
-
-            // Remove from localStorage and blacklist so Firebase won't re-merge it
-            const all = getAyaContent().filter(c => c.id !== _currentContent.id);
-            saveAyaContent(all);
-            removeDeleteToken(_currentContent.id);
-            addDeletedId(_currentContent.id);
+            await deleteContentRecordFromFirebase(_currentContent.id);
+            removeContentFromLocalCache(_currentContent.id);
 
             // Attempt Cloudinary asset cleanup (requires server-side credentials for full deletion)
             deleteFromCloudinary(
@@ -4677,7 +4678,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
     const _uploadNow = Date.now();
     const content = {
-      id: _uploadNow,
+      id: ayaId('content'),
       title,
       author: crew.length ? crew[0].tag : (user ? (user.handle || user.name) : ''),
       desc: document.getElementById('up-desc').value.trim(),
@@ -4883,12 +4884,45 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const data = await fbGet('users');
       _ayaUsersCache = objectToArray(data).map(normalizeUserRecord).filter(Boolean);
     } catch(e) {
-      fbWarn('users load failed; using local migration cache when available', e);
-      try {
-        _ayaUsersCache = (JSON.parse(localStorage.getItem('korseteik_users')) || []).map(normalizeUserRecord).filter(Boolean);
-      } catch { _ayaUsersCache = []; }
+      fbWarn('users load failed', e);
+      _ayaUsersCache = [];
     }
     return _ayaUsersCache;
+  }
+  async function loadUserByIdFromFirebase(uid) {
+    if (!uid) return null;
+    try {
+      const data = await fbGet(`users/${uid}`);
+      const user = normalizeUserRecord(data);
+      if (!user) return null;
+      const existing = getUsers().filter(u => String(u.uid) !== String(user.uid));
+      _ayaUsersCache = [...existing, user];
+      return user;
+    } catch(e) {
+      fbWarn('user load failed', e);
+      return null;
+    }
+  }
+  async function loadUserByEmailFromFirebase(email) {
+    const key = firebaseKey(email);
+    try {
+      const uid = await fbGet(`userEmails/${key}`);
+      if (uid) return await loadUserByIdFromFirebase(uid);
+    } catch(e) {
+      fbWarn('user email index lookup failed', e);
+    }
+    await loadUsersFromFirebase();
+    return findUserByEmail(email) || null;
+  }
+  async function isHandleTaken(handle) {
+    if (!handle) return false;
+    try {
+      const uid = await fbGet(`handles/${firebaseKey(handle)}`);
+      if (uid) return true;
+    } catch(e) {
+      fbWarn('handle index lookup failed', e);
+    }
+    return getUsers().some(u => u.handle && u.handle.toLowerCase() === handle.toLowerCase());
   }
 
   function getUsers() {
@@ -4896,7 +4930,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
   function saveUsers(users) {
     _ayaUsersCache = (users || []).map(normalizeUserRecord).filter(Boolean);
-    fbSet('users', keyById(_ayaUsersCache, 'uid')).catch(e => fbWarn('users save failed', e));
+    _ayaUsersCache.forEach(u => {
+      fbSet(`users/${u.uid}`, u).catch(e => fbWarn('user save failed', e));
+      if (u.email) fbSet(`userEmails/${firebaseKey(u.email)}`, u.uid).catch(e => fbWarn('user email index save failed', e));
+      if (u.handle) fbSet(`handles/${firebaseKey(u.handle)}`, u.uid).catch(e => fbWarn('handle index save failed', e));
+    });
   }
   function findUserByEmail(email) {
     return getUsers().find(u => u.email === email.trim().toLowerCase());
@@ -4948,7 +4986,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const normalized = normalizeUserRecord(user);
     await Promise.all([
       fbSet(`users/${normalized.uid}`, normalized),
-      fbSet(`profiles/${normalized.uid}`, userToProfile(normalized))
+      fbSet(`profiles/${normalized.uid}`, userToProfile(normalized)),
+      normalized.email ? fbSet(`userEmails/${firebaseKey(normalized.email)}`, normalized.uid) : Promise.resolve(),
+      normalized.handle ? fbSet(`handles/${firebaseKey(normalized.handle)}`, normalized.uid) : Promise.resolve()
     ]);
     const existing = getUsers().filter(u => String(u.uid) !== String(normalized.uid));
     _ayaUsersCache = [...existing, normalized];
@@ -5161,7 +5201,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   // ── REGISTER ─────────────────────────────────────────────────
   /* ── Handle validation (live) ── */
-  function validateHandleInput(input) {
+  async function validateHandleInput(input) {
     const raw = input.value;
     const cleaned = raw.replace(/[^a-zA-Z0-9_]/g, '');
     if (cleaned !== raw) input.value = cleaned;
@@ -5179,7 +5219,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       status.style.display = 'block';
       return;
     }
-    const taken = getUsers().some(u => u.handle && u.handle.toLowerCase() === cleaned.toLowerCase());
+    const taken = await isHandleTaken(cleaned.toLowerCase());
     if (taken) {
       status.textContent = tf('auth_handle_taken', { handle: cleaned });
       status.style.color = '#e05555';
@@ -5204,12 +5244,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const role       = roleOpt?.dataset?.role || 'viewer';
     const handleInput = document.getElementById('reg-handle').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
 
-    await loadUsersFromFirebase();
-
     if (!first_name || !last_name) return errShow(t('auth_name_required'));
     if (!email || !email.includes('@')) return errShow(t('auth_email_required'));
     if (password.length < 6) return errShow(t('auth_password_min'));
-    if (findUserByEmail(email)) return errShow(t('auth_email_taken'));
+    if (await loadUserByEmailFromFirebase(email)) return errShow(t('auth_email_taken'));
     if (handleInput && handleInput.length < 3) return errShow(t('auth_tag_min'));
     if (handleInput && handleInput.length > 24) return errShow(t('auth_tag_max'));
 
@@ -5222,7 +5260,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       // Use user-chosen handle or auto-generate from name
       let handle;
       if (handleInput) {
-        if (users.find(u => u.handle && u.handle.toLowerCase() === handleInput)) {
+        if (await isHandleTaken(handleInput)) {
           btn.disabled = false; btn.removeAttribute('data-i18n'); btn.textContent = t('register_btn');
           return errShow(tf('auth_tag_taken', { handle: handleInput }));
         }
@@ -5231,9 +5269,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         const baseHandle = (first_name + last_name).toLowerCase().replace(/[^a-z0-9]/gi,'') || 'user';
         handle = baseHandle;
         let suffix = 1;
-        while (users.find(u => u.handle === handle)) { handle = baseHandle + suffix++; }
+        while (await isHandleTaken(handle)) { handle = baseHandle + suffix++; }
       }
-      const uid = 'u_' + Date.now();
+      const uid = ayaId('user');
       const user  = {
         uid,
         id:           uid,
@@ -5287,8 +5325,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     btn.textContent = '…';
 
     try {
-      await loadUsersFromFirebase();
-      const user = findUserByEmail(email);
+      const user = await loadUserByEmailFromFirebase(email);
       if (!user) return errShow(t('auth_login_invalid'));
 
       const valid = await verifyPassword(password, user.password_hash);
@@ -6588,7 +6625,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   function normalizeModerationRecord(r) {
     const type = r.type || (r.commentId ? 'comment' : r.targetId ? 'ban' : 'content');
     return {
-      id: r.id || Date.now(),
+      id: r.id || ayaId('moderation'),
       type,
       contentId: r.contentId || r.videoId || null,
       commentId: r.commentId || null,
@@ -6627,6 +6664,73 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     _ayaBanReqsCache = r || [];
     _ayaBanReqsCache.forEach(req => fbSet(`moderation/${req.id}`, normalizeModerationRecord({...req, type:'ban'})).catch(e => fbWarn('ban moderation save failed', e)));
   }
+  function saveModerationRecord(req, type) {
+    const record = normalizeModerationRecord({ ...req, type });
+    return fbSet(`moderation/${record.id}`, record).catch(e => fbWarn('moderation record save failed', e));
+  }
+  function markModerationReviewed(req, type, status) {
+    const user = getUser();
+    req.status = status;
+    req.reviewedBy = user ? (user.uid || user.id) : null;
+    req.reviewedAt = new Date().toISOString();
+    saveModerationRecord(req, type);
+  }
+  async function deleteContentRecordFromFirebase(contentId) {
+    if (!contentId) return false;
+    let deleted = false;
+    try {
+      await fbDelete(`content/${contentId}`);
+      deleted = true;
+    } catch(e) {
+      fbWarn('direct content delete failed', e);
+    }
+    try {
+      const data = await fbGet('content');
+      const entry = Object.entries(data || {}).find(([key, v]) => key !== String(contentId) && v && String(v.id) === String(contentId));
+      if (entry) {
+        await fbDelete(`content/${entry[0]}`);
+        deleted = true;
+      }
+    } catch(e) {
+      fbWarn('content lookup delete failed', e);
+    }
+    return deleted;
+  }
+  function removeContentFromLocalCache(contentId) {
+    _ayaContentCache = getAyaContent().filter(c => String(c.id) !== String(contentId));
+    addDeletedId(contentId);
+    removeDeleteToken(contentId);
+  }
+  function updateUserRolePersistently(userId, role) {
+    const users = getUsers();
+    const usr = users.find(x => String(x.id) === String(userId) || String(x.uid) === String(userId));
+    if (!usr) {
+      fbUpdate(`users/${userId}`, { role, updatedAt: new Date().toISOString() }).catch(e => fbWarn('user role update failed', e));
+      fbUpdate(`profiles/${userId}`, { role, updatedAt: new Date().toISOString() }).catch(e => fbWarn('profile role update failed', e));
+      return true;
+    }
+    usr.role = role;
+    usr.updatedAt = new Date().toISOString();
+    _ayaUsersCache = users.map(normalizeUserRecord).filter(Boolean);
+    fbUpdate(`users/${usr.uid || usr.id}`, { role, updatedAt: usr.updatedAt }).catch(e => fbWarn('user role update failed', e));
+    fbUpdate(`profiles/${usr.uid || usr.id}`, { role, updatedAt: usr.updatedAt }).catch(e => fbWarn('profile role update failed', e));
+    return true;
+  }
+  function updateUserBanPersistently(userId, banned) {
+    const users = getUsers();
+    const usr = users.find(x => String(x.id) === String(userId) || String(x.uid) === String(userId));
+    if (!usr) {
+      fbUpdate(`users/${userId}`, { banned: !!banned, updatedAt: new Date().toISOString() }).catch(e => fbWarn('user ban update failed', e));
+      fbUpdate(`profiles/${userId}`, { banned: !!banned, updatedAt: new Date().toISOString() }).catch(e => fbWarn('profile ban update failed', e));
+      return true;
+    }
+    usr.banned = !!banned;
+    usr.updatedAt = new Date().toISOString();
+    _ayaUsersCache = users.map(normalizeUserRecord).filter(Boolean);
+    fbUpdate(`users/${usr.uid || usr.id}`, { banned: !!banned, updatedAt: usr.updatedAt }).catch(e => fbWarn('user ban update failed', e));
+    fbUpdate(`profiles/${usr.uid || usr.id}`, { banned: !!banned, updatedAt: usr.updatedAt }).catch(e => fbWarn('profile ban update failed', e));
+    return true;
+  }
 
   // ── Apply role class to body so CSS shows dots ───────────────
   function applyRoleToBody(user) {
@@ -6657,7 +6761,6 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   // ── Seed test accounts ───────────────────────────────────────
   async function seedTestAccounts() {
-    const users = getUsers();
     const seeds = [
       { email:'admin@korseteik.kz',           password:'admin',           first_name:'Admin',    last_name:'Korseteik',   role:'admin',     handle:'adminkorseteik'   },
       { email:'moderator@korseteik.kz',        password:'moderator',       first_name:'Moder',    last_name:'Ator',        role:'moderator', handle:'moderator'        },
@@ -6680,22 +6783,25 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       { email:'alisher_kassymov@gmail.com',    password:'Alisher123',      first_name:'Alisher',  last_name:'Kassymov',    role:'creator',   handle:'alisher_kassymov' },
       { email:'madina_karimova@gmail.com',     password:'Madina123',       first_name:'Madina',   last_name:'Karimova',    role:'creator',   handle:'madina_karimova'  },
     ];
-    let changed = false;
     for (const s of seeds) {
-      if (!users.find(u=>u.email===s.email)) {
+      const uid = 'seed_' + s.handle;
+      let existing = await loadUserByIdFromFirebase(uid);
+      if (!existing) {
         const password_hash = await hashPassword(s.password);
-        const uid = 'seed_' + s.handle;
-        users.push({ uid, id: uid, first_name:s.first_name, last_name:s.last_name, name:`${s.first_name} ${s.last_name}`, email:s.email, password_hash, role:s.role, handle:s.handle, avatar_url:null, avatar_public_id:null, created_at:new Date().toISOString(), createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(), banned:false });
-        changed = true;
+        const user = { uid, id: uid, first_name:s.first_name, last_name:s.last_name, name:`${s.first_name} ${s.last_name}`, email:s.email, password_hash, role:s.role, handle:s.handle, avatar_url:null, avatar_public_id:null, created_at:new Date().toISOString(), createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(), banned:false };
+        await saveUserAndProfile(user);
       } else {
-        // Migrate existing seed accounts to add handle if missing
-        const existing = users.find(u=>u.email===s.email);
-        if (!existing.handle) { existing.handle = s.handle; changed = true; }
+        const updates = {};
+        if (!existing.handle) updates.handle = s.handle;
+        if (!existing.email) updates.email = s.email;
+        if (Object.keys(updates).length) {
+          existing = normalizeUserRecord({ ...existing, ...updates, updatedAt: new Date().toISOString() });
+          await saveUserAndProfile(existing);
+        } else {
+          if (existing.email) fbSet(`userEmails/${firebaseKey(existing.email)}`, existing.uid).catch(e => fbWarn('seed email index save failed', e));
+          if (existing.handle) fbSet(`handles/${firebaseKey(existing.handle)}`, existing.uid).catch(e => fbWarn('seed handle index save failed', e));
+        }
       }
-    }
-    if (changed) {
-      saveUsers(users);
-      Promise.all(users.map(u => fbSet(`profiles/${u.uid || u.id}`, userToProfile(u)).catch(e => fbWarn('seed profile save failed', e))));
     }
   }
 
@@ -6761,8 +6867,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const user = getUser();
       if (!user) return;
       const reqs = getContentReqs();
-      reqs.push({ id:Date.now(), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, contentId, contentTitle, reason, status:'pending', createdAt:new Date().toISOString() });
-      saveContentReqs(reqs);
+      const req = { id: ayaId('mod_content'), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, contentId, contentTitle, reason, status:'pending', createdAt:new Date().toISOString() };
+      reqs.push(req);
+      _ayaContentReqsCache = reqs;
+      saveModerationRecord(req, 'content');
       updateBadges();
       showModal({ title:t('req_sent_title'), body:t('req_delete_sent_body'), actions:[{label:'OK', style:MODAL_BTN_PRIMARY}] });
     });
@@ -6774,8 +6882,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const user = getUser();
       if (!user) return;
       const reqs = getBanReqs();
-      reqs.push({ id:Date.now(), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, targetId, targetName, reason, status:'pending', createdAt:new Date().toISOString() });
-      saveBanReqs(reqs);
+      const req = { id: ayaId('mod_ban'), moderatorId:user.id, moderatorName:`${user.first_name} ${user.last_name}`, targetId, targetName, reason, status:'pending', createdAt:new Date().toISOString() };
+      reqs.push(req);
+      _ayaBanReqsCache = reqs;
+      saveModerationRecord(req, 'ban');
       updateBadges();
       showModal({ title:t('req_sent_title'), body:t('req_ban_sent_body'), actions:[{label:'OK', style:MODAL_BTN_PRIMARY}] });
     });
@@ -6784,7 +6894,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   // ── ADMIN: approve/decline content request ───────────────────
   function adminApproveContent(id) {
     const reqs = getContentReqs();
-    const r = reqs.find(x=>x.id===id);
+    const r = reqs.find(x=>String(x.id)===String(id));
     if (!r) return;
     showModal({
       title:t('admin_confirm_delete_title'),
@@ -6792,21 +6902,28 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       actions:[
         {label:t('modal_cancel'),style:MODAL_BTN_CANCEL2},
         {label:t('modal_delete'),style:MODAL_BTN_DANGER,
-         action:()=>{ r.status='approved'; saveContentReqs(reqs); renderAdminContentReqs(); updateBadges(); }}
+         action: async ()=>{
+           markModerationReviewed(r, 'content', 'approved');
+           if (r.contentId) {
+             await deleteContentRecordFromFirebase(r.contentId);
+             removeContentFromLocalCache(r.contentId);
+           }
+           renderAdminContentReqs(); updateBadges(); renderUserContent();
+         }}
       ]
     });
   }
   function adminDeclineContent(id) {
     const reqs = getContentReqs();
-    const r = reqs.find(x=>x.id===id);
+    const r = reqs.find(x=>String(x.id)===String(id));
     if (!r) return;
-    r.status='declined'; saveContentReqs(reqs); renderAdminContentReqs(); updateBadges();
+    markModerationReviewed(r, 'content', 'declined'); renderAdminContentReqs(); updateBadges();
   }
 
   // ── ADMIN: approve/decline ban request ───────────────────────
   function adminApproveBan(id) {
     const reqs = getBanReqs();
-    const r = reqs.find(x=>x.id===id);
+    const r = reqs.find(x=>String(x.id)===String(id));
     if (!r) return;
     showModal({
       title:t('admin_confirm_ban_title'),
@@ -6815,11 +6932,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         {label:t('modal_cancel'),style:MODAL_BTN_CANCEL2},
         {label:t('action_block'),style:MODAL_BTN_DANGER,
          action:()=>{
-           r.status='approved';
-           saveBanReqs(reqs);
-           const users=getUsers();
-           const u=users.find(x=>x.id===r.targetId);
-           if(u) { u.banned=true; saveUsers(users); }
+           markModerationReviewed(r, 'ban', 'approved');
+           updateUserBanPersistently(r.targetId, true);
            renderAdminBanReqs(); updateBadges();
          }}
       ]
@@ -6827,9 +6941,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   }
   function adminDeclineBan(id) {
     const reqs = getBanReqs();
-    const r = reqs.find(x=>x.id===id);
+    const r = reqs.find(x=>String(x.id)===String(id));
     if (!r) return;
-    r.status='declined'; saveBanReqs(reqs); renderAdminBanReqs(); updateBadges();
+    markModerationReviewed(r, 'ban', 'declined'); renderAdminBanReqs(); updateBadges();
   }
 
   // ── ADMIN: direct ban user ────────────────────────────────────
@@ -6840,7 +6954,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       actions:[
         {label:t('modal_cancel'),style:MODAL_BTN_CANCEL2},
         {label:t('action_block'),style:MODAL_BTN_DANGER,
-         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.banned=true;saveUsers(u);} showModal({title:t('done_title'),body:tf('user_blocked_body',{name:userName}),actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
+         action:()=>{ updateUserBanPersistently(userId, true); showModal({title:t('done_title'),body:tf('user_blocked_body',{name:userName}),actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
       ]
     });
   }
@@ -6853,7 +6967,15 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       actions:[
         {label:t('modal_cancel'),style:MODAL_BTN_CANCEL2},
         {label:t('card_delete_forever'),style:MODAL_BTN_DANGER,
-         action:()=>{ let u=getUsers(); u=u.filter(x=>x.id!==userId); saveUsers(u); showModal({title:t('deleted_title'),body:tf('account_deleted_body',{name:userName}),actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
+         action:()=>{
+           _ayaUsersCache = getUsers().filter(x => String(x.id) !== String(userId) && String(x.uid) !== String(userId));
+           fbDelete(`users/${userId}`).catch(e => fbWarn('user delete failed', e));
+           fbDelete(`profiles/${userId}`).catch(e => fbWarn('profile delete failed', e));
+           fbDelete(`settings/${userId}`).catch(e => fbWarn('settings delete failed', e));
+           fbDelete(`collections/${userId}`).catch(e => fbWarn('collections delete failed', e));
+           fbDelete(`saved/${userId}`).catch(e => fbWarn('saved delete failed', e));
+           showModal({title:t('deleted_title'),body:tf('account_deleted_body',{name:userName}),actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]});
+         }}
       ]
     });
   }
@@ -6866,7 +6988,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       actions:[
         {label:t('modal_cancel'),style:MODAL_BTN_CANCEL2},
         {label:t('assign_button'),style:MODAL_BTN_TEAL,
-         action:()=>{ const u=getUsers(); const usr=u.find(x=>x.id===userId); if(usr){usr.role='moderator';saveUsers(u);} showModal({title:t('done_title'),body:tf('assigned_mod_body',{name:userName}),actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
+         action:()=>{ updateUserRolePersistently(userId, 'moderator'); showModal({title:t('done_title'),body:tf('assigned_mod_body',{name:userName}),actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]}); }}
       ]
     });
   }
@@ -6915,6 +7037,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
          action:()=>{
            const card = document.querySelector(`[data-content-id="${contentId}"]`);
            if(card) card.style.display='none';
+           deleteContentRecordFromFirebase(contentId).then(() => {
+             removeContentFromLocalCache(contentId);
+             renderUserContent();
+           });
            showModal({title:t('deleted_title'),body:tf('content_deleted_platform',{title:contentTitle}),actions:[{label:'OK',style:MODAL_BTN_PRIMARY}]});
          }}
       ]
@@ -6935,7 +7061,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         </div>
         <div class="req-meta">${t('moderator_label')}: ${r.moderatorName} · ${new Date(r.createdAt).toLocaleDateString(dateLocale())}</div>
         <div class="req-reason">${t('req_reason_label')}: ${r.reason}</div>
-        ${r.status==='pending' ? `<div class="req-actions"><button class="req-btn req-btn-approve" onclick="adminApproveContent(${r.id})">${withIcon('check', t('approve'))}</button><button class="req-btn req-btn-decline" onclick="adminDeclineContent(${r.id})">${withIcon('close', t('decline'))}</button></div>` : ''}
+        ${r.status==='pending' ? `<div class="req-actions"><button class="req-btn req-btn-approve" onclick="adminApproveContent('${r.id}')">${withIcon('check', t('approve'))}</button><button class="req-btn req-btn-decline" onclick="adminDeclineContent('${r.id}')">${withIcon('close', t('decline'))}</button></div>` : ''}
       </div>
     `).join('');
   }
@@ -6952,7 +7078,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         </div>
         <div class="req-meta">${t('moderator_label')}: ${r.moderatorName} · ${new Date(r.createdAt).toLocaleDateString(dateLocale())}</div>
         <div class="req-reason">${t('req_reason_label')}: ${r.reason}</div>
-        ${r.status==='pending' ? `<div class="req-actions"><button class="req-btn req-btn-approve" onclick="adminApproveBan(${r.id})">${withIcon('check', t('approve'))}</button><button class="req-btn req-btn-decline" onclick="adminDeclineBan(${r.id})">${withIcon('close', t('decline'))}</button></div>` : ''}
+        ${r.status==='pending' ? `<div class="req-actions"><button class="req-btn req-btn-approve" onclick="adminApproveBan('${r.id}')">${withIcon('check', t('approve'))}</button><button class="req-btn req-btn-decline" onclick="adminDeclineBan('${r.id}')">${withIcon('close', t('decline'))}</button></div>` : ''}
       </div>
     `).join('');
   }
@@ -7057,21 +7183,28 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const oldCommentReports = JSON.parse(localStorage.getItem('korseteik_comment_reports') || '[]').filter(Boolean);
       const oldSession = JSON.parse(localStorage.getItem('korseteik_user') || 'null');
 
-      await Promise.all(oldUsers.map(u => Promise.all([
+      await Promise.all(oldUsers.filter(u => u && u.uid).map(u => Promise.all([
         fbSet(`users/${u.uid}`, u),
-        fbSet(`profiles/${u.uid}`, userToProfile(u))
+        fbSet(`profiles/${u.uid}`, userToProfile(u)),
+        u.email ? fbSet(`userEmails/${firebaseKey(u.email)}`, u.uid) : Promise.resolve(),
+        u.handle ? fbSet(`handles/${firebaseKey(u.handle)}`, u.uid) : Promise.resolve()
       ])));
-      await Promise.all(oldContent.map(c => fbSet(`content/${c.id}`, normalizeContentRecord(c)).catch(e => fbWarn('content migration item failed', e))));
+      await Promise.all(oldContent.filter(c => c && c.id).map(c => fbSet(`content/${c.id}`, normalizeContentRecord(c)).catch(e => fbWarn('content migration item failed', e))));
       await Promise.all(oldComments.map(c => {
-        const contentKey = c.videoId || c.contentId || 'unknown';
+        if (!c || !c.id || (!c.videoId && !c.contentId)) return Promise.resolve();
+        const contentKey = c.videoId || c.contentId;
         return fbSet(`comments/${contentKey}/${c.id}`, normalizeCommentRecord(c, contentKey)).catch(e => fbWarn('comment migration item failed', e));
       }));
       await Promise.all(oldCollections.map(c => {
-        const uid = c.userId || 'unknown';
-        return fbSet(`collections/${uid}/${c.id}`, normalizeCollectionRecord(c)).catch(e => fbWarn('collection migration item failed', e));
+        if (!c || !c.id || !c.userId) return Promise.resolve();
+        const normalized = normalizeCollectionRecord(c);
+        return Promise.all([
+          fbSet(`collections/${normalized.userId}/${normalized.id}`, normalized),
+          normalized.isPublic ? fbSet(`publicCollections/${normalized.id}`, normalized) : Promise.resolve()
+        ]).catch(e => fbWarn('collection migration item failed', e));
       }));
       await Promise.all([...oldContentReqs, ...oldBanReqs, ...oldCommentReports].map(r => {
-        const id = r.id || Date.now();
+        const id = r.id || ayaId('moderation');
         return fbSet(`moderation/${id}`, normalizeModerationRecord(r)).catch(e => fbWarn('moderation migration item failed', e));
       }));
       if (oldSession && (oldSession.uid || oldSession.id)) {
@@ -7087,7 +7220,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   (async function restoreSession() {
     resetCreateCollectionModalOnStartup();
     await migrateLocalAyaDataToFirebase();
-    await loadUsersFromFirebase();
+    const sessionUid = currentUid();
+    if (sessionUid) await loadUserByIdFromFirebase(sessionUid);
     const user = getUser();
     if (user) {
       _ayaCurrentUserCache = user;
@@ -7104,7 +7238,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     setLang(savedLang, savedLangBtn);
     // Render any previously uploaded community content (local cache first, then sync from server)
     await loadServerContent();
-    await loadModerationFromFirebase();
+    if (user && (user.role === 'admin' || user.role === 'moderator')) await loadModerationFromFirebase();
     renderUserContent();
     if (user) {
       loadCollectionsFromFirebase(user.uid).then(() => {
@@ -7144,7 +7278,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   let _ayaCommentReportsCache = [];
   function normalizeCommentRecord(c, contentId) {
     return {
-      id: c.id || ('c-' + Date.now()),
+      id: c.id || ayaId('comment'),
       contentId: contentId || c.contentId || c.videoId || 'unknown',
       videoId: contentId || c.videoId || c.contentId || 'unknown',
       userId: c.userId || c.authorId || null,
@@ -7176,8 +7310,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       return comments;
     } catch(e) {
       fbWarn('comments load failed', e);
-      try { _ayaCommentsCache = (JSON.parse(localStorage.getItem('aya_comments')) || []).map(c => normalizeCommentRecord(c, c.videoId)); }
-      catch { _ayaCommentsCache = []; }
+      _ayaCommentsCache = _ayaCommentsCache.filter(c => String(c.contentId || c.videoId) !== String(contentId));
       return [];
     }
   }
@@ -7193,10 +7326,31 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       fbSet(`comments/${cid}`, comments).catch(e => fbWarn('comments save failed', e));
     });
   }
+  function saveCommentRecord(c) {
+    const contentId = c.contentId || c.videoId;
+    if (!contentId || !c.id) return;
+    fbSet(`comments/${contentId}/${c.id}`, normalizeCommentRecord(c, contentId)).catch(e => fbWarn('comment save failed', e));
+  }
   function getCommentReports() { return _ayaCommentReportsCache || []; }
   function saveCommentReports(arr) {
     _ayaCommentReportsCache = arr || [];
     _ayaCommentReportsCache.forEach(r => fbSet(`moderation/${r.id}`, normalizeModerationRecord(r)).catch(e => fbWarn('comment report save failed', e)));
+  }
+  async function updateContentEngagementCounts(contentId) {
+    if (!contentId || contentId === 'unknown') return;
+    try {
+      const [commentData, likeData] = await Promise.all([
+        fbGet(`comments/${contentId}`).catch(() => null),
+        fbGet(`likes/${contentId}`).catch(() => null)
+      ]);
+      await fbUpdate(`content/${contentId}`, {
+        commentsCount: objectToArray(commentData).length,
+        likesCount: objectToArray(likeData).length,
+        updatedAt: new Date().toISOString()
+      });
+    } catch(e) {
+      fbWarn('content engagement count sync failed', e);
+    }
   }
 
   /* Format a stored timestamp into a relative label */
@@ -7290,7 +7444,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const name = user ? (user.handle ? '@' + user.handle : (user.first_name || t('comment_guest'))) : t('comment_guest');
     const grad = user ? 'linear-gradient(135deg,var(--teal),var(--gold))' : 'linear-gradient(135deg,#7a8848,#d4c9a0)';
     const comment = {
-      id: 'c-' + Date.now(),
+      id: ayaId('comment'),
       videoId: _currentContent ? (_currentContent.id || 'unknown') : 'unknown',
       contentId: _currentContent ? (_currentContent.id || 'unknown') : 'unknown',
       userId: user.id,
@@ -7308,11 +7462,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     };
     const all = getAyaComments();
     all.push(comment);
-    saveAyaComments(all);
+    _ayaCommentsCache = all.map(c => normalizeCommentRecord(c, c.contentId || c.videoId));
     try {
       await fbSet(`comments/${comment.contentId}/${comment.id}`, normalizeCommentRecord(comment, comment.contentId));
-      const count = all.filter(c => String(c.contentId || c.videoId) === String(comment.contentId)).length;
-      await fbUpdate(`content/${comment.contentId}`, { commentsCount: count, updatedAt: new Date().toISOString() });
+      await updateContentEngagementCounts(comment.contentId);
     } catch(e) {
       fbWarn('comment post failed', e);
     }
@@ -7344,7 +7497,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         }
       }
     }
-    if (changed) { saveAyaComments(all); if(_currentContent) renderComments(_currentContent.id); }
+    if (changed) {
+      _ayaCommentsCache = all.map(c => normalizeCommentRecord(c, c.contentId || c.videoId));
+      const changedTop = all.find(c => c.id === commentId || (isReply && c.replies && c.replies.some(r => r.id === commentId)));
+      if (changedTop) saveCommentRecord(changedTop);
+      if(_currentContent) renderComments(_currentContent.id);
+    }
   }
 
   /* Show / hide the inline reply compose box */
@@ -7366,7 +7524,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const name = user ? (user.name||user.first_name||t('comment_guest')) : t('comment_guest');
     const grad = user ? 'linear-gradient(135deg,var(--teal),var(--gold))' : 'linear-gradient(135deg,#7a8848,#d4c9a0)';
     const reply = {
-      id: 'r-' + Date.now(),
+      id: ayaId('reply'),
       authorId: user ? user.id : null,
       authorName: name,
       authorInitials: initials,
@@ -7381,7 +7539,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     if (!parent) return;
     if (!parent.replies) parent.replies = [];
     parent.replies.push(reply);
-    saveAyaComments(all);
+    _ayaCommentsCache = all.map(c => normalizeCommentRecord(c, c.contentId || c.videoId));
+    saveCommentRecord(parent);
     ta.value = '';
     toggleReplyCompose(parentId, true);
     if (_currentContent) renderComments(_currentContent.id);
@@ -7430,7 +7589,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const user = getUser();
     const reports = getCommentReports();
     reports.push({
-      id: Date.now(),
+      id: ayaId('comment_report'),
       commentId,
       videoId: _currentContent ? _currentContent.id : null,
       reporterId: user ? user.id : null,
