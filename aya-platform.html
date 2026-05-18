@@ -679,8 +679,7 @@ body.light-theme .about-aitu-light { display: block; }
   transition: background 150ms var(--ease-out, cubic-bezier(0.23,1,0.32,1)), border-color 150ms;
 }
 .action-btn:hover { background: var(--bg4); border-color: var(--bg5); }
-.action-btn.primary { background: var(--gold); color: #000; font-weight: 800; border-color: transparent; }
-.action-btn.primary:hover { background: var(--gold2); }
+
 
 /* Description */
 .desc-box {
@@ -775,6 +774,17 @@ body.light-theme .cs-head { border-bottom-color: rgba(0,0,0,.08); }
 .comment-acts { display: flex; gap: 14px; margin-top: 6px; }
 .comment-act { font-size: 11px; color: var(--text3); cursor: pointer; font-weight: 600; transition: color .15s; }
 .comment-act:hover { color: var(--text); }
+.comment-act.liked { color: #e05555; }
+.comment-act.report-act { color: var(--text3); }
+.comment-act.report-act:hover { color: #e05555; }
+/* Nested replies */
+.comment-replies { margin-top: 10px; padding-left: 20px; border-left: 2px solid var(--bg5); display: flex; flex-direction: column; gap: 12px; }
+.reply-compose { margin-top: 8px; padding-left: 20px; display: flex; gap: 8px; align-items: flex-start; }
+.reply-compose textarea { flex:1; background:var(--bg2); border:1px solid var(--bg5); border-radius:8px; padding:8px 10px; color:var(--text); font-size:12px; resize:none; outline:none; font-family:inherit; }
+.reply-compose textarea:focus { border-color:rgba(255,255,255,.12); }
+.reply-compose-btns { display:flex; gap:6px; margin-top:6px; }
+.reply-submit-btn { padding:5px 14px; border-radius:var(--r-pill); background:var(--gold); color:#000; font-size:12px; font-weight:700; border:none; cursor:pointer; }
+.reply-cancel-btn { padding:5px 14px; border-radius:var(--r-pill); background:var(--bg4); color:var(--text2); font-size:12px; font-weight:600; border:none; cursor:pointer; }
 
 /* Watch side — recommendations */
 .watch-side-label {
@@ -2552,7 +2562,6 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       <h1 class="video-title" id="watch-title"></h1>
       <div class="video-tags" id="watch-tags"></div>
       <div class="action-row">
-        <button class="action-btn primary" onclick="document.getElementById('player-placeholder').querySelector('.play-big').click()" data-i18n="btn_watch"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть</button>
         <button class="action-btn" id="watch-like-btn" onclick="toggleLikeWatch()"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z" fill="#7D9158" stroke="none"/><path d="M12 20 C5 15.5 3 12 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5 12 6.5 C13 5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 12 19 15.5 12 20 Z"/></g></svg> Нравится</button>
         <button class="action-btn" data-i18n="btn_review"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z"/></g></svg> Рецензия</button>
         <button class="action-btn" id="watch-save-btn" onclick="openCollectionPicker()" data-i18n="btn_save"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg> Сохранить</button>
@@ -3732,10 +3741,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
               }
             } catch(e) { /* Firebase unreachable — still remove locally */ }
 
-            // Remove from localStorage
+            // Remove from localStorage and blacklist so Firebase won't re-merge it
             const all = getAyaContent().filter(c => c.id !== content.id);
             saveAyaContent(all);
             removeDeleteToken(content.id);
+            addDeletedId(content.id);
+
+            // Attempt Cloudinary asset cleanup (requires server-side credentials for full deletion)
+            deleteFromCloudinary(
+              content.cloudinary_public_id,
+              content.cloudinary_cloud || DEFAULT_CLOUDINARY_CLOUD
+            );
 
             // If currently watching this content, navigate back
             if (_currentContent && _currentContent.id === content.id) goBack();
@@ -3912,6 +3928,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   function getAyaContent() { try { return JSON.parse(localStorage.getItem('aya_content'))||[]; } catch{return[];} }
   function saveAyaContent(arr) { localStorage.setItem('aya_content', JSON.stringify(arr)); }
 
+  /* Deleted IDs blacklist — prevents Firebase from re-merging deleted content on reload */
+  function getDeletedIds() { try { return JSON.parse(localStorage.getItem('aya_deleted_ids'))||[]; } catch{return[];} }
+  function addDeletedId(id) { if (!id) return; const ids=getDeletedIds(); if(!ids.includes(id)){ids.push(id);localStorage.setItem('aya_deleted_ids',JSON.stringify(ids));} }
+
   /* Delete tokens — keyed by content id, only present on the uploading device */
   function getDeleteTokens() { try { return JSON.parse(localStorage.getItem('aya_delete_tokens'))||{}; } catch{return{};} }
   function saveDeleteToken(id, token) {
@@ -3965,9 +3985,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       const items = Object.values(data).filter(Boolean);
       const local = getAyaContent();
       const localIds = new Set(local.map(c => c.id));
+      const deletedIds = new Set(getDeletedIds());
       let added = false;
       items.forEach(c => {
-        if (c.id && !localIds.has(c.id)) { local.push(c); added = true; }
+        if (c.id && !localIds.has(c.id) && !deletedIds.has(c.id)) { local.push(c); added = true; }
       });
       if (added) { saveAyaContent(local); renderUserContent(); }
     } catch(e) { /* Firebase unreachable */ }
@@ -4077,14 +4098,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     const playerWrap = document.getElementById('player-wrap');
     const placeholder = document.getElementById('player-placeholder');
     const unavailableMessage = document.getElementById('player-unavailable');
-    const watchPrimaryBtn = document.querySelector('.action-btn.primary');
-
     // Reset player state
     resetAyaCloudinaryPlayer();
     if (playerWrap) playerWrap.classList.remove('has-video');
     placeholder.style.display = '';
     if (unavailableMessage) unavailableMessage.style.display = 'none';
-    if (watchPrimaryBtn) watchPrimaryBtn.onclick = () => cloudinaryVideo.focus();
 
     // Always hide delete button first; it gets shown below if user owns the content
     const _dBtn = document.getElementById('watch-delete-btn');
@@ -4140,6 +4158,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       crewPanel.style.display = 'none';
     }
 
+    // Render persisted comments for this video
+    renderComments(content.id);
+
     // Sidebar recommendations (other uploaded content, excluding current)
     const recContainer = document.getElementById('watch-recommendations');
     if (recContainer) {
@@ -4149,7 +4170,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         const div = document.createElement('div');
         div.className = 'rec-card';
         div.onclick = () => openWatch(c);
-        div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner" style="background:var(--bg3);display:flex;align-items:center;justify-content:center">${I.feature}</div><div class="rec-play-wrap"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.crew&&c.crew.length?c.crew[0].tag:''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${categoryLabel(c.cat).toUpperCase()}</span></div>`;
+        const recThumbContent = c.thumbnail
+          ? `<img src="${c.thumbnail}" alt="${c.title}" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">`
+          : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));display:flex;align-items:center;justify-content:center">${I.feature}</div>`;
+        div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner">${recThumbContent}</div><div class="rec-play-wrap"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.crew&&c.crew.length?c.crew[0].tag:''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${categoryLabel(c.cat).toUpperCase()}</span></div>`;
         recContainer.appendChild(div);
       });
     }
@@ -4177,7 +4201,6 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
         catch (e) { focusPlayer(); }
       };
       placeholder.querySelector('.play-big').onclick = focusPlayer;
-      if (watchPrimaryBtn) watchPrimaryBtn.onclick = playPlayer;
     } else {
       if (unavailableMessage) unavailableMessage.style.display = '';
       placeholder.querySelector('.play-big').onclick = function() {
@@ -4195,6 +4218,23 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
       deleteBtn.style.display = (isOwner || isAdmin) ? '' : 'none';
       deleteBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 7 H19 L17.5 20 H6.5 Z" fill="#7D9158" stroke="none"/><path d="M5 7 H19 L17.5 20 H6.5 Z"/><path d="M3 7 H21"/><path d="M9 4 H15 V7"/><path d="M10 11 V16 M14 11 V16"/></g></svg> Удалить';
     }
+  }
+
+  /* Attempt to delete a video asset from Cloudinary.
+     NOTE: Cloudinary's destroy endpoint requires a signed request (API secret).
+     This function sends a best-effort unsigned destroy call; it will succeed only if
+     the upload preset is configured to allow unsigned deletion. For a production
+     deployment, route this through a serverless function that holds the API secret. */
+  async function deleteFromCloudinary(publicId, cloudName) {
+    if (!publicId || !cloudName) return;
+    try {
+      const fd = new FormData();
+      fd.append('public_id', publicId);
+      fd.append('upload_preset', CLOUDINARY_PRESET);
+      await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/destroy`, {
+        method: 'POST', body: fd
+      });
+    } catch(e) { /* Cloudinary deletion requires server-side credentials */ }
   }
 
   async function deleteCurrentContent() {
@@ -4224,10 +4264,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
               await fetch(`${FB}/content/${token}.json`, { method: 'DELETE' });
             } catch(e) { /* Firebase unreachable — still remove locally */ }
 
-            // Remove from localStorage
+            // Remove from localStorage and blacklist so Firebase won't re-merge it
             const all = getAyaContent().filter(c => c.id !== _currentContent.id);
             saveAyaContent(all);
             removeDeleteToken(_currentContent.id);
+            addDeletedId(_currentContent.id);
+
+            // Attempt Cloudinary asset cleanup (requires server-side credentials for full deletion)
+            deleteFromCloudinary(
+              _currentContent.cloudinary_public_id,
+              _currentContent.cloudinary_cloud || DEFAULT_CLOUDINARY_CLOUD
+            );
 
             renderUserContent();
             goBack();
@@ -6290,7 +6337,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 
   // ── Modal helpers ────────────────────────────────────────────
   function showModal({ title, body, actions }) {
-    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-title').innerHTML = title;
     document.getElementById('modal-body').innerHTML   = body;
     const actEl = document.getElementById('modal-actions');
     actEl.innerHTML = '';
@@ -6674,35 +6721,239 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
     applyLang(currentLang);
   });
 
-  // ── Comment submit ───────────────────────────────────────
+  // ── Comments system — persistent, per-video, with likes / replies / reports ──
+
+  function getAyaComments() { try { return JSON.parse(localStorage.getItem('aya_comments'))||[]; } catch{return[];} }
+  function saveAyaComments(arr) { localStorage.setItem('aya_comments', JSON.stringify(arr)); }
+  function getCommentReports() { try { return JSON.parse(localStorage.getItem('korseteik_comment_reports'))||[]; } catch{return[];} }
+  function saveCommentReports(arr) { localStorage.setItem('korseteik_comment_reports', JSON.stringify(arr)); }
+
+  /* Format a stored timestamp into a relative label */
+  function _commentTimeLabel(ts) {
+    const diff = Date.now() - ts;
+    if (diff < 60000) return t('comment_now');
+    if (diff < 3600000) return Math.floor(diff/60000) + (currentLang==='en' ? ' min ago' : currentLang==='kz' ? ' мин бұрын' : ' мин назад');
+    if (diff < 86400000) return Math.floor(diff/3600000) + (currentLang==='en' ? ' h ago' : currentLang==='kz' ? ' сағ бұрын' : ' ч назад');
+    return Math.floor(diff/86400000) + (currentLang==='en' ? ' d ago' : currentLang==='kz' ? ' күн бұрын' : ' дн назад');
+  }
+
+  /* Build the HTML for a single comment or reply row */
+  function _buildCommentHTML(c, isReply) {
+    const user = getUser();
+    const uid = user ? user.id : null;
+    const liked = uid && c.likedBy && c.likedBy.includes(uid);
+    const likeClass = liked ? 'comment-act liked' : 'comment-act';
+    const replyLabel = isReply ? '' : `<span class="comment-act" onclick="toggleReplyCompose('${c.id}')">${t('comment_reply')}</span>`;
+    const reportLabel = `<span class="comment-act report-act" onclick="openCommentReportModal('${c.id}')" title="${currentLang==='en'?'Report':'Пожаловаться'}">⚑</span>`;
+    return `
+      <div class="comment-av" style="background:${c.authorGrad}">${c.authorInitials}</div>
+      <div class="comment-body">
+        <div class="comment-name">${c.authorName} <span style="color:var(--text3);font-weight:400;font-size:10px">· ${_commentTimeLabel(c.timestamp)}</span></div>
+        <div class="comment-text">${c.text}</div>
+        <div class="comment-acts">
+          <span class="${likeClass}" onclick="toggleCommentLike('${c.id}',${!!isReply})">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true" style="width:12px;height:12px"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 22 V11 M2 13 H7 V22 H2 Z" fill="${liked?'#e05555':'#7D9158'}" stroke="none"/><path d="M2 13 H7 V22 H2 Z"/><path d="M7 11 L11 3 C12.5 3 14 4 14 6 V9 H20 C21 9 22 10 21.5 11 L19.5 19 C19 21 17 22 15 22 H7"/></g></svg>
+            ${c.likes || 0}
+          </span>
+          ${replyLabel}
+          ${reportLabel}
+        </div>
+        ${!isReply ? `<div class="comment-replies" id="replies-${c.id}" style="display:${(c.replies&&c.replies.length)?'flex':'none'}"></div>
+        <div class="reply-compose" id="reply-compose-${c.id}" style="display:none">
+          <textarea rows="1" placeholder="${t('comment_ph')||'...'}" id="reply-ta-${c.id}" oninput="this.rows=this.value.split('\\n').length>2?3:1"></textarea>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <button class="reply-submit-btn" onclick="submitReply('${c.id}')">${currentLang==='en'?'Reply':currentLang==='kz'?'Жауап':'Ответить'}</button>
+            <button class="reply-cancel-btn" onclick="toggleReplyCompose('${c.id}',true)">${t('modal_cancel')||'Отмена'}</button>
+          </div>
+        </div>` : ''}
+      </div>`;
+  }
+
+  /* Render all comments for a given video into #watch-comments-list */
+  function renderComments(videoId) {
+    const list = document.getElementById('watch-comments-list');
+    const countEl = document.getElementById('watch-comment-count');
+    if (!list) return;
+    list.innerHTML = '';
+    const all = getAyaComments().filter(c => c.videoId === videoId);
+    // Newest first
+    all.sort((a,b) => b.timestamp - a.timestamp);
+    if (countEl) countEl.textContent = all.length ? `(${all.length})` : '';
+    all.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'comment';
+      div.dataset.commentId = c.id;
+      div.style.cssText = 'animation:pageFadeIn .2s ease forwards';
+      div.innerHTML = _buildCommentHTML(c, false);
+      list.appendChild(div);
+      // Render replies
+      if (c.replies && c.replies.length) {
+        const repliesEl = div.querySelector(`#replies-${c.id}`);
+        if (repliesEl) {
+          repliesEl.style.display = 'flex';
+          c.replies.forEach(r => {
+            const rdiv = document.createElement('div');
+            rdiv.className = 'comment';
+            rdiv.dataset.commentId = r.id;
+            rdiv.innerHTML = _buildCommentHTML(r, true);
+            repliesEl.appendChild(rdiv);
+          });
+        }
+      }
+    });
+  }
+
+  /* Submit a new top-level comment */
   function submitComment() {
     const ta = document.getElementById('comment-textarea');
     const btn = document.getElementById('comment-submit-btn');
     const user = getUser();
     if (!ta || !ta.value.trim()) return;
     const text = ta.value.trim();
-    const initials = user ? (user.name || user.first_name || 'A').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() : (currentLang === 'en' ? 'AN' : currentLang === 'kz' ? 'АН' : 'АН');
+    const initials = user ? (user.name || user.first_name || 'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'АН';
     const name = user ? (user.name || user.first_name || t('comment_guest')) : t('comment_guest');
     const grad = user ? 'linear-gradient(135deg,var(--teal),var(--gold))' : 'linear-gradient(135deg,#7a8848,#d4c9a0)';
-    // Insert new comment above existing comments
-    const firstComment = document.querySelector('.comments-section .comment');
-    const newComment = document.createElement('div');
-    newComment.className = 'comment';
-    newComment.style.cssText = 'animation:pageFadeIn .25s ease forwards';
-    newComment.innerHTML = `
-      <div class="comment-av" style="background:${grad}">${initials}</div>
-      <div class="comment-body">
-        <div class="comment-name">${name} <span style="color:var(--text3);font-weight:400;font-size:10px">· ${t('comment_now')}</span></div>
-        <div class="comment-text">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-        <div class="comment-acts"><span class="comment-act"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 22 V11 M2 13 H7 V22 H2 Z" fill="#7D9158" stroke="none"/><path d="M2 13 H7 V22 H2 Z"/><path d="M7 11 L11 3 C12.5 3 14 4 14 6 V9 H20 C21 9 22 10 21.5 11 L19.5 19 C19 21 17 22 15 22 H7"/></g></svg> 0</span><span class="comment-act">${t('comment_reply')}</span></div>
-      </div>`;
-    if (firstComment) {
-      firstComment.parentNode.insertBefore(newComment, firstComment);
-    }
+    const comment = {
+      id: 'c-' + Date.now(),
+      videoId: _currentContent ? (_currentContent.id || 'unknown') : 'unknown',
+      authorId: user ? user.id : null,
+      authorName: name,
+      authorInitials: initials,
+      authorGrad: grad,
+      text: text.replace(/</g,'&lt;').replace(/>/g,'&gt;'),
+      timestamp: Date.now(),
+      likes: 0,
+      likedBy: [],
+      replies: []
+    };
+    const all = getAyaComments();
+    all.push(comment);
+    saveAyaComments(all);
     ta.value = '';
     ta.rows = 1;
     if (btn) btn.style.display = 'none';
-    showCollToast('Комментарий опубликован');
+    renderComments(comment.videoId);
+    showCollToast(currentLang==='en'?'Comment posted':currentLang==='kz'?'Пікір жарияланды':'Комментарий опубликован');
+  }
+
+  /* Toggle like on a comment or reply */
+  function toggleCommentLike(commentId, isReply) {
+    const user = getUser();
+    if (!user) { showCollToast(currentLang==='en'?'Sign in to like':'Войдите, чтобы ставить лайки'); return; }
+    const all = getAyaComments();
+    let changed = false;
+    for (const c of all) {
+      if (!isReply && c.id === commentId) {
+        if (c.likedBy.includes(user.id)) { c.likedBy = c.likedBy.filter(x=>x!==user.id); c.likes = Math.max(0,c.likes-1); }
+        else { c.likedBy.push(user.id); c.likes = (c.likes||0)+1; }
+        changed = true; break;
+      }
+      if (isReply && c.replies) {
+        const r = c.replies.find(r => r.id === commentId);
+        if (r) {
+          if (r.likedBy.includes(user.id)) { r.likedBy = r.likedBy.filter(x=>x!==user.id); r.likes = Math.max(0,r.likes-1); }
+          else { r.likedBy.push(user.id); r.likes = (r.likes||0)+1; }
+          changed = true; break;
+        }
+      }
+    }
+    if (changed) { saveAyaComments(all); if(_currentContent) renderComments(_currentContent.id); }
+  }
+
+  /* Show / hide the inline reply compose box */
+  function toggleReplyCompose(commentId, forceHide) {
+    const box = document.getElementById('reply-compose-' + commentId);
+    if (!box) return;
+    const show = forceHide ? false : box.style.display === 'none';
+    box.style.display = show ? 'flex' : 'none';
+    if (show) { const ta = document.getElementById('reply-ta-'+commentId); if(ta) ta.focus(); }
+  }
+
+  /* Submit a reply to a comment */
+  function submitReply(parentId) {
+    const ta = document.getElementById('reply-ta-' + parentId);
+    if (!ta || !ta.value.trim()) return;
+    const text = ta.value.trim();
+    const user = getUser();
+    const initials = user ? (user.name||user.first_name||'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'АН';
+    const name = user ? (user.name||user.first_name||t('comment_guest')) : t('comment_guest');
+    const grad = user ? 'linear-gradient(135deg,var(--teal),var(--gold))' : 'linear-gradient(135deg,#7a8848,#d4c9a0)';
+    const reply = {
+      id: 'r-' + Date.now(),
+      authorId: user ? user.id : null,
+      authorName: name,
+      authorInitials: initials,
+      authorGrad: grad,
+      text: text.replace(/</g,'&lt;').replace(/>/g,'&gt;'),
+      timestamp: Date.now(),
+      likes: 0,
+      likedBy: []
+    };
+    const all = getAyaComments();
+    const parent = all.find(c => c.id === parentId);
+    if (!parent) return;
+    if (!parent.replies) parent.replies = [];
+    parent.replies.push(reply);
+    saveAyaComments(all);
+    ta.value = '';
+    toggleReplyCompose(parentId, true);
+    if (_currentContent) renderComments(_currentContent.id);
+  }
+
+  /* Open a modal to report a comment */
+  function openCommentReportModal(commentId) {
+    const reasons = currentLang==='en'
+      ? ['Inappropriate content','Harassment / Bullying','Spam','Hate speech','Other']
+      : currentLang==='kz'
+      ? ['Орынсыз контент','Мазалау / Қорқыту','Спам','Жек көру сөзі','Басқа']
+      : ['Неприемлемый контент','Оскорбление / Травля','Спам','Язык ненависти','Другое'];
+    const uid = 'crep-' + Date.now();
+    const optHtml = reasons.map((r,i) =>
+      `<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;font-size:13px">
+        <input type="radio" name="${uid}" value="${r}" ${i===0?'checked':''}> ${r}
+      </label>`).join('');
+    showModal({
+      title: currentLang==='en'?'Report comment':currentLang==='kz'?'Пікірге шағымдану':'Пожаловаться на комментарий',
+      body: `${optHtml}<textarea id="${uid}-other" placeholder="${currentLang==='en'?'Additional details…':currentLang==='kz'?'Қосымша мәліметтер…':'Дополнительные сведения…'}" style="width:100%;background:var(--bg3);border:1px solid var(--bg5);border-radius:8px;padding:8px 10px;color:var(--text);font-size:12px;resize:vertical;margin-top:4px;font-family:inherit;box-sizing:border-box;display:none"></textarea>`,
+      actions: [
+        { label: t('modal_cancel'), style: MODAL_BTN_CANCEL2 },
+        { label: currentLang==='en'?'Send report':currentLang==='kz'?'Жіберу':'Отправить', style: MODAL_BTN_DANGER,
+          action: () => {
+            const sel = document.querySelector(`input[name="${uid}"]:checked`);
+            const other = document.getElementById(uid+'-other');
+            const reason = sel ? sel.value : reasons[0];
+            submitCommentReport(commentId, reason, other ? other.value.trim() : '');
+          }
+        }
+      ]
+    });
+    // Show "other" textarea when last radio is selected
+    setTimeout(() => {
+      document.querySelectorAll(`input[name="${uid}"]`).forEach(r => {
+        r.addEventListener('change', () => {
+          const ta = document.getElementById(uid+'-other');
+          if (ta) ta.style.display = r.value === reasons[4] ? '' : 'none';
+        });
+      });
+    }, 50);
+  }
+
+  /* Persist a comment report */
+  function submitCommentReport(commentId, reason, customText) {
+    const user = getUser();
+    const reports = getCommentReports();
+    reports.push({
+      id: Date.now(),
+      commentId,
+      videoId: _currentContent ? _currentContent.id : null,
+      reporterId: user ? user.id : null,
+      reason,
+      customReason: customText || '',
+      timestamp: Date.now(),
+      status: 'pending'
+    });
+    saveCommentReports(reports);
+    showCollToast(currentLang==='en'?'Report sent':'Жалоба отправлена');
   }
 </script>
 
