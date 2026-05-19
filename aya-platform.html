@@ -1290,6 +1290,242 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 }
 
 /* ============================================================
+   SETTINGS PAGE — PREMIUM REDESIGN
+   All rules scoped to #page-settings to prevent bleed
+============================================================ */
+
+/* Atmospheric backdrop */
+#page-settings .settings-page {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+#page-settings .settings-page::before {
+  content: '';
+  position: absolute;
+  inset: -80px 0 auto 0;
+  height: 480px;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 28% 10%, rgba(125,145,88,.16), transparent 38%),
+    radial-gradient(circle at 88% 6%, rgba(125,145,88,.08), transparent 28%),
+    linear-gradient(180deg, rgba(13,24,10,.68), rgba(8,12,7,0));
+}
+
+/* Settings hero header surface */
+#page-settings .settings-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(14,27,9,.93), rgba(19,32,12,.87) 52%, rgba(8,13,7,.97)),
+    radial-gradient(circle at 82% 22%, rgba(125,145,88,.20), transparent 40%);
+  border: 1px solid rgba(180,205,132,.11);
+  border-radius: 24px;
+  padding: clamp(22px, 3.2vw, 38px) clamp(22px, 3.2vw, 40px);
+  margin-bottom: 26px;
+  box-shadow:
+    0 26px 68px rgba(3,8,3,.36),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -1px 0 rgba(0,0,0,.26);
+  animation: settingsRise .8s cubic-bezier(.16,1,.3,1) both;
+}
+#page-settings .settings-hero::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 23px;
+  border: 1px solid rgba(255,255,255,.028);
+  pointer-events: none;
+}
+#page-settings .settings-title {
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 900;
+  letter-spacing: -.5px;
+  margin-bottom: 0;
+  color: var(--text);
+  line-height: 1.1;
+}
+#page-settings .pb-eyebrow {
+  margin-bottom: 10px;
+}
+
+/* Entrance animation */
+@keyframes settingsRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium card treatment */
+#page-settings .settings-block {
+  position: relative;
+  background: linear-gradient(150deg, rgba(22,31,17,.97), rgba(13,20,10,.99));
+  border: 1px solid rgba(180,205,132,.10);
+  border-radius: 20px;
+  box-shadow:
+    0 16px 44px rgba(3,8,3,.22),
+    inset 0 1px 0 rgba(255,255,255,.046);
+  overflow: hidden;
+  animation: settingsRise .75s cubic-bezier(.16,1,.3,1) both;
+}
+/* Inner border highlight */
+#page-settings .settings-block::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 19px;
+  border: 1px solid rgba(255,255,255,.020);
+  pointer-events: none;
+  z-index: 0;
+}
+#page-settings .settings-block > * { position: relative; z-index: 1; }
+
+/* Staggered animation delays — main column */
+#page-settings .settings-main .settings-block:nth-child(1) { animation-delay: .06s; }
+#page-settings .settings-main .settings-block:nth-child(2) { animation-delay: .13s; }
+#page-settings .settings-main .settings-block:nth-child(3) { animation-delay: .19s; }
+#page-settings .settings-main .settings-block:nth-child(4) { animation-delay: .25s; }
+/* Staggered animation delays — side column */
+#page-settings .settings-side .settings-block:nth-child(1) { animation-delay: .09s; }
+#page-settings .settings-side .settings-block:nth-child(2) { animation-delay: .16s; }
+#page-settings .settings-side .settings-block:nth-child(3) { animation-delay: .23s; }
+
+/* Refined block title */
+#page-settings .settings-block-title {
+  padding: 13px 22px 12px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  border-bottom: 1px solid rgba(180,205,132,.072);
+}
+
+/* Row dividers — sage-tinted */
+#page-settings .settings-row {
+  border-bottom-color: rgba(180,205,132,.06);
+}
+
+/* Upgraded toggle */
+#page-settings .toggle {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.10);
+}
+#page-settings .toggle.on {
+  background: var(--gold);
+  border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(125,145,88,.38), 0 3px 10px rgba(125,145,88,.22);
+}
+
+/* Upgraded lang switcher */
+#page-settings .lang-group {
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.09);
+}
+#page-settings .lang-opt.active {
+  background: var(--gold);
+  color: #0f1209;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(125,145,88,.32);
+}
+
+/* Upgraded theme toggle — scoped, won't touch global */
+#page-settings .theme-toggle {
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.09);
+  gap: 3px;
+}
+#page-settings .theme-btn {
+  color: var(--text2);
+  transition: all .18s cubic-bezier(.16,1,.3,1);
+}
+#page-settings .theme-btn.active {
+  background: var(--bg4);
+  color: var(--text);
+  box-shadow: 0 1px 5px rgba(0,0,0,.28);
+}
+
+/* Role badge hover lift */
+#page-settings .role-badge {
+  transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1);
+}
+#page-settings .role-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,.22);
+}
+
+/* Sticky sidebar */
+#page-settings .settings-side {
+  position: sticky;
+  top: calc(var(--topbar) + 20px);
+}
+
+/* ──────────────────── Light theme overrides ──────────────────── */
+body.light-theme #page-settings .settings-page::before {
+  background:
+    radial-gradient(circle at 28% 10%, rgba(92,120,64,.12), transparent 38%),
+    radial-gradient(circle at 88% 6%, rgba(62,84,40,.07), transparent 28%),
+    linear-gradient(180deg, rgba(230,219,196,.80), rgba(240,233,214,0));
+}
+body.light-theme #page-settings .settings-hero {
+  background:
+    linear-gradient(135deg, rgba(218,228,194,.97), rgba(196,212,168,.91) 52%, rgba(178,198,146,.96)),
+    radial-gradient(circle at 82% 22%, rgba(92,120,64,.16), transparent 40%);
+  border-color: rgba(62,84,40,.15);
+  box-shadow:
+    0 24px 62px rgba(70,82,44,.14),
+    inset 0 1px 0 rgba(255,255,255,.38),
+    inset 0 -1px 0 rgba(62,84,40,.08);
+}
+body.light-theme #page-settings .settings-block {
+  background: linear-gradient(150deg, rgba(230,219,196,.97), rgba(218,207,180,.99));
+  border-color: rgba(62,84,40,.11);
+  box-shadow:
+    0 14px 38px rgba(70,82,44,.12),
+    inset 0 1px 0 rgba(255,255,255,.44);
+}
+body.light-theme #page-settings .settings-block-title {
+  border-bottom-color: rgba(62,84,40,.09);
+}
+body.light-theme #page-settings .settings-row {
+  border-bottom-color: rgba(62,84,40,.07);
+}
+body.light-theme #page-settings .toggle {
+  background: rgba(0,0,0,.09);
+  border-color: rgba(62,84,40,.15);
+}
+body.light-theme #page-settings .toggle.on {
+  background: var(--gold);
+  box-shadow: 0 0 0 1px rgba(92,120,64,.32), 0 3px 10px rgba(92,120,64,.20);
+}
+body.light-theme #page-settings .lang-group {
+  background: rgba(62,84,40,.07);
+  border-color: rgba(62,84,40,.13);
+}
+body.light-theme #page-settings .lang-opt.active {
+  background: var(--gold);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(92,120,64,.28);
+}
+body.light-theme #page-settings .theme-toggle {
+  background: rgba(62,84,40,.07);
+  border-color: rgba(62,84,40,.13);
+}
+body.light-theme #page-settings .theme-btn.active {
+  background: var(--bg3);
+  box-shadow: 0 1px 5px rgba(70,82,44,.14);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #page-settings .settings-block,
+  #page-settings .settings-hero {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================
    ABOUT PAGE
 ============================================================ */
 .about-page {
@@ -3410,8 +3646,10 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 <!-- ============ SETTINGS ============ -->
 <div id="page-settings" class="page">
   <div class="settings-page">
-    <div class="pb-eyebrow" style="margin-bottom:10px"><span data-i18n="settings_eyebrow">Параметры аккаунта</span></div>
-    <div class="settings-title" data-i18n="settings_title">Настройки</div>
+    <div class="settings-hero">
+      <div class="pb-eyebrow" style="margin-bottom:10px"><span data-i18n="settings_eyebrow">Параметры аккаунта</span></div>
+      <div class="settings-title" data-i18n="settings_title">Настройки</div>
+    </div>
 
     <div class="settings-layout">
       <div class="settings-main">
