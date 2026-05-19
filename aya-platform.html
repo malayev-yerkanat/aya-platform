@@ -1735,6 +1735,25 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 .ptab { background: none; border: none; color: var(--text2); font-size: 13px; font-weight: 600; padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; }
 .ptab.active { color: var(--text); border-bottom-color: var(--gold); }
 
+/* Profile sections — continuous layout replacing tabs */
+.prof-sections { display: none; padding-top: 4px; }
+.prof-section-row { margin-bottom: 32px; }
+.prof-section-row .row-head-edit { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--bg4); }
+.prof-section-row .row-title-edit { font-size: 12px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: var(--text2); }
+.prof-section-row .cards-h { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+.prof-section-row .cards-h::-webkit-scrollbar { display: none; }
+.prof-empty-state { padding: 32px 0; text-align: center; color: var(--text2); opacity: .5; }
+.prof-empty-state .prof-empty-ico { font-size: 36px; margin-bottom: 8px; display: flex; justify-content: center; }
+.prof-empty-state .prof-empty-txt { font-size: 13px; }
+.prof-reviews-list { display: flex; flex-direction: column; gap: 10px; }
+.prof-review-card { background: var(--bg2); border-radius: var(--r-md); padding: 14px 18px; border: 1px solid var(--bg4); }
+.prof-review-title { font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 6px; }
+.prof-review-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+.prof-review-meta { font-size: 11px; color: var(--text3); margin-top: 6px; }
+.prof-section-new-btn { margin-left: auto; padding: 5px 12px; border-radius: 3px; border: none; background: var(--teal); color: var(--bg); font-size: 11px; font-weight: 700; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
+.prof-section-new-btn:hover { opacity: .85; }
+body.light-theme .prof-section-row .row-head-edit { border-bottom-color: rgba(0,0,0,.08); }
+
 /* ── Page transitions ─────────────────────────────────────── */
 @keyframes pageFadeIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -2789,21 +2808,67 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
           <div><div class="pstat-v" id="prof-stat-pitch">0</div><div class="pstat-l" data-i18n="pitches">Питч-кампании</div></div>
         </div>
       </div>
+      <!-- Section anchor links (replaces tab switcher) -->
       <div class="profile-tabs" id="prof-tabs" style="display:none">
         <button class="ptab active" onclick="switchProfTab('works',this)" data-i18n="tab_works">Мои работы</button>
         <button class="ptab" onclick="switchProfTab('collab',this)" data-i18n="tab_collab">Участие в проектах</button>
         <button class="ptab" onclick="switchProfTab('reviews',this)" data-i18n="tab_reviews">Рецензии</button>
+        <button class="ptab" onclick="switchProfTab('pitch',this)" data-i18n="tab_pitch">Питч-кампании</button>
         <button class="ptab" onclick="switchProfTab('collections',this)" data-i18n="tab_collections"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7 H10 L12 9 H21 V19 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 7 H10 L12 9 H21 V19 H3 Z"/></g></svg> Коллекции</button>
       </div>
-      <div class="profile-grid" id="prof-grid"></div>
-      <div id="prof-collections" class="prof-collections" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-          <div style="font-size:13px;font-weight:700;color:var(--text2)" data-i18n="my_collections_title">Мои коллекции</div>
-          <button onclick="openCreateCollection()" data-i18n="new_short" style="padding:6px 14px;border-radius:3px;border:none;background:var(--teal);color:var(--bg);font-size:11px;font-weight:700;cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none" opacity="0.85"/><path d="M12 7 V17 M7 12 H17"/></g></svg> Новая</button>
+
+      <!-- Continuous profile sections (all visible at once) -->
+      <div class="prof-sections" id="prof-sections">
+
+        <!-- My Works -->
+        <div class="prof-section-row" id="prof-sec-works">
+          <div class="row-head-edit">
+            <span class="row-title-edit" data-i18n="tab_works">Мои работы</span>
+            <button class="prof-section-new-btn" onclick="goPage('upload',null)" id="prof-works-upload-btn" style="display:none"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none" opacity="0.85"/><path d="M12 7 V17 M7 12 H17"/></g></svg> <span data-i18n="upload_btn_short">Загрузить</span></button>
+          </div>
+          <div class="cards-h" id="prof-works-cards"></div>
         </div>
+
+        <!-- Project Participation -->
+        <div class="prof-section-row" id="prof-sec-collab">
+          <div class="row-head-edit">
+            <span class="row-title-edit" data-i18n="tab_collab">Участие в проектах</span>
+          </div>
+          <div class="cards-h" id="prof-collab-cards"></div>
+        </div>
+
+        <!-- Pitch Campaigns -->
+        <div class="prof-section-row" id="prof-sec-pitch">
+          <div class="row-head-edit">
+            <span class="row-title-edit" data-i18n="tab_pitch">Питч-кампании</span>
+          </div>
+          <div class="cards-h" id="prof-pitch-cards"></div>
+        </div>
+
+        <!-- Reviews -->
+        <div class="prof-section-row" id="prof-sec-reviews">
+          <div class="row-head-edit">
+            <span class="row-title-edit" data-i18n="tab_reviews">Рецензии</span>
+          </div>
+          <div class="prof-reviews-list" id="prof-reviews-list"></div>
+        </div>
+
+        <!-- Public Collections -->
+        <div class="prof-section-row" id="prof-sec-collections">
+          <div class="row-head-edit">
+            <span class="row-title-edit" data-i18n="tab_collections">Коллекции</span>
+            <button class="prof-section-new-btn" onclick="openCreateCollection()" id="prof-coll-new-btn" style="display:none"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none" opacity="0.85"/><path d="M12 7 V17 M7 12 H17"/></g></svg> <span data-i18n="new_short">Новая</span></button>
+          </div>
+          <div class="coll-grid" id="prof-coll-grid"></div>
+        </div>
+
+      </div><!-- /prof-sections -->
+
+      <!-- Legacy compat elements — kept so renderProfileCollections() doesn't break -->
+      <div id="prof-grid" style="display:none"></div>
+      <div id="prof-collections" class="prof-collections" style="display:none">
         <div id="my-coll-grid" class="coll-grid"></div>
-        <div id="followed-coll-section" style="display:none;margin-top:28px">
-          <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px" data-i18n="followed_collections_title">Сохранённые коллекции</div>
+        <div id="followed-coll-section" style="display:none">
           <div id="followed-coll-grid" class="coll-grid"></div>
         </div>
       </div>
@@ -3973,13 +4038,269 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     });
   }
 
-  /* ── Profile tab switcher ── */
+  /* ── Profile section anchor (was tab switcher — now scrolls to section) ── */
   function switchProfTab(tab, el) {
     document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
     if (el) el.classList.add('active');
-    document.getElementById('prof-grid').style.display = tab === 'collections' ? 'none' : '';
-    document.getElementById('prof-collections').style.display = tab === 'collections' ? '' : 'none';
-    if (tab === 'collections') renderProfileCollections();
+    const secMap = { works: 'prof-sec-works', collab: 'prof-sec-collab', pitch: 'prof-sec-pitch', reviews: 'prof-sec-reviews', collections: 'prof-sec-collections' };
+    const sec = document.getElementById(secMap[tab] || 'prof-sec-works');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ── Profile helper: resolve thumbnail URL from any content shape ── */
+  function _profGetThumbnail(c) {
+    return c.thumbnail || c.poster_url || c.posterUrl || c.thumbnail_url || c.image || c.cover || null;
+  }
+
+  /* ── Profile helper: normalise user identity tokens for matching ── */
+  function _profUserIdentities(user) {
+    const handle   = (user.handle || user.username || '').toLowerCase().replace(/^@/, '');
+    const email    = (user.email  || '').toLowerCase();
+    const uid      = String(user.id || '');
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim().toLowerCase();
+    const name     = (user.name || '').toLowerCase();
+    return { handle, email, uid, fullName, name };
+  }
+
+  /* ── Profile helper: check if a single crew/cast member matches the user ── */
+  function _profCrewMemberMatchesUser(member, ids) {
+    if (!member) return false;
+    const tag = (member.tag || String(member)).toLowerCase().replace(/^@/, '');
+    return (ids.handle   && tag === ids.handle)   ||
+           (ids.email    && tag === ids.email)     ||
+           (ids.uid      && tag === ids.uid)       ||
+           (ids.fullName && tag === ids.fullName)  ||
+           (ids.name     && ids.name.length > 2 && tag === ids.name);
+  }
+
+  /* ── Profile helper: true if user is listed as Director in crew ── */
+  const _DIRECTOR_ROLE_SET = new Set(['role_director','director','режиссёр','режиссер','rejissyor']);
+  function _profIsDirectorOfContent(user, c, ids) {
+    ids = ids || _profUserIdentities(user);
+    return (c.crew || []).some(m =>
+      _DIRECTOR_ROLE_SET.has((m.role || '').toLowerCase()) &&
+      _profCrewMemberMatchesUser(m, ids)
+    );
+  }
+
+  /* ── Profile helper: true if user is the primary creator (uploader OR director) ── */
+  function _profIsCreatorOfContent(user, c, ids) {
+    ids = ids || _profUserIdentities(user);
+    const uid = ids.uid;
+    return c.uploaderId === uid ||
+           c.creatorId  === uid ||
+           c.owner      === uid ||
+           _profIsDirectorOfContent(user, c, ids);
+  }
+
+  /* ── Profile helper: true if user participated in a non-creator role ── */
+  function _profIsParticipantOfContent(user, c, ids) {
+    ids = ids || _profUserIdentities(user);
+    // Combine all people arrays; each entry may be a string or {tag, role} object
+    const allPeople = [...(c.crew || []), ...(c.cast || []), ...(c.team || [])];
+    const inPeople = allPeople.some(m => _profCrewMemberMatchesUser(m, ids));
+    // Also check freeform author / collaborator fields
+    const authorStr = (c.author || c.creatorName || '').toLowerCase();
+    const inAuthor = (ids.handle   && authorStr.includes(ids.handle))   ||
+                     (ids.fullName && ids.fullName.length > 3 && authorStr.includes(ids.fullName));
+    return inPeople || inAuthor;
+  }
+
+  /* ── Normalise a stored role value to its canonical i18n key ──────
+     Existing content may have stored the already-translated label
+     (e.g. "Монтажёр", "Editor") instead of the key ("role_editor")
+     because the upload form options previously had no value attribute.
+     This reverse-map covers all RU / KZ / EN labels.               */
+  const _ROLE_REVERSE_MAP = (function() {
+    const pairs = [
+      ['role_director',       ['режиссёр','режиссер','rejissyor','director']],
+      ['role_producer',       ['продюсер','продюсер','produser','producer']],
+      ['role_writer',         ['сценарист','сценарист','scenarист','writer']],
+      ['role_cinematographer',['оператор-постановщик','оператор','operator','cinematographer']],
+      ['role_editor',         ['монтажёр','монтажер','montager','editor']],
+      ['role_sound',          ['звукорежиссёр','звукорежиссер','дыбыс режиссері','sound engineer','sound']],
+      ['role_art_director',   ['художник-постановщик','қоюшы суретші','production designer','art director']],
+      ['role_line_producer',  ['директор картины','картина директоры','line producer']],
+      ['role_exec_producer',  ['исполнительный продюсер','атқарушы продюсер','executive producer']],
+      ['role_lead',           ['главная роль','басты рөл','lead role','lead']],
+      ['role_supporting',     ['второй план','екінші план','supporting role','supporting']],
+      ['role_episode',        ['эпизодическая роль','эпизодтық рөл','episode role','episode']],
+      ['role_voice',          ['закадровый голос','кадр сыртындағы дауыс','voice-over','voice over','voice']],
+      ['role_other',          ['другое','басқа','other']],
+    ];
+    const map = {};
+    pairs.forEach(([key, labels]) => {
+      labels.forEach(l => { map[l.toLowerCase()] = key; });
+      map[key] = key; // key maps to itself
+    });
+    return map;
+  })();
+
+  function _normalizeRoleKey(raw) {
+    if (!raw) return 'role_other';
+    const lower = raw.trim().toLowerCase();
+    return _ROLE_REVERSE_MAP[lower] || raw; // unknown → return raw (t() will fall back gracefully)
+  }
+
+  /* ── Profile helper: collect user's role labels in a content item ── */
+  function _profGetUserRolesInContent(user, c, ids) {
+    ids = ids || _profUserIdentities(user);
+    const allPeople = [...(c.crew || []), ...(c.cast || []), ...(c.team || [])];
+    const rawRoles = [];
+    allPeople.forEach(m => {
+      if (!_profCrewMemberMatchesUser(m, ids)) return;
+      const raw = (m.role || '').trim();
+      if (raw) rawRoles.push(raw);
+    });
+    // Normalise to canonical key then translate to active language
+    const labels = [...new Set(rawRoles)].map(r => {
+      const key = _normalizeRoleKey(r);
+      const translated = t(key);
+      if (translated && translated !== key) return translated;
+      // Unknown key: capitalise the raw string as last resort
+      return r.charAt(0).toUpperCase() + r.slice(1);
+    }).filter(Boolean);
+    // Fallback if user is detected as participant but no role found
+    if (!labels.length) {
+      const fallback = currentLang === 'en' ? 'Collaborator' : currentLang === 'kz' ? 'Қатысушы' : 'Соавтор';
+      labels.push(fallback);
+    }
+    return labels;
+  }
+
+  /* ── Render all profile sections (continuous layout) ── */
+  function renderProfileSections(user) {
+    if (!user) return;
+    const isOwnProfile = !_viewedUserId || _viewedUserId === user.id;
+    const allContent  = getAyaContent();
+    const allComments = getAyaComments();
+
+    // ── Precompute user identity tokens once ──────────────────────
+    const _ids = _profUserIdentities(user);
+
+    // ── My Works ──────────────────────────────────────────────────
+    const worksCards = document.getElementById('prof-works-cards');
+    const uploadBtn  = document.getElementById('prof-works-upload-btn');
+    if (uploadBtn) uploadBtn.style.display = isOwnProfile ? 'flex' : 'none';
+    const works = allContent.filter(c => _profIsCreatorOfContent(user, c, _ids));
+    if (worksCards) {
+      if (works.length) {
+        worksCards.innerHTML = works.map(c => _profContentCard(c)).join('');
+      } else {
+        worksCards.innerHTML = `<div class="prof-empty-state"><div class="prof-empty-ico">${I.feature}</div><div class="prof-empty-txt">${t('prof_empty')}</div></div>`;
+      }
+    }
+
+    // ── Project Participation ─────────────────────────────────────
+    const collabCards = document.getElementById('prof-collab-cards');
+    if (collabCards) {
+      const worksSet = new Set(works.map(c => c.id));
+      const collab = allContent.filter(c =>
+        !worksSet.has(c.id) &&
+        _profIsParticipantOfContent(user, c, _ids)
+      );
+      if (collab.length) {
+        collabCards.innerHTML = collab.map(c => _profContentCard(c, _profGetUserRolesInContent(user, c, _ids))).join('');
+      } else {
+        collabCards.innerHTML = `<div class="prof-empty-state"><div class="prof-empty-ico">${I.feature}</div><div class="prof-empty-txt">${t('prof_collab_empty')}</div></div>`;
+      }
+    }
+
+    // ── Pitch Campaigns ──────────────────────────────────────────
+    const pitchCards = document.getElementById('prof-pitch-cards');
+    if (pitchCards) {
+      const pitchStatEl = document.getElementById('prof-stat-pitch');
+      // Collect matching pitch cards from the static pitch page DOM
+      const allPitchCards = Array.from(document.querySelectorAll('.pitch-grid .pc'));
+      const userPitches = allPitchCards.filter(pc => {
+        const authorEl = pc.querySelector('.pc-author');
+        if (!authorEl) return false;
+        const authorTxt = authorEl.textContent.trim().toLowerCase();
+        return (ids.handle && authorTxt.includes(ids.handle)) ||
+               (ids.email  && authorTxt.includes(ids.email)) ||
+               (ids.fullName && ids.fullName.length > 3 && authorTxt.includes(ids.fullName)) ||
+               (ids.name && ids.name.length > 3 && authorTxt.includes(ids.name));
+      });
+      if (userPitches.length) {
+        pitchCards.innerHTML = '';
+        userPitches.forEach(pc => {
+          const clone = pc.cloneNode(true);
+          clone.style.flexShrink = '0';
+          pitchCards.appendChild(clone);
+        });
+        if (pitchStatEl) pitchStatEl.textContent = userPitches.length;
+      } else {
+        pitchCards.innerHTML = `<div class="prof-empty-state"><div class="prof-empty-ico">${I.feature}</div><div class="prof-empty-txt">${t('prof_pitch_empty')}</div></div>`;
+        if (pitchStatEl) pitchStatEl.textContent = '0';
+      }
+    }
+
+    // ── Reviews ──────────────────────────────────────────────────
+    const reviewsList = document.getElementById('prof-reviews-list');
+    if (reviewsList) {
+      const reviews = allComments.filter(cm => cm.authorId === user.id || cm.userId === user.id);
+      if (reviews.length) {
+        reviewsList.innerHTML = reviews.slice(0, 20).map(cm => {
+          const relatedContent = allContent.find(c => c.id === cm.contentId || c.id === cm.videoId) || null;
+          const titleLine = relatedContent ? `<div class="prof-review-title">${relatedContent.title || ''}</div>` : '';
+          const dateStr = cm.createdAt ? new Date(cm.createdAt).toLocaleDateString() : '';
+          return `<div class="prof-review-card">${titleLine}<div class="prof-review-text">${cm.text || ''}</div><div class="prof-review-meta">${dateStr}</div></div>`;
+        }).join('');
+      } else {
+        reviewsList.innerHTML = `<div class="prof-empty-state"><div class="prof-empty-ico">${I.feature}</div><div class="prof-empty-txt">${t('prof_reviews_empty')}</div></div>`;
+      }
+    }
+
+    // ── Public Collections ────────────────────────────────────────
+    const collGrid   = document.getElementById('prof-coll-grid');
+    const collNewBtn = document.getElementById('prof-coll-new-btn');
+    if (collNewBtn) collNewBtn.style.display = isOwnProfile ? 'flex' : 'none';
+    if (collGrid) {
+      const userColls = getUserCollections(user.id);
+      const visibleColls = isOwnProfile ? userColls : userColls.filter(c => c.isPublic);
+      if (visibleColls.length) {
+        collGrid.innerHTML = visibleColls.map(c => buildCollCard(c, isOwnProfile)).join('');
+      } else {
+        collGrid.innerHTML = `<div class="prof-empty-state"><div class="prof-empty-ico">${I.feature}</div><div class="prof-empty-txt">${t('prof_coll_empty')}</div></div>`;
+      }
+    }
+  }
+
+  /* ── Helper: render a small content card for profile sections ── */
+  const _profSecContentMap = {};
+  function _profContentCard(c, userRoles) {
+    const col = CAT_COLORS[c.cat] || 'var(--gold)';
+    const sid = 'psc_' + String(c.id).replace(/[^a-zA-Z0-9_\-]/g,'_');
+    _profSecContentMap[sid] = c;
+    const isPodcast = c.cat === 'ct-podcast';
+    const thumbClass = isPodcast ? 'r-sq' : 'r-film';
+    const _pt = _profGetThumbnail(c);
+    const thumbInner = _pt
+      ? `<img src="${_pt}" alt="${(c.title||'').replace(/"/g,'&quot;')}" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">
+         <div class="thumb-play-wrap"><div class="thumb-play"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div>
+         <span class="ct-badge ${c.cat||''}">${categoryLabel(c.cat)}</span>`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg3),var(--bg5))">${I.feature}</div>
+         <span class="ct-badge ${c.cat||''}" style="position:absolute;bottom:8px;left:8px">${categoryLabel(c.cat)}</span>`;
+    // Role badges — only shown for Project Participation cards (userRoles array passed)
+    const roleBadgesHtml = (userRoles && userRoles.length)
+      ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${
+          userRoles.map(r =>
+            `<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--teal-dim);color:var(--teal);text-transform:uppercase;letter-spacing:.8px">${r}</span>`
+          ).join('')
+        }</div>`
+      : '';
+    return `<div class="card w-200 card-feat" style="cursor:pointer;flex-shrink:0" data-prof-sec-id="${sid}" onclick="_profSecOpenCard(this)">
+      <div class="thumb ${thumbClass}" style="position:relative;margin-bottom:10px">${thumbInner}</div>
+      <div class="card-title">${c.title || ''}</div>
+      <div class="card-sub">${c.author || c.creatorName || ''}</div>
+      ${roleBadgesHtml}
+    </div>`;
+  }
+  function _profSecOpenCard(el) {
+    const sid = el.dataset.profSecId || el.closest('[data-prof-sec-id]')?.dataset.profSecId;
+    if (!sid) return;
+    const c = _profSecContentMap[sid];
+    if (c) openWatch(c);
   }
 
   /* ── Close card dropdowns on outside click ── */
@@ -4465,7 +4786,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
           div.style.cursor = 'pointer';
           div.onclick = () => goPage('profile', null, userId);
         }
-        div.innerHTML = `<div class="cav" style="background:linear-gradient(135deg,${grad})">${initials}</div><div class="cinfo"><div class="cname">${p.tag}</div><div class="crole">${p.role}</div></div><span class="carrow">${I.arrowRight}</span>`;
+        div.innerHTML = `<div class="cav" style="background:linear-gradient(135deg,${grad})">${initials}</div><div class="cinfo"><div class="cname">${p.tag}</div><div class="crole">${t(_normalizeRoleKey(p.role))}</div></div><span class="carrow">${I.arrowRight}</span>`;
         crewList.appendChild(div);
       });
     } else {
@@ -4656,7 +4977,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     slot.innerHTML = `
       <input type="text" class="up-person-tag" placeholder="${placeholder}" autocomplete="off" style="flex:1;min-width:0;background:var(--bg3);border:1px solid var(--bg5);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none">
       <select class="up-person-role" style="flex:0 0 auto;background:var(--bg3);border:1px solid var(--bg5);border-radius:8px;padding:8px 10px;color:var(--text);font-size:12px;outline:none;cursor:pointer">
-        ${roles.map(r=>`<option>${t(r)}</option>`).join('')}
+        ${roles.map(r=>`<option value="${r}">${t(r)}</option>`).join('')}
       </select>
       <button onclick="this.closest('.up-person-slot').remove()" aria-label="${t('aria_delete_member')}" style="flex-shrink:0;width:28px;height:28px;border-radius:50%;border:none;background:var(--bg5);color:var(--text2);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">${I.close}</button>`;
     list.appendChild(slot);
@@ -5329,27 +5650,10 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       tabs.style.display      = 'flex';
       guestCta.style.display  = 'none';
 
-      // Display user's uploaded content
-      const userContent = getAyaContent().filter(c => c.uploaderId === user.id);
-      grid.innerHTML = '';
-      if (userContent.length) {
-        userContent.forEach(c => {
-          const col = CAT_COLORS[c.cat] || 'var(--gold)';
-          const div = document.createElement('div');
-          div.className = 'rec-card';
-          div.style.cursor = 'pointer';
-          div.onclick = () => openWatch(c);
-          div.innerHTML = `<div class="rec-thumb"><div class="rec-thumb-inner" style="background:var(--bg3);display:flex;align-items:center;justify-content:center">${I.feature}</div><div class="rec-play-wrap"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div><div class="rec-info"><div class="rec-title">${c.title}</div><div class="rec-meta">${c.author || ''}</div><span class="rec-tag" style="background:${col}22;color:${col}">${categoryLabel(c.cat).toUpperCase()}</span></div>`;
-          grid.appendChild(div);
-        });
-      } else {
-        grid.innerHTML = `
-          <div style="grid-column:1/-1;padding:40px 0;text-align:center;opacity:.5">
-            <div style="margin-bottom:10px;display:flex;justify-content:center">${I.feature}</div>
-            <div style="font-size:13px;color:var(--text2)">${t('prof_empty')}</div>
-          </div>
-        `;
-      }
+      // Show continuous sections layout
+      const sections = document.getElementById('prof-sections');
+      if (sections) sections.style.display = 'block';
+      renderProfileSections(user);
 
     } else {
       // ── GUEST ──────────────────────────────────────────────
@@ -5368,6 +5672,8 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       tabs.style.display      = 'none';
       grid.innerHTML          = '';
       guestCta.style.display  = 'flex';
+      const sectionsEl = document.getElementById('prof-sections');
+      if (sectionsEl) sectionsEl.style.display = 'none';
     }
   }
 
@@ -5660,13 +5966,18 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       pf_animation: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация', pf_almost: withIcon('hot', 'Почти собрано'),
       // PROFILE PAGE
       works: 'Работ', followers: 'Подписчиков', pitches: 'Питч-кампании',
-      tab_works: 'Мои работы', tab_collab: 'Участие в проектах', tab_reviews: 'Рецензии',
+      tab_works: 'Мои работы', tab_collab: 'Участие в проектах', tab_reviews: 'Рецензии', tab_pitch: 'Питч-кампании',
+      prof_pitch_empty: 'Питч-кампании появятся здесь',
       guest_title: 'Войдите в аккаунт',
       guest_sub: 'Зарегистрируйтесь бесплатно, чтобы загружать контент, участвовать в питч-кампаниях и строить свою команду.',
       guest_btn: 'ВОЙТИ / РЕГИСТРАЦИЯ',
       // PROFILE DYNAMIC (used in updateProfilePage)
       prof_welcome: 'Добро пожаловать на AYA! Заполните информацию о себе в настройках.',
       prof_empty: 'Здесь появятся ваши работы после загрузки',
+      prof_collab_empty: 'Участие в совместных проектах появится здесь',
+      prof_reviews_empty: 'Рецензии и комментарии появятся здесь',
+      prof_coll_empty: 'Публичные коллекции появятся здесь',
+      upload_btn_short: 'Загрузить',
       prof_settings_lnk: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg> Настройки', prof_logout_lnk: withIcon('back', 'Выйти'),
       prof_guest_handle: 'Вы не вошли в аккаунт',
       prof_guest_bio: 'Войдите или создайте аккаунт, чтобы загружать контент, поддерживать питч-кампании и общаться с другими авторами.',
@@ -5776,12 +6087,17 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       pf_animation: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация', pf_almost: withIcon('hot', 'Жиналып қалды'),
       // PROFILE PAGE
       works: 'Жұмыс', followers: 'Жазылушы', pitches: 'Питч-науқандар',
-      tab_works: 'Менің жұмыстарым', tab_collab: 'Жобаларға қатысу', tab_reviews: 'Пікірлер',
+      tab_works: 'Менің жұмыстарым', tab_collab: 'Жобаларға қатысу', tab_reviews: 'Пікірлер', tab_pitch: 'Питч-науқандар',
+      prof_pitch_empty: 'Питч-науқандар осында пайда болады',
       guest_title: 'Аккаунтқа кіріңіз',
       guest_sub: 'Контент жүктеу, питч-науқандарға қатысу және команда құру үшін тегін тіркеліңіз.',
       guest_btn: 'КІРУ / ТІРКЕЛУ',
       prof_welcome: 'AYA-ға қош келдіңіз! Баптауларда өзіңіз туралы ақпаратты толтырыңыз.',
       prof_empty: 'Жүктегеннен кейін жұмыстарыңыз осында пайда болады',
+      prof_collab_empty: 'Бірлескен жобаларға қатысу осында пайда болады',
+      prof_reviews_empty: 'Пікірлер мен түсініктемелер осында пайда болады',
+      prof_coll_empty: 'Жалпыға қолжетімді жинақтар осында пайда болады',
+      upload_btn_short: 'Жүктеу',
       prof_settings_lnk: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg> Баптаулар', prof_logout_lnk: withIcon('back', 'Шығу'),
       prof_guest_handle: 'Аккаунтқа кірмедіңіз',
       prof_guest_bio: 'Контент жүктеу, питч-науқандарды қолдау және басқа авторлармен сөйлесу үшін кіріңіз немесе аккаунт жасаңыз.',
@@ -5891,12 +6207,17 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       pf_animation: withIcon('animation', 'Animation'), pf_almost: withIcon('hot', 'Almost Funded'),
       // PROFILE PAGE
       works: 'Works', followers: 'Followers', pitches: 'Pitch Campaigns',
-      tab_works: 'My Works', tab_collab: 'Project Participation', tab_reviews: 'Reviews',
+      tab_works: 'My Works', tab_collab: 'Project Participation', tab_reviews: 'Reviews', tab_pitch: 'Pitch Campaigns',
+      prof_pitch_empty: 'Pitch campaigns will appear here',
       guest_title: 'Sign In',
       guest_sub: 'Register for free to upload content, participate in pitch campaigns, and build your team.',
       guest_btn: 'SIGN IN / REGISTER',
       prof_welcome: 'Welcome to AYA! Fill in your info in Settings.',
       prof_empty: 'Your works will appear here after uploading',
+      prof_collab_empty: 'Project collaborations will appear here',
+      prof_reviews_empty: 'Reviews and comments will appear here',
+      prof_coll_empty: 'Public collections will appear here',
+      upload_btn_short: 'Upload',
       prof_settings_lnk: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg> Settings', prof_logout_lnk: withIcon('back', 'Sign out'),
       prof_guest_handle: 'You are not signed in',
       prof_guest_bio: 'Sign in or create an account to upload content, support pitch campaigns, and connect with other creators.',
@@ -6040,7 +6361,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       coll_picker_title: 'Сохранить в коллекцию',
       coll_create_new: 'Создать новую коллекцию',
       coll_new_title: 'Новая коллекция',
-      tab_collections: 'Коллекции',
+      tab_collections: 'Коллекции', tab_pitch: 'Питч-кампании',
       my_collections_title: 'Мои коллекции',
       new_short: 'Новая',
       followed_collections_title: 'Сохранённые коллекции',
@@ -6279,7 +6600,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       coll_picker_title: 'Жинаққа сақтау',
       coll_create_new: 'Жаңа жинақ жасау',
       coll_new_title: 'Жаңа жинақ',
-      tab_collections: 'Жинақтар',
+      tab_collections: 'Жинақтар', tab_pitch: 'Питч-науқандар',
       my_collections_title: 'Менің жинақтарым',
       new_short: 'Жаңа',
       followed_collections_title: 'Сақталған жинақтар',
@@ -6518,7 +6839,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       coll_picker_title: 'Save to collection',
       coll_create_new: 'Create new collection',
       coll_new_title: 'New collection',
-      tab_collections: 'Collections',
+      tab_collections: 'Collections', tab_pitch: 'Pitch Campaigns',
       my_collections_title: 'My collections',
       new_short: 'New',
       followed_collections_title: 'Saved collections',
