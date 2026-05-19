@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet"></noscript>
-<link href="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css" rel="stylesheet">
+<link href="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css" rel="stylesheet"></noscript>
 <style>
 /* ============================================================
    DESIGN TOKENS — AYA identity
@@ -3245,8 +3246,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
 </main>
 
-<script src="https://unpkg.com/cloudinary-core/cloudinary-core-shrinkwrap.min.js" defer></script>
-<script src="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.js" defer></script>
+<!-- Cloudinary libs loaded on-demand when Watch page opens — not on initial load -->
 <script>
   /* ── Module-level constants ─────────────────────────────────────────────────
      Centralised here so they are never duplicated across call-sites.
@@ -4687,6 +4687,36 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     return content.cloudinary_public_id || content.video_public_id || getCloudinaryPublicIdFromUrl(content.video_url);
   }
 
+  // ── Lazy-load Cloudinary libs on first Watch open (not on page load) ──────
+  let _cldLibsLoaded = false;
+  let _cldLibsPromise = null;
+  function loadCloudinaryLibs() {
+    if (_cldLibsLoaded) return Promise.resolve();
+    if (_cldLibsPromise) return _cldLibsPromise;
+    _cldLibsPromise = new Promise((resolve, reject) => {
+      // CSS — non-blocking, inject once
+      if (!document.querySelector('link[href*="cld-video-player.min.css"][media="all"]')) {
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css';
+        document.head.appendChild(css);
+      }
+      // Core JS → then Player JS (sequential dependency)
+      const core = document.createElement('script');
+      core.src = 'https://unpkg.com/cloudinary-core/cloudinary-core-shrinkwrap.min.js';
+      core.onload = () => {
+        const player = document.createElement('script');
+        player.src = 'https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.js';
+        player.onload = () => { _cldLibsLoaded = true; resolve(); };
+        player.onerror = reject;
+        document.head.appendChild(player);
+      };
+      core.onerror = reject;
+      document.head.appendChild(core);
+    });
+    return _cldLibsPromise;
+  }
+
   function prepareAyaCloudinaryVideoElement() {
     const current = document.getElementById('aya-cloudinary-player');
     const wrap = document.getElementById('player-wrap');
@@ -4707,6 +4737,8 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
   }
 
   async function ensureAyaCloudinaryPlayer(cloudName = DEFAULT_CLOUDINARY_CLOUD) {
+    // Load Cloudinary libs on first use — skipped entirely on Home/Profile page load
+    await loadCloudinaryLibs();
     if (typeof cloudinary === 'undefined' || typeof cloudinary.player !== 'function') {
       console.warn('Cloudinary Video Player library is not available.');
       return null;
