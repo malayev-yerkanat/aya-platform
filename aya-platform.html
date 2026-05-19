@@ -107,12 +107,12 @@ body.light-theme .logo-badge-light { display: block; }
 .logo-badge:hover { transform: scale(1.08); box-shadow: 0 5px 16px rgba(125,145,88,.5); }
 .logo-badge-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; display: block; }
 /* ── Theme-aware about logos ── */
-.about-qr-section { margin-top: 40px; display: flex; justify-content: center; }
+.about-qr-section { display: flex; justify-content: stretch; width: 100%; }
 .about-qr-card {
-  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 11px;
   background: var(--bg2); border: 1px solid var(--bg4);
-  border-radius: 24px; padding: 28px 36px;
-  max-width: 320px; width: 100%;
+  border-radius: 18px; padding: 20px 18px;
+  width: 100%; box-sizing: border-box;
   position: relative; overflow: hidden;
 }
 .about-qr-card::before {
@@ -122,15 +122,15 @@ body.light-theme .logo-badge-light { display: block; }
   opacity: 0.6;
 }
 .about-qr-card-icon {
-  width: 36px; height: 36px;
-  background: rgba(125,145,88,.15); border-radius: 10px;
+  width: 30px; height: 30px;
+  background: rgba(125,145,88,.15); border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
 }
-.about-qr-card-title { font-size: 15px; font-weight: 700; color: var(--text1); text-align: center; }
-.about-qr-card-sub { font-size: 12px; color: var(--text2); text-align: center; line-height: 1.5; margin-top: -6px; }
+.about-qr-card-title { font-size: 13px; font-weight: 700; color: var(--text); text-align: center; }
+.about-qr-card-sub { font-size: 11px; color: var(--text2); text-align: center; line-height: 1.45; margin-top: -3px; max-width: 220px; }
 .about-qr-wrap { position: relative; }
-.about-qr { width: 148px; height: 148px; object-fit: contain; border-radius: 14px; display: block; }
-.about-qr-url { font-size: 11px; color: var(--text3); letter-spacing: 0.3px; text-align: center; }
+.about-qr { width: 122px; height: 122px; object-fit: contain; border-radius: 12px; display: block; }
+.about-qr-url { font-size: 10px; color: var(--text3); letter-spacing: 0.25px; text-align: center; }
 /* Dark theme: show dark variants, hide light */
 .about-qr-light { display: none; }
 .about-qr-dark  { display: block; }
@@ -1142,14 +1142,35 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 /* ============================================================
    SETTINGS PAGE
 ============================================================ */
+#page-settings .settings-page {
+  box-sizing: border-box;
+  width: min(1280px, calc(100% - 56px));
+  margin: 0 auto;
+  padding: 32px 0 60px;
+  max-width: none;
+}
 .settings-page { padding: 32px 28px 60px; max-width: 720px; }
 .settings-title { font-family: 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -.3px; margin-bottom: 28px; }
+.settings-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  align-items: start;
+  gap: 18px;
+}
+.settings-main,
+.settings-side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
 .settings-block {
   background: var(--bg2); border-radius: var(--r-lg);
   margin-bottom: 20px; overflow: hidden;
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(255,255,255,.055);
 }
+#page-settings .settings-block { margin-bottom: 0; }
 .settings-block-title {
   padding: 15px 22px;
   font-size: 11px; font-weight: 800; color: var(--text2);
@@ -1159,9 +1180,10 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 .settings-row {
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,.06);
+  gap: 18px;
 }
 .settings-row:last-child { border-bottom: none; }
-.settings-row-info { }
+.settings-row-info { min-width: 0; }
 .settings-row-label { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
 .settings-row-desc { font-size: 12px; color: var(--text2); line-height: 1.4; }
 .toggle {
@@ -1201,14 +1223,80 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
 .role-badge.role-admin    { background: rgba(224,82,82,.12); color: #e05252; }
 .role-switcher { display: flex; gap: 6px; flex-wrap: wrap; }
 
+@media (max-width: 1180px) {
+  #page-settings .settings-page {
+    width: calc(100% - 40px);
+  }
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  #page-settings .settings-page {
+    width: calc(100% - 28px);
+    padding: 20px 0 40px;
+  }
+  .settings-layout {
+    gap: 14px;
+  }
+  #page-settings .settings-title {
+    font-size: 30px !important;
+    margin-bottom: 24px !important;
+  }
+  #page-settings .settings-block {
+    border-radius: 14px;
+  }
+  #page-settings .settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px 18px;
+  }
+  #page-settings .settings-row > button,
+  #page-settings .theme-toggle,
+  #page-settings .lang-group {
+    align-self: flex-start;
+    max-width: 100%;
+  }
+  #page-settings .role-switcher {
+    max-width: 100%;
+  }
+  #page-settings .role-badge {
+    white-space: normal;
+  }
+}
+
 /* ============================================================
    ABOUT PAGE
 ============================================================ */
-.about-page { padding: 20px 28px 40px; max-width: 860px; }
+.about-page {
+  box-sizing: border-box;
+  width: min(1280px, calc(100% - 56px));
+  margin: 0 auto;
+  padding: 20px 0 48px;
+}
 .about-hero {
   background: linear-gradient(135deg, #0C1808, #111F0C, #0f1a09);
   border-radius: var(--r-lg); padding: 28px 36px; margin-bottom: 20px;
   box-shadow: var(--shadow-md);
+}
+.about-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  align-items: start;
+  gap: 18px;
+}
+.about-main,
+.about-side {
+  min-width: 0;
+}
+.about-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: calc(var(--topbar) + 20px);
 }
 .about-uni {
   display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
@@ -1227,20 +1315,21 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
   font-size: 48px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px;
   color: var(--gold);
 }
-.about-tagline { font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 560px; }
+.about-tagline { font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 760px; }
 .about-research {
   background: var(--bg2); border-radius: var(--r-lg); padding: 20px 24px; margin-bottom: 16px;
 }
 .about-research-title { font-size: 14px; font-weight: 800; margin-bottom: 8px; }
 .about-research-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
-.about-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.about-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .about-stat {
-  background: var(--bg2); border-radius: var(--r-lg); padding: 20px 24px; flex: 1; min-width: 140px;
+  background: var(--bg2); border-radius: var(--r-lg); padding: 16px 18px; min-width: 0; min-height: 96px;
+  box-sizing: border-box;
 }
-.about-stat-num { font-family: 'Barlow', system-ui, sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); letter-spacing: -.5px; }
-.about-stat-label { font-size: 11px; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: .6px; }
+.about-stat-num { font-family: 'Barlow', system-ui, sans-serif; font-size: 30px; font-weight: 900; color: var(--gold); letter-spacing: -.5px; }
+.about-stat-label { font-size: 10px; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: .55px; }
 .about-section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; letter-spacing: -.3px; }
-.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 32px; }
+.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 32px; }
 .team-card {
   background: var(--bg2); border-radius: var(--r-lg); padding: 20px;
   transition: background .2s, transform .2s;
@@ -1259,7 +1348,7 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
   padding: 3px 8px; border-radius: var(--r-pill);
   text-transform: uppercase; letter-spacing: .5px;
 }
-.tech-stack { display: flex; gap: 8px; flex-wrap: wrap; }
+.tech-stack { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
 .tech-tag {
   background: var(--bg2); color: var(--text2);
   font-size: 12px; font-weight: 600;
@@ -2185,6 +2274,102 @@ body.light-theme .toggle { border-color: rgba(0,0,0,.10) !important; }
   width: 16px; height: 1px; background: var(--gold); flex-shrink: 0;
 }
 
+@media (max-width: 1180px) {
+  .about-page {
+    width: calc(100% - 40px);
+  }
+  .about-layout {
+    grid-template-columns: 1fr;
+  }
+  .about-main {
+    display: contents;
+  }
+  .about-main > * {
+    order: 3;
+  }
+  .about-main > .about-research {
+    order: 1;
+  }
+  .about-side {
+    position: static;
+    order: 2;
+  }
+  .about-stats {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .about-qr-section {
+    justify-content: center;
+  }
+  .about-qr-card {
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 700px) {
+  .about-page {
+    width: calc(100% - 28px);
+    padding: 14px 0 32px;
+  }
+  .about-hero {
+    padding: 24px 20px;
+    margin-bottom: 14px;
+  }
+  .about-layout {
+    gap: 14px;
+  }
+  .about-project-title {
+    font-size: clamp(40px, 16vw, 52px) !important;
+    letter-spacing: 1.5px !important;
+  }
+  .about-uni {
+    align-items: flex-start;
+  }
+  .about-tagline,
+  .about-research-text {
+    font-size: 12.5px;
+    line-height: 1.65;
+  }
+  .about-research {
+    padding: 18px 18px;
+    margin-bottom: 14px;
+  }
+  .about-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .about-stat {
+    padding: 16px;
+    min-height: 92px;
+  }
+  .about-stat-num {
+    font-size: 28px;
+  }
+  .about-stat-label {
+    font-size: 9px;
+    letter-spacing: .45px;
+    overflow-wrap: anywhere;
+  }
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .team-card {
+    padding: 18px;
+  }
+  .tech-stack {
+    gap: 7px;
+  }
+  .tech-tag {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+  .about-qr-card {
+    padding: 20px 18px;
+    border-radius: 18px;
+  }
+}
+
 /* ── Profile cover grain texture ── */
 .profile-cover { position: relative; overflow: hidden; }
 .profile-cover::before {
@@ -2979,164 +3164,170 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     <div class="pb-eyebrow" style="margin-bottom:10px"><span data-i18n="settings_eyebrow">Параметры аккаунта</span></div>
     <div class="settings-title" data-i18n="settings_title">Настройки</div>
 
-    <!-- Account & Role -->
-    <div class="settings-block">
-      <div class="settings-block-title" data-i18n="account_block">Аккаунт и роль</div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="current_role">Текущая роль</div>
-          <div class="settings-row-desc" data-i18n="role_desc">Определяет уровень доступа на платформе</div>
+    <div class="settings-layout">
+      <div class="settings-main">
+        <!-- Account & Role -->
+        <div class="settings-block">
+          <div class="settings-block-title" data-i18n="account_block">Аккаунт и роль</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="current_role">Текущая роль</div>
+              <div class="settings-row-desc" data-i18n="role_desc">Определяет уровень доступа на платформе</div>
+            </div>
+            <div class="role-switcher">
+              <span class="role-badge role-user" onclick="demoRole(this,'role-user')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> <span data-i18n="role_viewer_name">Зритель</span></span>
+              <span class="role-badge role-creator" onclick="demoRole(this,'role-creator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg> <span data-i18n="role_creator_name">Автор</span></span>
+              <span class="role-badge role-moderator" onclick="demoRole(this,'role-moderator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> <span data-i18n="role_moderator_name">Модератор</span></span>
+              <span class="role-badge role-admin" onclick="demoRole(this,'role-admin')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> <span data-i18n="role_admin_name">Администратор</span></span>
+              <span class="role-badge role-creator" onclick="demoRole(this,'role-yerkanat')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Yerkanat M.</span>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Email</div>
+              <div class="settings-row-desc">malayevyerkanat@gmail.com</div>
+            </div>
+            <button style="background:var(--bg3);color:var(--text2);font-size:12px;font-weight:700;padding:7px 16px;border-radius:3px" data-i18n="change_btn">Изменить</button>
+          </div>
         </div>
-        <div class="role-switcher">
-          <span class="role-badge role-user" onclick="demoRole(this,'role-user')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> <span data-i18n="role_viewer_name">Зритель</span></span>
-          <span class="role-badge role-creator" onclick="demoRole(this,'role-creator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg> <span data-i18n="role_creator_name">Автор</span></span>
-          <span class="role-badge role-moderator" onclick="demoRole(this,'role-moderator')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> <span data-i18n="role_moderator_name">Модератор</span></span>
-          <span class="role-badge role-admin" onclick="demoRole(this,'role-admin')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> <span data-i18n="role_admin_name">Администратор</span></span>
-          <span class="role-badge role-creator" onclick="demoRole(this,'role-yerkanat')" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> Yerkanat M.</span>
-        </div>
-      </div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label">Email</div>
-          <div class="settings-row-desc">malayevyerkanat@gmail.com</div>
-        </div>
-        <button style="background:var(--bg3);color:var(--text2);font-size:12px;font-weight:700;padding:7px 16px;border-radius:3px" data-i18n="change_btn">Изменить</button>
-      </div>
-    </div>
 
-    <!-- Language -->
-    <div class="settings-block">
-      <div class="settings-block-title" data-i18n="lang_block">Язык интерфейса</div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="lang_label">Язык / Тіл / Language</div>
-          <div class="settings-row-desc" data-i18n="lang_desc">Изменит весь текст платформы</div>
+        <!-- Notifications -->
+        <div class="settings-block">
+          <div class="settings-block-title" data-i18n="notif_block">Уведомления</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="notif_new">Новые работы подписок</div>
+              <div class="settings-row-desc" data-i18n="notif_new_desc">Когда автор загружает новый контент</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="notif_pitch">Обновления питч-кампаний</div>
+              <div class="settings-row-desc" data-i18n="notif_pitch_desc">Новые бэкеры, достижение цели</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="notif_comments">Ответы на рецензии</div>
+              <div class="settings-row-desc" data-i18n="notif_comments_desc">Когда кто-то отвечает на ваш комментарий</div>
+            </div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="notif_email">Email-рассылка</div>
+              <div class="settings-row-desc" data-i18n="notif_email_desc">Еженедельный дайджест платформы</div>
+            </div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
         </div>
-        <div class="lang-group">
-          <div class="lang-opt active" onclick="setLangFromSettings('ru',this)">RU</div>
-          <div class="lang-opt" onclick="setLangFromSettings('kz',this)">KZ</div>
-          <div class="lang-opt" onclick="setLangFromSettings('en',this)">EN</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Appearance -->
-    <div class="settings-block">
-      <div class="settings-block-title" data-i18n="appearance_block">Оформление</div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="theme_label">Тема</div>
-          <div class="settings-row-desc" data-i18n="theme_desc">Выберите тёмную или светлую тему</div>
+        <!-- Access Rights info -->
+        <div class="settings-block">
+          <div class="settings-block-title" data-i18n="access_block">Уровни доступа</div>
+          <div class="settings-row">
+            <div style="display:flex;align-items:center;gap:12px;flex:1">
+              <span class="role-badge role-user"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> <span data-i18n="role_viewer_name">Зритель</span></span>
+              <div style="font-size:12px;color:var(--text2)" data-i18n="access_user">Просмотр контента, комментарии, поддержка питчей</div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div style="display:flex;align-items:center;gap:12px;flex:1">
+              <span class="role-badge role-creator"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg> <span data-i18n="role_creator_name">Автор</span></span>
+              <div style="font-size:12px;color:var(--text2)" data-i18n="access_creator">+ Загрузка контента, создание питч-кампаний, Creator Membership</div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div style="display:flex;align-items:center;gap:12px;flex:1">
+              <span class="role-badge role-moderator"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> <span data-i18n="role_moderator_name">Модератор</span></span>
+              <div style="font-size:12px;color:var(--text2)" data-i18n="access_mod">+ Модерация контента и комментариев, верификация авторов</div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div style="display:flex;align-items:center;gap:12px;flex:1">
+              <span class="role-badge role-admin"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> <span data-i18n="role_admin_name">Администратор</span></span>
+              <div style="font-size:12px;color:var(--text2)" data-i18n="access_admin">Полный доступ: управление платформой, пользователями, аналитика</div>
+            </div>
+          </div>
         </div>
-        <div class="theme-toggle">
-          <div class="theme-btn active" id="theme-btn-dark" onclick="setTheme('dark')"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M15.5 3.5 C12 4.5 9.5 7.5 9.5 11.5 C9.5 15.5 12.5 18.5 16.5 18.5 C17.7 18.5 18.8 18.2 19.8 17.6 C18.4 20 15.8 21.5 12.8 21.5 C8.2 21.5 4.5 17.8 4.5 13.2 C4.5 8.8 7.7 5.1 12 4.5 C13.1 4.3 14.3 4 15.5 3.5 Z" fill="#7D9158" stroke="none"/><path d="M15.5 3.5 C12 4.5 9.5 7.5 9.5 11.5 C9.5 15.5 12.5 18.5 16.5 18.5 C17.7 18.5 18.8 18.2 19.8 17.6 C18.4 20 15.8 21.5 12.8 21.5 C8.2 21.5 4.5 17.8 4.5 13.2 C4.5 8.8 7.7 5.1 12 4.5 C13.1 4.3 14.3 4 15.5 3.5 Z"/></g></svg> <span data-i18n="theme_dark">Тёмная</span></div>
-          <div class="theme-btn" id="theme-btn-light" onclick="setTheme('light')"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="4" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="4"/><path d="M12 2.5 V5 M12 19 V21.5 M2.5 12 H5 M19 12 H21.5"/><path d="M5.3 5.3 L7.1 7.1 M16.9 16.9 L18.7 18.7 M18.7 5.3 L16.9 7.1 M7.1 16.9 L5.3 18.7"/></g></svg> <span data-i18n="theme_light">Светлая</span></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Notifications -->
-    <div class="settings-block">
-      <div class="settings-block-title" data-i18n="notif_block">Уведомления</div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="notif_new">Новые работы подписок</div>
-          <div class="settings-row-desc" data-i18n="notif_new_desc">Когда автор загружает новый контент</div>
+        <!-- Logout block — only shown when logged in -->
+        <div id="logout-block" class="settings-block" style="display:none">
+          <div class="settings-block-title" data-i18n="logout_section">Аккаунт</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" id="settings-user-name">—</div>
+              <div class="settings-row-desc" id="settings-user-email">—</div>
+            </div>
+            <button onclick="handleLogout()" style="background:rgba(220,53,53,.15);color:#ff6b6b;border:1px solid rgba(220,53,53,.3);font-size:12px;font-weight:700;padding:7px 18px;border-radius:var(--r-pill);cursor:pointer" data-i18n="logout_btn">Выйти</button>
+          </div>
         </div>
-        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
       </div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="notif_pitch">Обновления питч-кампаний</div>
-          <div class="settings-row-desc" data-i18n="notif_pitch_desc">Новые бэкеры, достижение цели</div>
-        </div>
-        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-      </div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="notif_comments">Ответы на рецензии</div>
-          <div class="settings-row-desc" data-i18n="notif_comments_desc">Когда кто-то отвечает на ваш комментарий</div>
-        </div>
-        <div class="toggle" onclick="this.classList.toggle('on')"></div>
-      </div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="notif_email">Email-рассылка</div>
-          <div class="settings-row-desc" data-i18n="notif_email_desc">Еженедельный дайджест платформы</div>
-        </div>
-        <div class="toggle" onclick="this.classList.toggle('on')"></div>
-      </div>
-    </div>
 
-    <!-- Playback -->
-    <div class="settings-block">
-      <div class="settings-block-title" data-i18n="playback_block">Воспроизведение</div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="autoplay_label">Автовоспроизведение</div>
-          <div class="settings-row-desc" data-i18n="autoplay_desc">Следующий контент запускается автоматически</div>
+      <aside class="settings-side" aria-label="Quick settings">
+        <!-- Language -->
+        <div class="settings-block">
+          <div class="settings-block-title" data-i18n="lang_block">Язык интерфейса</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="lang_label">Язык / Тіл / Language</div>
+              <div class="settings-row-desc" data-i18n="lang_desc">Изменит весь текст платформы</div>
+            </div>
+            <div class="lang-group">
+              <div class="lang-opt active" onclick="setLangFromSettings('ru',this)">RU</div>
+              <div class="lang-opt" onclick="setLangFromSettings('kz',this)">KZ</div>
+              <div class="lang-opt" onclick="setLangFromSettings('en',this)">EN</div>
+            </div>
+          </div>
         </div>
-        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-      </div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="subtitles_label">Субтитры по умолчанию</div>
-          <div class="settings-row-desc" data-i18n="subtitles_desc">Автоматически включать субтитры</div>
-        </div>
-        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-      </div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" data-i18n="quality_label">Качество видео</div>
-          <div class="settings-row-desc" data-i18n="quality_desc">По умолчанию при загрузке</div>
-        </div>
-        <div class="lang-group">
-          <div class="lang-opt" style="font-size:11px">Auto</div>
-          <div class="lang-opt active" style="font-size:11px">720p</div>
-          <div class="lang-opt" style="font-size:11px">1080p</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Access Rights info -->
-    <div class="settings-block">
-      <div class="settings-block-title" data-i18n="access_block">Уровни доступа</div>
-      <div class="settings-row">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-user"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg> <span data-i18n="role_viewer_name">Зритель</span></span>
-          <div style="font-size:12px;color:var(--text2)" data-i18n="access_user">Просмотр контента, комментарии, поддержка питчей</div>
+        <!-- Appearance -->
+        <div class="settings-block">
+          <div class="settings-block-title" data-i18n="appearance_block">Оформление</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="theme_label">Тема</div>
+              <div class="settings-row-desc" data-i18n="theme_desc">Выберите тёмную или светлую тему</div>
+            </div>
+            <div class="theme-toggle">
+              <div class="theme-btn active" id="theme-btn-dark" onclick="setTheme('dark')"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M15.5 3.5 C12 4.5 9.5 7.5 9.5 11.5 C9.5 15.5 12.5 18.5 16.5 18.5 C17.7 18.5 18.8 18.2 19.8 17.6 C18.4 20 15.8 21.5 12.8 21.5 C8.2 21.5 4.5 17.8 4.5 13.2 C4.5 8.8 7.7 5.1 12 4.5 C13.1 4.3 14.3 4 15.5 3.5 Z" fill="#7D9158" stroke="none"/><path d="M15.5 3.5 C12 4.5 9.5 7.5 9.5 11.5 C9.5 15.5 12.5 18.5 16.5 18.5 C17.7 18.5 18.8 18.2 19.8 17.6 C18.4 20 15.8 21.5 12.8 21.5 C8.2 21.5 4.5 17.8 4.5 13.2 C4.5 8.8 7.7 5.1 12 4.5 C13.1 4.3 14.3 4 15.5 3.5 Z"/></g></svg> <span data-i18n="theme_dark">Тёмная</span></div>
+              <div class="theme-btn" id="theme-btn-light" onclick="setTheme('light')"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="4" fill="#7D9158" stroke="none"/><circle cx="12" cy="12" r="4"/><path d="M12 2.5 V5 M12 19 V21.5 M2.5 12 H5 M19 12 H21.5"/><path d="M5.3 5.3 L7.1 7.1 M16.9 16.9 L18.7 18.7 M18.7 5.3 L16.9 7.1 M7.1 16.9 L5.3 18.7"/></g></svg> <span data-i18n="theme_light">Светлая</span></div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="settings-row">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-creator"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9 9 L16 12 L9 15 Z" fill="currentColor" stroke="none"/></g></svg> <span data-i18n="role_creator_name">Автор</span></span>
-          <div style="font-size:12px;color:var(--text2)" data-i18n="access_creator">+ Загрузка контента, создание питч-кампаний, Creator Membership</div>
-        </div>
-      </div>
-      <div class="settings-row">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-moderator"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L20 6 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V6 Z"/><path d="M9 12 L11 14 L15 10"/></g></svg> <span data-i18n="role_moderator_name">Модератор</span></span>
-          <div style="font-size:12px;color:var(--text2)" data-i18n="access_mod">+ Модерация контента и комментариев, верификация авторов</div>
-        </div>
-      </div>
-      <div class="settings-row">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
-          <span class="role-badge role-admin"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="#7D9158" stroke="none"/><path d="M14 2 L4 14 H11 L10 22 L20 10 H13 Z"/></g></svg> <span data-i18n="role_admin_name">Администратор</span></span>
-          <div style="font-size:12px;color:var(--text2)" data-i18n="access_admin">Полный доступ: управление платформой, пользователями, аналитика</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Logout block — only shown when logged in -->
-    <div id="logout-block" class="settings-block" style="display:none">
-      <div class="settings-block-title" data-i18n="logout_section">Аккаунт</div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-label" id="settings-user-name">—</div>
-          <div class="settings-row-desc" id="settings-user-email">—</div>
+        <!-- Playback -->
+        <div class="settings-block">
+          <div class="settings-block-title" data-i18n="playback_block">Воспроизведение</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="autoplay_label">Автовоспроизведение</div>
+              <div class="settings-row-desc" data-i18n="autoplay_desc">Следующий контент запускается автоматически</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="subtitles_label">Субтитры по умолчанию</div>
+              <div class="settings-row-desc" data-i18n="subtitles_desc">Автоматически включать субтитры</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="quality_label">Качество видео</div>
+              <div class="settings-row-desc" data-i18n="quality_desc">По умолчанию при загрузке</div>
+            </div>
+            <div class="lang-group">
+              <div class="lang-opt" style="font-size:11px">Auto</div>
+              <div class="lang-opt active" style="font-size:11px">720p</div>
+              <div class="lang-opt" style="font-size:11px">1080p</div>
+            </div>
+          </div>
         </div>
-        <button onclick="handleLogout()" style="background:rgba(220,53,53,.15);color:#ff6b6b;border:1px solid rgba(220,53,53,.3);font-size:12px;font-weight:700;padding:7px 18px;border-radius:var(--r-pill);cursor:pointer" data-i18n="logout_btn">Выйти</button>
-      </div>
+      </aside>
     </div>
 
   </div>
@@ -3162,18 +3353,13 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       </p>
     </div>
 
+    <div class="about-layout">
+      <div class="about-main">
     <div class="about-research">
       <div class="about-research-title" data-i18n="research_title">Тема дипломной работы</div>
       <div class="about-research-text" data-i18n="research_desc">
         «State-sponsored vs independent cinema in Kazakhstan distributed in 2020–2025: challenges of profitability, distribution, and audience engagement» — исследование проблем казахстанской независимой киноиндустрии и практическое решение в виде платформы, объединяющей VOD-стриминг, профессиональный нетворкинг и краудфандинг.
       </div>
-    </div>
-
-    <div class="about-stats">
-      <div class="about-stat"><div class="about-stat-num">3</div><div class="about-stat-label" data-i18n="stat_modules">Модуля платформы</div></div>
-      <div class="about-stat"><div class="about-stat-num">340+</div><div class="about-stat-label" data-i18n="stat_content">Единиц контента</div></div>
-      <div class="about-stat"><div class="about-stat-num">4</div><div class="about-stat-label" data-i18n="stat_roles">Уровня доступа</div></div>
-      <div class="about-stat"><div class="about-stat-num">3</div><div class="about-stat-label" data-i18n="stat_langs">Языка интерфейса</div></div>
     </div>
 
     <div class="about-section-title" style="display:flex;align-items:center;gap:12px">
@@ -3196,7 +3382,14 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       <span class="tech-tag">CDN</span>
     </div>
 
-  </div>
+      </div>
+      <aside class="about-side" aria-label="Project summary">
+        <div class="about-stats">
+          <div class="about-stat"><div class="about-stat-num">3</div><div class="about-stat-label" data-i18n="stat_modules">Модуля платформы</div></div>
+          <div class="about-stat"><div id="about-content-count" class="about-stat-num">—</div><div class="about-stat-label" data-i18n="stat_content">Единиц контента</div></div>
+          <div class="about-stat"><div class="about-stat-num">4</div><div class="about-stat-label" data-i18n="stat_roles">Уровня доступа</div></div>
+          <div class="about-stat"><div class="about-stat-num">3</div><div class="about-stat-label" data-i18n="stat_langs">Языка интерфейса</div></div>
+        </div>
       <div class="about-qr-section">
         <div class="about-qr-card">
           <div class="about-qr-card-icon">
@@ -3218,7 +3411,9 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
           <div class="about-qr-url">aya-platform.vercel.app</div>
         </div>
       </div>
+      </aside>
     </div>
+  </div>
 </div><!-- /about -->
 
 <!-- ADMIN PAGES -->
@@ -3352,6 +3547,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       updateProfilePage(userToDisplay);
     }
     if (id === 'settings')      highlightActiveRoleBadge();
+    if (id === 'about')         updateAboutContentCount();
     if (id==='admin-content')   renderAdminContentReqs();
     if (id==='admin-bans')      renderAdminBanReqs();
     if (id==='mod-requests')    renderModReqs();
@@ -4483,6 +4679,36 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
   function getAyaContent() { return _ayaContentCache || []; }
   function saveAyaContent(arr) {
     _ayaContentCache = (arr || []).map(normalizeContentRecord);
+    updateAboutContentCount();
+  }
+  function isValidVisibleContent(c) {
+    if (!c || typeof c !== 'object') return false;
+    const id = c.id || c.contentId;
+    const title = String(c.title || '').trim();
+    if (!id || !title) return false;
+    if (getDeletedIds().map(String).includes(String(id))) return false;
+    if (c.deleted || c.isDeleted || c.removed || c.placeholder) return false;
+    const status = String(c.status || 'approved').trim().toLowerCase();
+    const hiddenStatuses = new Set(['pending', 'draft', 'rejected', 'declined', 'deleted', 'removed', 'hidden', 'blocked', 'banned']);
+    if (hiddenStatuses.has(status)) return false;
+    const hasMedia = Boolean(
+      c.video_url ||
+      c.video_public_id ||
+      c.cloudinary_public_id ||
+      c.poster_url ||
+      c.thumbnail ||
+      c.poster_public_id
+    );
+    return hasMedia;
+  }
+  function getVisibleContentCount() {
+    return getAyaContent().filter(isValidVisibleContent).length;
+  }
+  function updateAboutContentCount() {
+    const el = document.getElementById('about-content-count');
+    if (!el) return;
+    const count = getVisibleContentCount();
+    el.textContent = Number.isFinite(count) ? String(count) : '0';
   }
 
   /* Deleted IDs blacklist — prevents Firebase from re-merging deleted content on reload */
@@ -4616,27 +4842,31 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     // ── Always fetch fresh from Firebase ──
     try {
       const res = await fetch(`${FB}/content.json`);
-      if (!res.ok) return;
+      if (!res.ok) {
+        updateAboutContentCount();
+        return;
+      }
       const data = await res.json();
-      if (!data) return;
+      if (!data) {
+        _ayaContentCache = [];
+        try { sessionStorage.setItem(AYA_CONTENT_SESSION_KEY, JSON.stringify(_ayaContentCache)); } catch(e) {}
+        renderUserContent();
+        return;
+      }
       Object.entries(data).forEach(([fbKey, c]) => {
         if (c && c.id && !getDeleteToken(c.id)) saveDeleteToken(c.id, fbKey);
       });
-      const items = Object.values(data).filter(Boolean).map(normalizeContentRecord);
-      const local = getAyaContent();
-      const localIds = new Set(local.map(c => String(c.id)));
       const deletedIds = new Set(getDeletedIds());
-      let added = false;
-      items.forEach(c => {
-        if (c.id && !localIds.has(String(c.id)) && !deletedIds.has(c.id)) { local.push(c); added = true; }
-      });
-      _ayaContentCache = local.map(normalizeContentRecord);
+      _ayaContentCache = Object.values(data)
+        .filter(c => c && c.id && !deletedIds.has(String(c.id)))
+        .map(normalizeContentRecord);
       // Persist to sessionStorage for next load
       try { sessionStorage.setItem(AYA_CONTENT_SESSION_KEY, JSON.stringify(_ayaContentCache)); } catch(e) {}
       renderUserContent();
     } catch(e) {
       fbWarn('content load failed', e);
       if (!_ayaContentCache.length) _ayaContentCache = [];
+      updateAboutContentCount();
     }
   }
 
@@ -5212,6 +5442,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
   function renderUserContent() {
     // Remove any previously injected uploaded cards (so we don't duplicate on refresh)
     document.querySelectorAll('.uploaded-user-card').forEach(el => el.remove());
+    updateAboutContentCount();
 
     const items = getAyaContent();
     if (!items.length) return;
@@ -7278,6 +7509,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     _ayaContentCache = getAyaContent().filter(c => String(c.id) !== String(contentId));
     addDeletedId(contentId);
     removeDeleteToken(contentId);
+    updateAboutContentCount();
   }
   function updateUserRolePersistently(userId, role) {
     const users = getUsers();
