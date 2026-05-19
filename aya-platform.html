@@ -6,7 +6,8 @@
 <title>AYA — Art Yearns Action</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet"></noscript>
 <link href="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css" rel="stylesheet">
 <style>
 /* ============================================================
@@ -3210,8 +3211,8 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
           <div class="about-qr-card-title" data-i18n="about_qr_title">Расскажи друзьям об AYA</div>
           <div class="about-qr-card-sub" data-i18n="about_qr_sub">Отсканируй код — и они сразу окажутся на платформе</div>
           <div class="about-qr-wrap">
-            <img src="assets/qr_code_dark.png"  class="about-qr about-qr-dark"  alt="QR-код AYA">
-            <img src="assets/qr_code_light.png" class="about-qr about-qr-light" alt="QR-код AYA">
+            <img src="assets/qr_code_dark.png"  class="about-qr about-qr-dark"  alt="QR-код AYA" loading="lazy">
+            <img src="assets/qr_code_light.png" class="about-qr about-qr-light" alt="QR-код AYA" loading="lazy">
           </div>
           <div class="about-qr-url">aya-platform.vercel.app</div>
         </div>
@@ -3244,8 +3245,8 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
 </main>
 
-<script src="https://unpkg.com/cloudinary-core/cloudinary-core-shrinkwrap.min.js"></script>
-<script src="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.js"></script>
+<script src="https://unpkg.com/cloudinary-core/cloudinary-core-shrinkwrap.min.js" defer></script>
+<script src="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.js" defer></script>
 <script>
   /* ── Module-level constants ─────────────────────────────────────────────────
      Centralised here so they are never duplicated across call-sites.
@@ -4216,10 +4217,10 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
         const authorEl = pc.querySelector('.pc-author');
         if (!authorEl) return false;
         const authorTxt = authorEl.textContent.trim().toLowerCase();
-        return (ids.handle && authorTxt.includes(ids.handle)) ||
-               (ids.email  && authorTxt.includes(ids.email)) ||
-               (ids.fullName && ids.fullName.length > 3 && authorTxt.includes(ids.fullName)) ||
-               (ids.name && ids.name.length > 3 && authorTxt.includes(ids.name));
+        return (_ids.handle && authorTxt.includes(_ids.handle)) ||
+               (_ids.email  && authorTxt.includes(_ids.email)) ||
+               (_ids.fullName && _ids.fullName.length > 3 && authorTxt.includes(_ids.fullName)) ||
+               (_ids.name && _ids.name.length > 3 && authorTxt.includes(_ids.name));
       });
       if (userPitches.length) {
         pitchCards.innerHTML = '';
@@ -4597,13 +4598,27 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
   }
 
   /* Fetch all content from Firebase and merge into local cache / re-render */
+  const AYA_CONTENT_SESSION_KEY = 'aya_content_cache_v1';
   async function loadServerContent() {
+    // ── Pre-populate from sessionStorage so content renders before Firebase responds ──
+    try {
+      const cached = sessionStorage.getItem(AYA_CONTENT_SESSION_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length) {
+          const deletedIds = new Set(getDeletedIds());
+          _ayaContentCache = parsed.filter(c => c && c.id && !deletedIds.has(String(c.id))).map(normalizeContentRecord);
+          renderUserContent();
+        }
+      }
+    } catch(e) { /* ignore sessionStorage errors */ }
+
+    // ── Always fetch fresh from Firebase ──
     try {
       const res = await fetch(`${FB}/content.json`);
       if (!res.ok) return;
       const data = await res.json();
       if (!data) return;
-      // Firebase returns an object keyed by content ID.
       Object.entries(data).forEach(([fbKey, c]) => {
         if (c && c.id && !getDeleteToken(c.id)) saveDeleteToken(c.id, fbKey);
       });
@@ -4616,10 +4631,12 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
         if (c.id && !localIds.has(String(c.id)) && !deletedIds.has(c.id)) { local.push(c); added = true; }
       });
       _ayaContentCache = local.map(normalizeContentRecord);
+      // Persist to sessionStorage for next load
+      try { sessionStorage.setItem(AYA_CONTENT_SESSION_KEY, JSON.stringify(_ayaContentCache)); } catch(e) {}
       if (added) renderUserContent();
     } catch(e) {
       fbWarn('content load failed', e);
-      _ayaContentCache = [];
+      if (!_ayaContentCache.length) _ayaContentCache = [];
     }
   }
 
@@ -7113,9 +7130,11 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     localizeConstructorOptions();
 
     // 4. Re-render dynamic surfaces so injected strings also translate
+    // Skip expensive re-renders during startup when caches are still empty
+    const _hasContent = (_ayaContentCache && _ayaContentCache.length > 0);
     updateProfilePage(getUser());
     updateWatchLikeBtn();
-    renderUserContent();
+    if (_hasContent) renderUserContent();
     renderTopCollections();
     renderAdminContentReqs();
     renderAdminBanReqs();
@@ -7289,7 +7308,9 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
   }
 
   // ── Seed test accounts ───────────────────────────────────────
+  const AYA_SEEDS_KEY = 'aya_seeds_seeded_v1';
   async function seedTestAccounts() {
+    if (localStorage.getItem(AYA_SEEDS_KEY) === 'true') return;
     const seeds = [
       { email:'admin@korseteik.kz',           password:'admin',           first_name:'Admin',    last_name:'Korseteik',   role:'admin',     handle:'adminkorseteik'   },
       { email:'moderator@korseteik.kz',        password:'moderator',       first_name:'Moder',    last_name:'Ator',        role:'moderator', handle:'moderator'        },
@@ -7332,6 +7353,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
         }
       }
     }
+    localStorage.setItem(AYA_SEEDS_KEY, 'true');
   }
 
   // ── Modal helpers ────────────────────────────────────────────
@@ -7757,18 +7779,20 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       updateAuthUI(user);
       loadProfileFromFirebase(user.uid).then(() => updateProfilePage(getUser()));
     }
-    await seedTestAccounts();
-    // Restore theme
+    // Restore theme immediately (localStorage, no network)
     const savedTheme = localStorage.getItem('aya_theme') || 'dark';
     setTheme(savedTheme);
+    // Load content FIRST — sessionStorage cache renders cards before Firebase responds
+    await loadServerContent();
+    renderUserContent();
+    // Language restore triggers re-render; do it after content is already on screen
     let savedLang = 'ru';
     try { savedLang = window.localStorage?.getItem('aya_language') || window.localStorage?.getItem('aya_lang') || 'ru'; } catch {}
     const savedLangBtn = document.querySelector(`.lang-btn[data-lang="${savedLang}"]`);
     setLang(savedLang, savedLangBtn);
-    // Render any previously uploaded community content (local cache first, then sync from server)
-    await loadServerContent();
+    // Seed accounts in background — guard flag makes this a no-op on repeat loads
+    seedTestAccounts();
     if (user && (user.role === 'admin' || user.role === 'moderator')) await loadModerationFromFirebase();
-    renderUserContent();
     if (user) {
       loadCollectionsFromFirebase(user.uid).then(() => {
         ensureDefaultCollections(getUser());
@@ -8236,7 +8260,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       <input id="up-thumb-file" type="file" accept="image/*" onchange="handleThumbnailSelect(this)" style="display:none">
       <div style="display:flex;gap:12px;align-items:flex-start">
         <div onclick="document.getElementById('up-thumb-file').click()" id="up-thumb-dropzone" style="width:96px;height:64px;border:2px dashed var(--bg5);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color .2s;overflow:hidden;position:relative">
-          <img id="up-thumb-preview" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:6px" alt="Обложка" data-i18n-alt="upload_cover_alt">
+          <img id="up-thumb-preview" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:6px" alt="Обложка" data-i18n-alt="upload_cover_alt" loading="lazy">
           <svg id="up-thumb-icon" viewBox="0 0 24 24" fill="none" class="aya-ico" aria-hidden="true" style="width:24px;height:24px;opacity:.4"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" fill="#7D9158" stroke="none" opacity="0.45"/><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M3 17 L8 12 L12 16 L16 13 L21 17"/></g></svg>
         </div>
         <div style="flex:1;min-width:0">
