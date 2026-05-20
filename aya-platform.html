@@ -8,8 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Podkova:wght@800;900&display=swap" rel="stylesheet"></noscript>
-<link href="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css" rel="stylesheet"></noscript>
 <style>
 /* ============================================================
    DESIGN TOKENS — AYA identity
@@ -587,23 +585,6 @@ body.light-theme .about-aitu-light { display: block; }
   align-items: center; justify-content: center;
 }
 #player-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; }
-.cloudinary-player-video,
-.player-wrap .cld-video-player {
-  position: absolute;
-  inset: 0;
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
-  background: #000;
-}
-.player-wrap.has-video .cloudinary-player-video,
-.player-wrap.has-video .cld-video-player {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-}
 /* Bunny Stream iframe player */
 .bunny-player-iframe {
   position: absolute;
@@ -612,12 +593,6 @@ body.light-theme .about-aitu-light { display: block; }
   height: 100%;
   border: none;
   background: #000;
-}
-.player-wrap .cld-video-player,
-.player-wrap .cld-video-player video,
-.player-wrap .video-js {
-  width: 100%;
-  height: 100%;
 }
 .player-wrap .video-js {
   position: absolute;
@@ -942,6 +917,442 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
   transition: all .15s;
 }
 .qoldau:hover { background: #5de0ca; transform: scale(1.04); }
+
+/* ============================================================
+   PITCH PAGE — PREMIUM REDESIGN
+============================================================ */
+#page-pitch .pitch-page {
+  box-sizing: border-box;
+  width: min(1280px, calc(100% - 56px));
+  margin: 0 auto;
+  padding: 24px 0 72px;
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+/* Atmospheric backdrop */
+#page-pitch .pitch-page::before {
+  content: '';
+  position: absolute;
+  inset: -80px 0 auto 0;
+  height: 600px;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(125,145,88,.20), transparent 32%),
+    radial-gradient(circle at 82% 6%,  rgba(45,113,88,.13),  transparent 28%),
+    linear-gradient(180deg, rgba(13,24,10,.86), rgba(8,12,7,0));
+  filter: saturate(1.04);
+}
+
+/* Subtle grid overlay */
+#page-pitch .pitch-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.5), transparent 52%);
+  opacity: .26;
+}
+
+/* ── Banner → editorial hero ── */
+#page-pitch .pitch-banner {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(12,24,8,.96), rgba(18,30,11,.90) 48%, rgba(8,13,7,.98)),
+    radial-gradient(circle at 78% 20%, rgba(125,145,88,.26), transparent 38%) !important;
+  border: 1px solid rgba(180,205,132,.13) !important;
+  border-radius: 28px !important;
+  padding: clamp(28px, 4vw, 52px) clamp(28px, 4.4vw, 56px) !important;
+  margin-bottom: 22px;
+  min-height: 200px;
+  box-shadow:
+    0 32px 84px rgba(3,8,3,.44),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -1px 0 rgba(0,0,0,.32);
+}
+
+/* Inner refraction ring */
+#page-pitch .pitch-banner::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 27px;
+  border: 1px solid rgba(255,255,255,.034);
+  pointer-events: none;
+}
+
+/* Keep PITCHING watermark but restyle it cleanly */
+#page-pitch .pitch-banner::before {
+  content: 'PITCHING';
+  position: absolute;
+  top: 50%;
+  right: clamp(-10px, 2vw, 20px);
+  transform: translateY(-50%);
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(80px, 11vw, 168px);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: .01em;
+  color: rgba(211,225,167,.032);
+  pointer-events: none;
+  user-select: none;
+  -webkit-text-stroke: unset;
+}
+
+#page-pitch .pb-title {
+  font-size: clamp(24px, 3.2vw, 42px);
+  letter-spacing: -.3px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+#page-pitch .pb-desc {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  line-height: 1.74;
+  max-width: 480px;
+  text-wrap: pretty;
+}
+
+#page-pitch .pb-action {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  transition: background .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1);
+}
+#page-pitch .pb-action:hover {
+  background: var(--gold2);
+  transform: translateY(-2px);
+}
+#page-pitch .pb-action:active { transform: scale(.97); }
+
+/* ── Filter pills — elevated ── */
+#page-pitch .pitch-filters {
+  margin-bottom: 22px;
+  gap: 7px;
+}
+
+#page-pitch .pf {
+  background: linear-gradient(150deg, rgba(23,33,17,.92), rgba(14,22,11,.96));
+  border: 1px solid rgba(180,205,132,.08);
+  color: var(--text2);
+  border-radius: var(--r-pill);
+  box-shadow:
+    0 4px 14px rgba(3,8,3,.18),
+    inset 0 1px 0 rgba(255,255,255,.038);
+  transition:
+    background .45s cubic-bezier(.16,1,.3,1),
+    border-color .45s cubic-bezier(.16,1,.3,1),
+    color .45s cubic-bezier(.16,1,.3,1),
+    transform .45s cubic-bezier(.16,1,.3,1);
+  padding: 8px 16px;
+  font-size: 12px;
+}
+#page-pitch .pf:hover {
+  background: linear-gradient(150deg, rgba(30,43,22,.96), rgba(18,28,13,.98));
+  border-color: rgba(180,205,132,.15);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+#page-pitch .pf.active {
+  background: linear-gradient(150deg, rgba(125,145,88,.22), rgba(100,118,68,.14));
+  border-color: rgba(180,205,132,.32);
+  color: var(--text);
+  font-weight: 700;
+  box-shadow:
+    0 6px 20px rgba(3,8,3,.22),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* ── Pitch grid ── */
+#page-pitch .pitch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+/* ── Pitch cards — layered surface ── */
+#page-pitch .pc {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.10);
+  border-radius: 22px;
+  box-shadow:
+    0 20px 52px rgba(3,8,3,.28),
+    inset 0 1px 0 rgba(255,255,255,.048);
+  transition:
+    transform .55s cubic-bezier(.16,1,.3,1),
+    border-color .55s cubic-bezier(.16,1,.3,1),
+    background .55s cubic-bezier(.16,1,.3,1),
+    box-shadow .55s cubic-bezier(.16,1,.3,1);
+  cursor: pointer;
+}
+
+/* Inner refraction ring on cards */
+#page-pitch .pc::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 21px;
+  border: 1px solid rgba(255,255,255,.024);
+  pointer-events: none;
+  z-index: 1;
+}
+
+#page-pitch .pc:hover {
+  background: linear-gradient(150deg, rgba(27,39,19,.98), rgba(14,22,10,.98));
+  border-color: rgba(180,205,132,.20);
+  transform: translateY(-4px);
+  box-shadow:
+    0 30px 70px rgba(3,8,3,.36),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* ── Thumbnail ── */
+#page-pitch .pc-thumb {
+  height: 185px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 18px 14px;
+  border-radius: 21px 21px 0 0;
+}
+
+/* Vignette overlay on thumb */
+#page-pitch .pc-thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 21px 21px 0 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(10,16,8,.72) 100%);
+  pointer-events: none;
+}
+
+#page-pitch .pc-badge {
+  position: relative;
+  z-index: 2;
+}
+
+#page-pitch .pc-days {
+  position: absolute;
+  bottom: 14px;
+  right: 18px;
+  z-index: 2;
+  font-size: 11px;
+  color: rgba(212,201,160,.72);
+}
+
+/* ── Card body ── */
+#page-pitch .pc-body {
+  padding: 18px 20px 20px;
+  position: relative;
+  z-index: 2;
+}
+
+#page-pitch .pc-title {
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  letter-spacing: -.1px;
+  color: var(--text);
+}
+
+#page-pitch .pc-author {
+  font-size: 11.5px;
+  color: var(--text2);
+  margin-bottom: 12px;
+}
+
+#page-pitch .pc-desc {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.68;
+  margin-bottom: 16px;
+  text-wrap: pretty;
+}
+
+/* ── Progress bar — refined ── */
+#page-pitch .prog-labels {
+  margin-bottom: 7px;
+}
+
+#page-pitch .prog-track {
+  height: 5px;
+  background: rgba(255,255,255,.06);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+#page-pitch .prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  border-radius: 3px;
+  transition: width .6s cubic-bezier(.16,1,.3,1);
+}
+
+/* ── Qoldau button — refined ── */
+#page-pitch .qoldau {
+  transition:
+    background .45s cubic-bezier(.16,1,.3,1),
+    transform .45s cubic-bezier(.16,1,.3,1),
+    box-shadow .45s cubic-bezier(.16,1,.3,1);
+  box-shadow: 0 6px 18px rgba(65,110,90,.22);
+}
+#page-pitch .qoldau:hover {
+  background: var(--teal);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(65,110,90,.30);
+}
+#page-pitch .qoldau:active { transform: scale(.97); }
+
+/* ── Entrance animations ── */
+@keyframes pitchRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-pitch.active .pitch-banner {
+  animation: pitchRise .9s cubic-bezier(.16,1,.3,1) both;
+}
+#page-pitch.active .pitch-filters {
+  animation: pitchRise .9s cubic-bezier(.16,1,.3,1) .06s both;
+}
+#page-pitch.active .pitch-grid .pc {
+  animation: pitchRise .85s cubic-bezier(.16,1,.3,1) both;
+}
+#page-pitch.active .pitch-grid .pc:nth-child(1) { animation-delay: .10s; }
+#page-pitch.active .pitch-grid .pc:nth-child(2) { animation-delay: .16s; }
+#page-pitch.active .pitch-grid .pc:nth-child(3) { animation-delay: .22s; }
+#page-pitch.active .pitch-grid .pc:nth-child(4) { animation-delay: .28s; }
+#page-pitch.active .pitch-grid .pc:nth-child(5) { animation-delay: .34s; }
+#page-pitch.active .pitch-grid .pc:nth-child(6) { animation-delay: .40s; }
+
+/* ── Light theme overrides ── */
+body.light-theme #page-pitch .pitch-banner {
+  background:
+    linear-gradient(135deg, rgba(210,222,185,.96), rgba(195,210,165,.90) 48%, rgba(220,230,198,.98)),
+    radial-gradient(circle at 78% 20%, rgba(100,125,60,.18), transparent 38%) !important;
+  border-color: rgba(62,84,40,.15) !important;
+  box-shadow:
+    0 32px 84px rgba(70,82,44,.18),
+    inset 0 1px 0 rgba(255,255,255,.52),
+    inset 0 -1px 0 rgba(0,0,0,.06) !important;
+}
+
+body.light-theme #page-pitch .pitch-banner::before {
+  color: rgba(50,70,30,.055);
+}
+
+body.light-theme #page-pitch .pf {
+  background: linear-gradient(150deg, rgba(234,226,204,.90), rgba(221,211,184,.94));
+  border-color: rgba(62,84,40,.10);
+  color: var(--text2);
+  box-shadow:
+    0 4px 14px rgba(70,82,44,.10),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+body.light-theme #page-pitch .pf:hover {
+  background: linear-gradient(150deg, rgba(224,216,192,.96), rgba(210,200,172,.98));
+  border-color: rgba(62,84,40,.20);
+  color: var(--text);
+}
+body.light-theme #page-pitch .pf.active {
+  background: linear-gradient(150deg, rgba(125,145,88,.18), rgba(100,118,68,.12));
+  border-color: rgba(62,84,40,.34);
+}
+
+body.light-theme #page-pitch .pc {
+  background: linear-gradient(150deg, rgba(234,226,204,.96), rgba(221,211,184,.98));
+  border-color: rgba(62,84,40,.12);
+  box-shadow:
+    0 20px 52px rgba(70,82,44,.14),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+body.light-theme #page-pitch .pc:hover {
+  background: linear-gradient(150deg, rgba(224,216,192,.98), rgba(210,200,172,.98));
+  border-color: rgba(62,84,40,.22);
+  box-shadow:
+    0 30px 70px rgba(70,82,44,.20),
+    inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+body.light-theme #page-pitch .prog-track {
+  background: rgba(0,0,0,.08);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #page-pitch .pitch-banner,
+  #page-pitch .pitch-filters,
+  #page-pitch .pitch-grid .pc {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── Responsive — tablet ── */
+@media (max-width: 1180px) {
+  #page-pitch .pitch-page {
+    width: calc(100% - 40px);
+  }
+}
+
+@media (max-width: 900px) {
+  #page-pitch .pitch-page {
+    width: calc(100% - 32px);
+    padding: 18px 0 56px;
+  }
+  #page-pitch .pitch-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    min-height: unset;
+  }
+  #page-pitch .pitch-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+
+/* ── Responsive — mobile ── */
+@media (max-width: 600px) {
+  #page-pitch .pitch-page {
+    width: 100%;
+    padding: 14px 14px 48px;
+  }
+  #page-pitch .pitch-banner {
+    border-radius: 20px !important;
+    padding: 24px 20px !important;
+  }
+  #page-pitch .pitch-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  #page-pitch .pc-thumb {
+    height: 162px;
+  }
+  #page-pitch .pitch-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  #page-pitch .pitch-filters::-webkit-scrollbar { display: none; }
+  #page-pitch .pb-title {
+    font-size: 22px;
+  }
+}
 
 /* ============================================================
    PROFILE PAGE
@@ -1690,7 +2101,7 @@ body.light-theme #page-settings .theme-btn.active {
   box-shadow:
     0 18px 46px rgba(3,8,3,.28),
     inset 0 1px 0 rgba(255,255,255,.055);
-  transition: transform .55s cubic-bezier(.16,1,.3,1), border-color .55s cubic-bezier(.16,1,.3,1), background .55s cubic-bezier(.16,1,.3,1);
+  transition: transform 160ms cubic-bezier(.23,1,.32,1), border-color 200ms ease, box-shadow 200ms ease;
 }
 .about-stat::before {
   content: '';
@@ -1711,9 +2122,11 @@ body.light-theme #page-settings .theme-btn.active {
   background: radial-gradient(circle, rgba(125,145,88,.26), transparent 70%);
   opacity: .65;
 }
-.about-stat:hover {
-  transform: translateY(-3px);
-  border-color: rgba(180,205,132,.22);
+@media (hover: hover) and (pointer: fine) {
+  .about-stat:hover {
+    transform: translateY(-3px);
+    border-color: rgba(180,205,132,.22);
+  }
 }
 .about-stat-num { font-family: 'Barlow', system-ui, sans-serif; font-size: 34px; font-weight: 900; color: var(--gold); letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
 .about-stat-label { font-size: 10px; color: var(--text2); margin-top: 8px; text-transform: uppercase; letter-spacing: .72px; line-height: 1.45; }
@@ -1727,7 +2140,7 @@ body.light-theme #page-settings .theme-btn.active {
   border-radius: 22px;
   padding: 22px;
   box-shadow: 0 20px 48px rgba(3,8,3,.24), inset 0 1px 0 rgba(255,255,255,.045);
-  transition: transform .55s cubic-bezier(.16,1,.3,1), border-color .55s cubic-bezier(.16,1,.3,1), background .55s cubic-bezier(.16,1,.3,1);
+  transition: transform 160ms cubic-bezier(.23,1,.32,1), border-color 200ms ease, background 200ms ease;
 }
 .team-card::before {
   content: '';
@@ -1737,7 +2150,9 @@ body.light-theme #page-settings .theme-btn.active {
   border: 1px solid rgba(255,255,255,.024);
   pointer-events: none;
 }
-.team-card:hover { background: linear-gradient(150deg, rgba(27,39,19,.98), rgba(14,22,10,.98)); border-color: rgba(180,205,132,.19); transform: translateY(-4px); }
+@media (hover: hover) and (pointer: fine) {
+  .team-card:hover { background: linear-gradient(150deg, rgba(27,39,19,.98), rgba(14,22,10,.98)); border-color: rgba(180,205,132,.19); transform: translateY(-4px); }
+}
 .team-av {
   width: 52px; height: 52px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -1759,12 +2174,14 @@ body.light-theme #page-settings .theme-btn.active {
   font-size: 12px; font-weight: 600;
   padding: 7px 14px; border-radius: var(--r-pill);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
-  transition: transform .42s cubic-bezier(.16,1,.3,1), color .42s cubic-bezier(.16,1,.3,1), border-color .42s cubic-bezier(.16,1,.3,1);
+  transition: transform 160ms cubic-bezier(.23,1,.32,1), color 160ms ease, border-color 160ms ease;
 }
-#page-about .tech-tag:hover {
-  color: var(--text);
-  border-color: rgba(180,205,132,.16);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  #page-about .tech-tag:hover {
+    color: var(--text);
+    border-color: rgba(180,205,132,.16);
+    transform: translateY(-2px);
+  }
 }
 
 #page-about .pb-eyebrow {
@@ -1772,24 +2189,54 @@ body.light-theme #page-settings .theme-btn.active {
   z-index: 1;
 }
 
-#page-about .about-hero,
+/* ── About page entry animations (Emil design engineering) ── */
+
+/* Hero: slight scale + lift — feels expansive as it enters */
+#page-about .about-hero {
+  animation: aboutHeroRise .85s cubic-bezier(.16,1,.3,1) both;
+}
+
+/* All other blocks: rise from scale(0.98) — nothing appears from nothing */
 #page-about .about-research,
 #page-about .team-card,
 #page-about .about-stat,
 #page-about .about-qr-card,
 #page-about .tech-tag {
-  animation: aboutRise .9s cubic-bezier(.16,1,.3,1) both;
+  animation: aboutRise .8s cubic-bezier(.16,1,.3,1) both;
 }
-#page-about .about-research { animation-delay: .05s; }
-#page-about .about-side { animation: aboutRise .95s cubic-bezier(.16,1,.3,1) .09s both; }
-#page-about .team-card:nth-child(1) { animation-delay: .10s; }
-#page-about .team-card:nth-child(2) { animation-delay: .16s; }
-#page-about .team-card:nth-child(3) { animation-delay: .22s; }
-#page-about .tech-tag:nth-child(odd) { animation-delay: .08s; }
 
+/* Main column — cascade top to bottom */
+#page-about .about-research        { animation-delay: .06s; }
+#page-about .team-card:nth-child(1) { animation-delay: .14s; }
+#page-about .team-card:nth-child(2) { animation-delay: .20s; }
+#page-about .team-card:nth-child(3) { animation-delay: .26s; }
+#page-about .team-card:nth-child(n+4){ animation-delay: .30s; }
+
+/* Tech tags — tight 35ms stagger, feels like a ripple */
+#page-about .tech-tag:nth-child(1)  { animation-delay: .30s; }
+#page-about .tech-tag:nth-child(2)  { animation-delay: .335s; }
+#page-about .tech-tag:nth-child(3)  { animation-delay: .37s; }
+#page-about .tech-tag:nth-child(4)  { animation-delay: .405s; }
+#page-about .tech-tag:nth-child(5)  { animation-delay: .44s; }
+#page-about .tech-tag:nth-child(6)  { animation-delay: .475s; }
+#page-about .tech-tag:nth-child(7)  { animation-delay: .51s; }
+#page-about .tech-tag:nth-child(8)  { animation-delay: .545s; }
+#page-about .tech-tag:nth-child(n+9){ animation-delay: .58s; }
+
+/* Right column stats — stagger independently, no parent animation */
+#page-about .about-stat:nth-child(1) { animation-delay: .08s; }
+#page-about .about-stat:nth-child(2) { animation-delay: .14s; }
+#page-about .about-stat:nth-child(3) { animation-delay: .20s; }
+#page-about .about-stat:nth-child(4) { animation-delay: .26s; }
+#page-about .about-qr-card           { animation-delay: .30s; }
+
+@keyframes aboutHeroRise {
+  from { opacity: 0; transform: translateY(12px) scale(0.986); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
 @keyframes aboutRise {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 }
 
@@ -2869,15 +3316,21 @@ body.light-theme .about-section-title {
 #page-about .tech-tag { border-radius: 999px !important; }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Keep opacity fades — they aid comprehension. Remove all motion/transform. */
   #page-about .about-hero,
   #page-about .about-research,
   #page-about .team-card,
   #page-about .about-stat,
   #page-about .about-qr-card,
+  #page-about .about-side,
   #page-about .tech-tag {
-    animation: none !important;
+    animation: aboutFadeOnly .25s ease both !important;
     transition: none !important;
   }
+}
+@keyframes aboutFadeOnly {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ── Profile page — finishing polish ── */
@@ -2907,6 +3360,450 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
 /* ── Type strip pills stay pill (filter chips, not CTAs) ── */
 /* .type-pill keeps --r-pill intentionally */
+
+/* ============================================================
+   PROFILE PAGE — IMPECCABLE REDESIGN
+   All rules scoped to #page-profile to avoid bleeding.
+============================================================ */
+
+/* ── Page wrapper: atmospheric backdrop ── */
+#page-profile .profile-page {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+#page-profile .profile-page::before {
+  content: '';
+  position: absolute;
+  inset: -60px 0 auto 0;
+  height: 560px;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(125,145,88,.18), transparent 40%),
+    linear-gradient(180deg, rgba(13,24,10,.76), rgba(8,12,7,0));
+}
+
+/* ── Cover: richer layered cinematic ── */
+#page-profile .profile-cover {
+  height: 260px !important;
+  background:
+    radial-gradient(ellipse 62% 130% at 12% 58%, rgba(125,145,88,.34) 0%, transparent 54%),
+    radial-gradient(ellipse 40% 78% at 84% 20%, rgba(125,145,88,.13) 0%, transparent 52%),
+    radial-gradient(ellipse 55% 85% at 50% 115%, rgba(5,10,4,.92) 0%, transparent 44%),
+    linear-gradient(158deg, #060F04 0%, #0D1A08 44%, #081206 100%) !important;
+}
+
+/* ── Avatar: double-ring premium treatment ── */
+#page-profile .prof-av {
+  width: 108px !important;
+  height: 108px !important;
+  border-radius: 24px !important;
+  border: 3px solid var(--bg) !important;
+  box-shadow:
+    0 0 0 2px rgba(180,205,132,.38),
+    0 0 0 5px rgba(180,205,132,.09),
+    0 14px 36px rgba(0,0,0,.62) !important;
+  font-size: 38px !important;
+}
+
+/* ── Profile body: generous horizontal breathing ── */
+#page-profile .profile-body {
+  padding: 0 32px 0 !important;
+}
+
+/* ── Profile top: pull overlap a touch deeper ── */
+#page-profile .profile-top {
+  margin-top: -54px !important;
+  margin-bottom: 28px !important;
+}
+
+/* ── Stats container: subtle elevated card ── */
+#page-profile .prof-stats {
+  background: linear-gradient(150deg, rgba(22,31,17,.90), rgba(13,20,10,.96)) !important;
+  border: 1px solid rgba(180,205,132,.11) !important;
+  border-radius: 18px !important;
+  padding: 16px 22px !important;
+  gap: 0 !important;
+  margin-top: 60px !important;
+  align-self: flex-start !important;
+  box-shadow:
+    0 14px 38px rgba(3,8,3,.22),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+#page-profile .prof-stats > div {
+  padding: 0 18px;
+}
+#page-profile .prof-stats > div:first-child { padding-left: 0; }
+#page-profile .prof-stats > div:last-child  { padding-right: 0; }
+#page-profile .prof-stats > div + div {
+  border-left: 1px solid rgba(180,205,132,.12) !important;
+  padding-left: 18px !important;
+}
+#page-profile .pstat-v {
+  font-size: 26px !important;
+  letter-spacing: -.4px !important;
+}
+#page-profile .pstat-l {
+  font-size: 10px !important;
+  letter-spacing: .9px !important;
+  color: var(--text3) !important;
+}
+
+/* ── Bio + handle: tighter but readable ── */
+#page-profile .prof-handle {
+  font-size: 12px !important;
+  letter-spacing: .25px !important;
+  opacity: .70;
+}
+#page-profile .prof-bio {
+  font-size: 13.5px !important;
+  line-height: 1.72 !important;
+  max-width: 480px !important;
+  text-wrap: pretty !important;
+}
+
+/* ── Skill pills: crisp surface ── */
+#page-profile .skill-pill {
+  background: rgba(20,28,15,.88) !important;
+  border: 1px solid rgba(180,205,132,.15) !important;
+  color: var(--text2) !important;
+  font-size: 10.5px !important;
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
+  letter-spacing: .25px !important;
+}
+
+/* ── Profile links: refined card buttons ── */
+#page-profile .prof-link {
+  background: linear-gradient(150deg, rgba(22,31,17,.88), rgba(13,20,10,.94)) !important;
+  border: 1px solid rgba(180,205,132,.13) !important;
+  color: var(--text2) !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+  padding: 7px 14px !important;
+  transition: all .22s cubic-bezier(.16,1,.3,1) !important;
+}
+#page-profile .prof-link:hover {
+  background: linear-gradient(150deg, rgba(30,42,22,.92), rgba(20,30,14,.98)) !important;
+  border-color: rgba(180,205,132,.28) !important;
+  color: var(--text) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Profile tabs: editorial pill row ── */
+#page-profile .profile-tabs {
+  border-bottom: 1px solid rgba(180,205,132,.10) !important;
+  margin-bottom: 28px !important;
+  gap: 2px !important;
+}
+#page-profile .ptab {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  padding: 10px 16px !important;
+  border-radius: 6px 6px 0 0 !important;
+  letter-spacing: .2px !important;
+  transition: all .18s cubic-bezier(.16,1,.3,1) !important;
+}
+#page-profile .ptab.active {
+  color: var(--text) !important;
+  background: rgba(125,145,88,.11) !important;
+  border-bottom-color: var(--gold) !important;
+}
+#page-profile .ptab:hover:not(.active) {
+  color: var(--text) !important;
+  background: rgba(255,255,255,.04) !important;
+}
+
+/* ── Section rows: elevated spacing + refined header ── */
+#page-profile .prof-section-row {
+  margin-bottom: 36px !important;
+}
+#page-profile .prof-section-row .row-head-edit {
+  border-bottom: 1px solid rgba(180,205,132,.10) !important;
+  margin-bottom: 16px !important;
+  padding-bottom: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+#page-profile .prof-section-row .row-title-edit {
+  font-family: 'Barlow', system-ui, sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  color: var(--text2) !important;
+  flex: 1 !important;
+}
+
+/* ── Section new-btn: sage outline CTA ── */
+#page-profile .prof-section-new-btn {
+  background: linear-gradient(135deg, rgba(125,145,88,.18), rgba(125,145,88,.10)) !important;
+  border: 1px solid rgba(180,205,132,.24) !important;
+  color: var(--gold2) !important;
+  border-radius: 8px !important;
+  padding: 5px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  transition: all .18s cubic-bezier(.16,1,.3,1) !important;
+}
+#page-profile .prof-section-new-btn:hover {
+  background: linear-gradient(135deg, rgba(125,145,88,.28), rgba(125,145,88,.18)) !important;
+  border-color: rgba(180,205,132,.40) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Review cards: layered premium surface ── */
+#page-profile .prof-review-card {
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98)) !important;
+  border: 1px solid rgba(180,205,132,.10) !important;
+  border-radius: 16px !important;
+  padding: 18px 20px !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 10px 30px rgba(3,8,3,.20),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+  transition: border-color .22s, box-shadow .22s !important;
+}
+#page-profile .prof-review-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(255,255,255,.03) 0%, transparent 55%);
+  pointer-events: none;
+}
+#page-profile .prof-review-card:hover {
+  border-color: rgba(180,205,132,.20) !important;
+  box-shadow:
+    0 16px 44px rgba(3,8,3,.28),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+#page-profile .prof-review-title {
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  color: var(--gold) !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  margin-bottom: 9px !important;
+}
+#page-profile .prof-review-text {
+  font-size: 13px !important;
+  line-height: 1.70 !important;
+  text-wrap: pretty !important;
+}
+#page-profile .prof-review-meta {
+  font-size: 10px !important;
+  color: var(--text3) !important;
+  margin-top: 10px !important;
+  letter-spacing: .3px !important;
+}
+
+/* ── Profile grid cards (pgcard): premium surface ── */
+#page-profile .pgcard {
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98)) !important;
+  border: 1px solid rgba(180,205,132,.10) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 8px 24px rgba(3,8,3,.18),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+  transition: all .22s cubic-bezier(.16,1,.3,1) !important;
+}
+#page-profile .pgcard:hover {
+  background: linear-gradient(150deg, rgba(28,40,22,.96), rgba(18,28,14,.98)) !important;
+  border-color: rgba(180,205,132,.22) !important;
+  box-shadow:
+    0 16px 42px rgba(3,8,3,.28),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+  transform: translateY(-3px) !important;
+}
+#page-profile .pgcard-thumb {
+  height: 126px !important;
+  border-radius: 10px !important;
+}
+#page-profile .pgcard-title {
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.1px !important;
+}
+
+/* ── Guest CTA card: elevated container ── */
+#page-profile #prof-guest-cta {
+  background: linear-gradient(150deg, rgba(18,26,13,.90), rgba(11,17,9,.96)) !important;
+  border: 1px solid rgba(180,205,132,.09) !important;
+  border-radius: 24px !important;
+  padding: 56px 24px !important;
+  margin-top: 8px !important;
+  box-shadow:
+    0 18px 52px rgba(3,8,3,.20),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+/* ── Entrance animations ── */
+@keyframes profileRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#page-profile.active .profile-cover {
+  animation: profileRise .84s cubic-bezier(.16,1,.3,1) both;
+}
+#page-profile.active .profile-top {
+  animation: profileRise .88s cubic-bezier(.16,1,.3,1) .07s both;
+}
+#page-profile.active .profile-tabs {
+  animation: profileRise .80s cubic-bezier(.16,1,.3,1) .15s both;
+}
+
+/* ── Light theme overrides ── */
+body.light-theme #page-profile .profile-cover {
+  background:
+    radial-gradient(ellipse 62% 130% at 12% 58%, rgba(94,122,64,.22) 0%, transparent 54%),
+    radial-gradient(ellipse 40% 78% at 84% 20%, rgba(94,122,64,.10) 0%, transparent 52%),
+    linear-gradient(158deg, #C2D4A8 0%, #B4C898 44%, #AABF8C 100%) !important;
+}
+body.light-theme #page-profile .prof-av {
+  box-shadow:
+    0 0 0 2px rgba(62,84,40,.30),
+    0 0 0 5px rgba(62,84,40,.07),
+    0 12px 30px rgba(80,100,50,.24) !important;
+}
+body.light-theme #page-profile .prof-stats {
+  background: linear-gradient(150deg, rgba(234,226,204,.96), rgba(221,211,184,.98)) !important;
+  border-color: rgba(62,84,40,.12) !important;
+  box-shadow:
+    0 12px 32px rgba(70,82,44,.12),
+    inset 0 1px 0 rgba(255,255,255,.44) !important;
+}
+body.light-theme #page-profile .prof-stats > div + div {
+  border-left-color: rgba(62,84,40,.14) !important;
+}
+body.light-theme #page-profile .skill-pill {
+  background: rgba(234,226,204,.90) !important;
+  border-color: rgba(62,84,40,.16) !important;
+  color: rgba(55,68,36,.78) !important;
+}
+body.light-theme #page-profile .prof-link {
+  background: linear-gradient(150deg, rgba(234,226,204,.90), rgba(221,211,184,.95)) !important;
+  border-color: rgba(62,84,40,.14) !important;
+  color: rgba(55,68,36,.72) !important;
+}
+body.light-theme #page-profile .prof-link:hover {
+  background: linear-gradient(150deg, rgba(216,208,186,.96), rgba(204,194,168,.98)) !important;
+  border-color: rgba(62,84,40,.26) !important;
+  color: rgba(35,48,22,.90) !important;
+}
+body.light-theme #page-profile .profile-tabs {
+  border-bottom-color: rgba(62,84,40,.12) !important;
+}
+body.light-theme #page-profile .ptab.active {
+  background: rgba(62,84,40,.08) !important;
+  border-bottom-color: rgba(62,84,40,.65) !important;
+}
+body.light-theme #page-profile .ptab:hover:not(.active) {
+  background: rgba(0,0,0,.04) !important;
+}
+body.light-theme #page-profile .prof-section-row .row-head-edit {
+  border-bottom-color: rgba(62,84,40,.10) !important;
+}
+body.light-theme #page-profile .prof-section-new-btn {
+  background: linear-gradient(135deg, rgba(62,84,40,.14), rgba(62,84,40,.08)) !important;
+  border-color: rgba(62,84,40,.22) !important;
+  color: rgba(62,84,40,.85) !important;
+}
+body.light-theme #page-profile .prof-section-new-btn:hover {
+  background: linear-gradient(135deg, rgba(62,84,40,.22), rgba(62,84,40,.14)) !important;
+  border-color: rgba(62,84,40,.38) !important;
+}
+body.light-theme #page-profile .prof-review-card {
+  background: linear-gradient(150deg, rgba(234,226,204,.96), rgba(221,211,184,.98)) !important;
+  border-color: rgba(62,84,40,.11) !important;
+  box-shadow:
+    0 8px 24px rgba(70,82,44,.10),
+    inset 0 1px 0 rgba(255,255,255,.50) !important;
+}
+body.light-theme #page-profile .prof-review-card::before {
+  background: linear-gradient(135deg, rgba(255,255,255,.30) 0%, transparent 55%);
+}
+body.light-theme #page-profile .prof-review-title {
+  color: rgba(62,84,40,.88) !important;
+}
+body.light-theme #page-profile .pgcard {
+  background: linear-gradient(150deg, rgba(234,226,204,.95), rgba(221,211,184,.97)) !important;
+  border-color: rgba(62,84,40,.11) !important;
+  box-shadow:
+    0 6px 18px rgba(70,82,44,.10),
+    inset 0 1px 0 rgba(255,255,255,.50) !important;
+}
+body.light-theme #page-profile .pgcard:hover {
+  background: linear-gradient(150deg, rgba(216,208,186,.96), rgba(204,194,168,.98)) !important;
+  border-color: rgba(62,84,40,.22) !important;
+  box-shadow:
+    0 12px 32px rgba(70,82,44,.14),
+    inset 0 1px 0 rgba(255,255,255,.50) !important;
+}
+body.light-theme #page-profile #prof-guest-cta {
+  background: linear-gradient(150deg, rgba(234,226,204,.90), rgba(221,211,184,.95)) !important;
+  border-color: rgba(62,84,40,.09) !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #page-profile .profile-top {
+    flex-wrap: wrap;
+  }
+  #page-profile .prof-stats {
+    margin-top: 0 !important;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 600px) {
+  #page-profile .profile-cover {
+    height: 200px !important;
+  }
+  #page-profile .profile-body {
+    padding: 0 16px 0 !important;
+  }
+  #page-profile .prof-av {
+    width: 84px !important;
+    height: 84px !important;
+    font-size: 30px !important;
+    border-radius: 18px !important;
+  }
+  #page-profile .profile-top {
+    margin-top: -40px !important;
+  }
+  #page-profile .prof-stats {
+    padding: 12px 16px !important;
+  }
+  #page-profile .prof-stats > div {
+    padding: 0 14px;
+  }
+  #page-profile .pstat-v {
+    font-size: 22px !important;
+  }
+  #page-profile .profile-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  #page-profile .profile-tabs::-webkit-scrollbar { display: none; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #page-profile .profile-cover,
+  #page-profile .profile-top,
+  #page-profile .profile-tabs,
+  #page-profile .prof-link,
+  #page-profile .prof-section-new-btn,
+  #page-profile .pgcard,
+  #page-profile .prof-review-card {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 
 /* ============================================================
    HOME — IMPECCABLE REDESIGN
@@ -3350,19 +4247,12 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     <div class="watch-main">
       <button class="back-btn" onclick="goBack()" data-i18n="back_btn"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M10 6 L4 12 L10 18 V13 H20 V11 H10 Z" fill="#7D9158" stroke="none"/><path d="M10 6 L4 12 L10 18"/><path d="M4.5 12 H20"/></g></svg> Назад</button>
       <div class="player-wrap" id="player-wrap">
-        <video
-          id="aya-cloudinary-player"
-          class="cloudinary-player-video"
-          controls
-          playsinline
-          preload="metadata"
-          aria-label="AYA Cloudinary video player">
-        </video>
-        <!-- Placeholder shown when no video source is available (Cloudinary or Bunny) -->
+        <!-- Bunny Stream iframe is injected dynamically by openWatch() -->
+        <!-- Placeholder shown when no video source is available -->
         <div id="player-placeholder">
           <div class="player-bg"></div>
           <div class="player-center">
-            <button class="play-big" aria-label="Перейти к видеоплееру" onclick="document.getElementById('aya-cloudinary-player').focus()"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></button>
+            <button class="play-big" aria-label="Перейти к видеоплееру"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></button>
             <p class="player-unavailable" id="player-unavailable" style="display:none">Видео временно недоступно.</p>
           </div>
           <div class="player-title-area">
@@ -3928,7 +4818,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
 </main>
 
-<!-- Cloudinary libs loaded on-demand when Watch page opens — not on initial load -->
+<!-- AYA main scripts -->
 <script>
   /* ── Module-level constants ─────────────────────────────────────────────────
      Centralised here so they are never duplicated across call-sites.
@@ -4770,12 +5660,6 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
             await deleteContentRecordFromFirebase(content.id);
             removeContentFromLocalCache(content.id);
 
-            // Attempt Cloudinary asset cleanup (requires server-side credentials for full deletion)
-            deleteFromCloudinary(
-              content.cloudinary_public_id,
-              content.cloudinary_cloud || DEFAULT_CLOUDINARY_CLOUD
-            );
-
             // If currently watching this content, navigate back
             if (_currentContent && _currentContent.id === content.id) goBack();
 
@@ -5215,11 +6099,14 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       description: c.description || c.desc || '',
       creatorId: c.creatorId || c.uploaderId || null,
       creatorName: c.creatorName || c.author || '',
-      video_public_id: c.video_public_id || c.cloudinary_public_id || getCloudinaryPublicId(c.video_url),
+      media_provider: c.media_provider || (c.bunny_video_id ? 'bunny' : null),
+      bunny_video_id: c.bunny_video_id || null,
+      bunny_library_id: c.bunny_library_id || null,
+      video_embed_url: c.video_embed_url || null,
+      video_playback_url: c.video_playback_url || null,
       video_url: c.video_url || null,
-      poster_public_id: c.poster_public_id || getCloudinaryPublicId(c.poster_url || c.thumbnail),
       poster_url: c.poster_url || c.thumbnail || null,
-      cloudinary_folder: c.cloudinary_folder || 'aya',
+      thumbnail_url: c.thumbnail_url || c.poster_url || c.thumbnail || null,
       status: c.status || 'approved',
       likesCount: c.likesCount || 0,
       commentsCount: c.commentsCount || 0,
@@ -5244,12 +6131,12 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     const hiddenStatuses = new Set(['pending', 'draft', 'rejected', 'declined', 'deleted', 'removed', 'hidden', 'blocked', 'banned']);
     if (hiddenStatuses.has(status)) return false;
     const hasMedia = Boolean(
+      c.video_embed_url ||
+      c.bunny_video_id ||
       c.video_url ||
-      c.video_public_id ||
-      c.cloudinary_public_id ||
       c.poster_url ||
-      c.thumbnail ||
-      c.poster_public_id
+      c.thumbnail_url ||
+      c.thumbnail
     );
     return hasMedia;
   }
@@ -5362,7 +6249,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     return `${safePrefix}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
   }
 
-  /* Save content metadata to Firebase. Cloudinary stores media files only. */
+  /* Save content metadata to Firebase. Bunny.net stores media files. */
   async function syncContentToServer(content) {
     try {
       const record = normalizeContentRecord(content);
@@ -5423,133 +6310,28 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
   }
 
   const AYA_FEATURED_VIDEO = {
-    id: 'aya-cloudinary-featured',
+    id: 'aya-featured',
     title: 'The Final Take',
     author: '@aya',
     desc: 'Join us as we kick off our documentary about the group and its challenges.',
     cat: 'ct-film',
     catLabel: 'film',
     year: '2026',
-    tags: ['AYA', 'Cloudinary', 'independent-film'],
+    tags: ['AYA', 'independent-film'],
     crew: [{ tag: '@aya', role: 'Creator' }],
     cast: [],
-    cloudinary_cloud: 'dmpax008r',
-    cloudinary_public_id: 'g09ovdoru4av2je3dvqx'
+    media_provider: 'bunny',
+    video_embed_url: ''
   };
 
-  const DEFAULT_CLOUDINARY_CLOUD = 'dmpax008r';
-  const AYA_PLAYER_PROFILE = 'AYA_player';
-  let ayaPlayer = null;
-  let ayaPlayerPromise = null;
-  let ayaPlayerCloudName = '';
   let watchLoadToken = 0;
 
-  function getCloudinaryPublicIdFromUrl(url) {
-    if (!url) return '';
-    try {
-      const parsed = new URL(url);
-      const marker = '/video/upload/';
-      const markerIndex = parsed.pathname.indexOf(marker);
-      if (markerIndex === -1) return '';
-      const tail = parsed.pathname.slice(markerIndex + marker.length);
-      const parts = tail.split('/').filter(Boolean);
-      while (parts.length && (/^v\d+$/.test(parts[0]) || parts[0].includes(','))) parts.shift();
-      return parts.join('/').replace(/\.[^.]+$/, '');
-    } catch (e) {
-      console.warn('Could not extract Cloudinary public id:', e);
-      return '';
-    }
-  }
-
-  function getCloudinaryPublicId(url) {
-    return getCloudinaryPublicIdFromUrl(url);
-  }
-
-  function getCloudinaryVideoSource(content) {
-    return content.cloudinary_public_id || content.video_public_id || getCloudinaryPublicIdFromUrl(content.video_url);
-  }
-
-  // ── Lazy-load Cloudinary libs on first Watch open (not on page load) ──────
-  let _cldLibsLoaded = false;
-  let _cldLibsPromise = null;
-  function loadCloudinaryLibs() {
-    if (_cldLibsLoaded) return Promise.resolve();
-    if (_cldLibsPromise) return _cldLibsPromise;
-    _cldLibsPromise = new Promise((resolve, reject) => {
-      // CSS — non-blocking, inject once
-      if (!document.querySelector('link[href*="cld-video-player.min.css"][media="all"]')) {
-        const css = document.createElement('link');
-        css.rel = 'stylesheet';
-        css.href = 'https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.css';
-        document.head.appendChild(css);
-      }
-      // Core JS → then Player JS (sequential dependency)
-      const core = document.createElement('script');
-      core.src = 'https://unpkg.com/cloudinary-core/cloudinary-core-shrinkwrap.min.js';
-      core.onload = () => {
-        const player = document.createElement('script');
-        player.src = 'https://unpkg.com/cloudinary-video-player/dist/cld-video-player.min.js';
-        player.onload = () => { _cldLibsLoaded = true; resolve(); };
-        player.onerror = reject;
-        document.head.appendChild(player);
-      };
-      core.onerror = reject;
-      document.head.appendChild(core);
-    });
-    return _cldLibsPromise;
-  }
-
-  function prepareAyaCloudinaryVideoElement() {
-    const current = document.getElementById('aya-cloudinary-player');
-    const wrap = document.getElementById('player-wrap');
-    if (!current && !wrap) return null;
-    const fresh = document.createElement('video');
-    fresh.id = 'aya-cloudinary-player';
-    fresh.className = 'cloudinary-player-video cld-video-player cld-fluid';
-    fresh.controls = true;
-    fresh.playsInline = true;
-    fresh.preload = 'metadata';
-    fresh.setAttribute('aria-label', current ? (current.getAttribute('aria-label') || 'AYA Cloudinary video player') : 'AYA Cloudinary video player');
-    if (current) {
-      current.replaceWith(fresh);
-    } else {
-      wrap.insertBefore(fresh, document.getElementById('player-placeholder'));
-    }
-    return fresh;
-  }
-
-  async function ensureAyaCloudinaryPlayer(cloudName = DEFAULT_CLOUDINARY_CLOUD) {
-    // Load Cloudinary libs on first use — skipped entirely on Home/Profile page load
-    await loadCloudinaryLibs();
-    if (typeof cloudinary === 'undefined' || typeof cloudinary.player !== 'function') {
-      console.warn('Cloudinary Video Player library is not available.');
-      return null;
-    }
-    if (ayaPlayer && typeof ayaPlayer.dispose === 'function') {
-      try { ayaPlayer.dispose(); } catch (e) { console.warn('Could not dispose previous Cloudinary player:', e); }
-    }
-    ayaPlayer = null;
-    ayaPlayerPromise = null;
-    ayaPlayerCloudName = cloudName;
-    prepareAyaCloudinaryVideoElement();
-    ayaPlayerPromise = cloudinary.player('aya-cloudinary-player', {
-      cloudName,
-      profile: AYA_PLAYER_PROFILE
-    });
-    ayaPlayer = await ayaPlayerPromise;
-    return ayaPlayer;
-  }
-
-  function resetAyaCloudinaryPlayer() {
+  function resetPlayerState() {
     const wrap = document.getElementById('player-wrap');
     if (wrap) {
       wrap.classList.remove('has-video');
-      // Remove any Bunny iframe injected by the previous watch session
       wrap.querySelectorAll('.bunny-player-iframe').forEach(el => el.remove());
     }
-    if (!ayaPlayer) return;
-    try { ayaPlayer.pause(); } catch {}
-    try { ayaPlayer.source(''); } catch {}
   }
 
   /* ---- Open watch page with optional content object ---- */
@@ -5559,12 +6341,11 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     document.getElementById('page-watch').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    let cloudinaryVideo = document.getElementById('aya-cloudinary-player');
     const playerWrap = document.getElementById('player-wrap');
     const placeholder = document.getElementById('player-placeholder');
     const unavailableMessage = document.getElementById('player-unavailable');
     // Reset player state
-    resetAyaCloudinaryPlayer();
+    resetPlayerState();
     if (playerWrap) playerWrap.classList.remove('has-video');
     placeholder.style.display = '';
     if (unavailableMessage) unavailableMessage.style.display = 'none';
@@ -5652,50 +6433,22 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       });
     }
 
-    // ── Bunny Stream player branch ────────────────────────────────────────
-    if (content.media_provider === 'bunny' && content.video_embed_url) {
+    // ── Bunny Stream player ───────────────────────────────────────────────
+    if (content.video_embed_url) {
       const iframe = document.createElement('iframe');
       iframe.className = 'bunny-player-iframe';
       iframe.src = content.video_embed_url + '?autoplay=false&responsive=true&preload=true';
       iframe.allow = 'accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture';
       iframe.allowFullscreen = true;
-      iframe.setAttribute('aria-label', `${content.title || 'AYA'} — Bunny video player`);
+      iframe.setAttribute('aria-label', `${content.title || 'AYA'} — AYA video player`);
       playerWrap.appendChild(iframe);
       playerWrap.classList.add('has-video');
       placeholder.style.display = 'none';
       if (loadToken !== watchLoadToken) return;
     } else {
-    // ── Cloudinary player branch (legacy / existing content) ─────────────
-    const cloudinaryPublicId = getCloudinaryVideoSource(content);
-    const cloudinaryCloud = content.cloudinary_cloud || DEFAULT_CLOUDINARY_CLOUD;
-    let player = null;
-    try {
-      player = await ensureAyaCloudinaryPlayer(cloudinaryCloud);
-    } catch (e) {
-      console.warn('Could not initialize AYA Cloudinary player:', e);
-    }
-    if (loadToken !== watchLoadToken) return;
-    if (player && cloudinaryPublicId) {
-      cloudinaryVideo = document.getElementById('aya-cloudinary-player');
-      cloudinaryVideo.setAttribute('aria-label', `${content.title || 'AYA'} — Cloudinary video player`);
-      player.source(cloudinaryPublicId);
-      if (playerWrap) playerWrap.classList.add('has-video');
-      placeholder.style.display = 'none';
-      const focusPlayer = function() {
-        cloudinaryVideo.focus();
-      };
-      const playPlayer = function() {
-        try { player.play(); }
-        catch (e) { focusPlayer(); }
-      };
-      placeholder.querySelector('.play-big').onclick = focusPlayer;
-    } else {
+      // No video available
       if (unavailableMessage) unavailableMessage.style.display = '';
-      placeholder.querySelector('.play-big').onclick = function() {
-        cloudinaryVideo.focus();
-      };
     }
-    } // end Cloudinary branch
 
     // Show delete button if uploader (has Firebase token AND owns the content) OR admin
     const deleteBtn = document.getElementById('watch-delete-btn');
@@ -5710,26 +6463,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     syncWatchLikeStateFromFirebase(content);
 
     // Re-render comments after all async work completes.
-    // Ensures comments are always visible even if the Cloudinary player SDK
-    // (or any other async operation) interfered with the DOM during init.
     if (_currentContent) renderComments(_currentContent.id);
-  }
-
-  /* Attempt to delete a video asset from Cloudinary.
-     NOTE: Cloudinary's destroy endpoint requires a signed request (API secret).
-     This function sends a best-effort unsigned destroy call; it will succeed only if
-     the upload preset is configured to allow unsigned deletion. For a production
-     deployment, route this through a serverless function that holds the API secret. */
-  async function deleteFromCloudinary(publicId, cloudName) {
-    if (!publicId || !cloudName) return;
-    try {
-      const fd = new FormData();
-      fd.append('public_id', publicId);
-      fd.append('upload_preset', CLOUDINARY_PRESET);
-      await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/destroy`, {
-        method: 'POST', body: fd
-      });
-    } catch(e) { /* Cloudinary deletion requires server-side credentials */ }
   }
 
   async function deleteCurrentContent() {
@@ -5757,12 +6491,6 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
             await deleteContentRecordFromFirebase(_currentContent.id);
             removeContentFromLocalCache(_currentContent.id);
 
-            // Attempt Cloudinary asset cleanup (requires server-side credentials for full deletion)
-            deleteFromCloudinary(
-              _currentContent.cloudinary_public_id,
-              _currentContent.cloudinary_cloud || DEFAULT_CLOUDINARY_CLOUD
-            );
-
             renderUserContent();
             goBack();
           }
@@ -5772,12 +6500,9 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
   }
 
   /* ---- Upload modal ---- */
-  const CLOUDINARY_CLOUD  = DEFAULT_CLOUDINARY_CLOUD;
-  const CLOUDINARY_PRESET = 'aya_videos';
-  let _cloudinaryUrl = null;
-  let _cloudinaryPublicId = null;
-  let _cloudinaryDuration = null;
-  let _thumbnailUrl    = null;
+  let _uploadedVideoData = null; // { bunny_video_id, bunny_library_id, video_embed_url, video_playback_url, duration }
+  let _videoUploaded = false;
+  let _thumbnailUrl = null;
 
   function openUploadModal() {
     const user = getUser();
@@ -5798,9 +6523,8 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     document.getElementById('up-progress-bar').style.width = '0%';
     document.getElementById('up-progress-label').textContent = '0%';
     document.querySelectorAll('.up-cat-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
-    _cloudinaryUrl = null;
-    _cloudinaryPublicId = null;
-    _cloudinaryDuration = null;
+    _uploadedVideoData = null;
+    _videoUploaded = false;
     _thumbnailUrl = null;
     document.getElementById('up-thumb-preview').style.display = 'none';
     document.getElementById('up-thumb-file').value = '';
@@ -5857,9 +6581,8 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
     const file = input.files[0];
     if (!file) return;
 
-    _cloudinaryUrl = null;
-    _cloudinaryPublicId = null;
-    _cloudinaryDuration = null;
+    _uploadedVideoData = null;
+    _videoUploaded = false;
     const nameEl    = document.getElementById('up-file-name');
     const progressEl = document.getElementById('up-progress');
     const barEl     = document.getElementById('up-progress-bar');
@@ -5876,10 +6599,9 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_PRESET);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+    xhr.open('POST', '/api/upload-video');
 
     xhr.upload.onprogress = function(e) {
       if (!e.lengthComputable) return;
@@ -5892,9 +6614,8 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       progressEl.style.display = 'none';
       if (xhr.status === 200) {
         const data = JSON.parse(xhr.responseText);
-        _cloudinaryUrl = data.secure_url;
-        _cloudinaryPublicId = data.public_id || getCloudinaryPublicId(data.secure_url);
-        _cloudinaryDuration = typeof data.duration === 'number' ? data.duration : null;
+        _uploadedVideoData = data;
+        _videoUploaded = true;
         nameEl.textContent = file.name + ' загружен';
         nameEl.style.color = 'var(--teal)';
         dropzone.style.borderColor = 'var(--teal)';
@@ -5930,12 +6651,11 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_PRESET);
 
-    fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: 'POST', body: formData })
+    fetch('/api/upload-image', { method: 'POST', body: formData })
       .then(r => r.json())
       .then(data => {
-        _thumbnailUrl = data.secure_url;
+        _thumbnailUrl = data.thumbnail_url;
         previewEl.src = _thumbnailUrl;
         previewEl.style.display = 'block';
         iconEl.style.display = 'none';
@@ -5955,7 +6675,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
 
     const title = document.getElementById('up-title').value.trim();
     if (!title) { errEl.textContent = t('upload_title_required'); errEl.style.display = 'block'; return; }
-    if (!_cloudinaryUrl) { errEl.textContent = t('upload_wait_video'); errEl.style.display = 'block'; return; }
+    if (!_videoUploaded) { errEl.textContent = t('upload_wait_video'); errEl.style.display = 'block'; return; }
 
     const activeCat = document.querySelector('.up-cat-btn.active');
     const user = getUser();
@@ -5986,12 +6706,15 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       crew,
       cast,
       tags,
-      video_url: _cloudinaryUrl || null,
-      cloudinary_cloud: CLOUDINARY_CLOUD,
-      cloudinary_public_id: _cloudinaryPublicId || getCloudinaryPublicId(_cloudinaryUrl),
-      duration: _cloudinaryDuration,
+      media_provider: 'bunny',
+      bunny_video_id: _uploadedVideoData?.bunny_video_id || null,
+      bunny_library_id: _uploadedVideoData?.bunny_library_id || null,
+      video_embed_url: _uploadedVideoData?.video_embed_url || null,
+      video_playback_url: _uploadedVideoData?.video_playback_url || null,
+      duration: _uploadedVideoData?.duration || null,
       thumbnail: _thumbnailUrl || null,
       poster_url: _thumbnailUrl || null,
+      thumbnail_url: _thumbnailUrl || null,
       uploaderId: user ? user.id : null,
       ts: _uploadNow,
     };
@@ -7157,7 +7880,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       aria_notifications: 'Уведомления',
       aria_profile: 'Профиль',
       aria_content_filter: 'Фильтр по типу контента',
-      aria_video_player: 'AYA видеоплеер Cloudinary',
+      aria_video_player: 'AYA видеоплеер',
       aria_go_player: 'Перейти к видеоплееру',
       aria_comment: 'Написать рецензию или комментарий',
       aria_bottom_nav: 'Навигация',
@@ -7396,7 +8119,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       aria_notifications: 'Хабарламалар',
       aria_profile: 'Профиль',
       aria_content_filter: 'Контент түрі бойынша сүзгі',
-      aria_video_player: 'AYA Cloudinary бейнеплеері',
+      aria_video_player: 'AYA бейнеплеер',
       aria_go_player: 'Бейнеплеерге өту',
       aria_comment: 'Рецензия немесе пікір жазу',
       aria_bottom_nav: 'Навигация',
@@ -7635,7 +8358,7 @@ body.light-theme .ptab.active { background: rgba(94,122,64,.08) !important; }
       aria_notifications: 'Notifications',
       aria_profile: 'Profile',
       aria_content_filter: 'Content type filter',
-      aria_video_player: 'AYA Cloudinary video player',
+      aria_video_player: 'AYA video player',
       aria_go_player: 'Go to video player',
       aria_comment: 'Write a review or comment',
       aria_bottom_nav: 'Navigation',

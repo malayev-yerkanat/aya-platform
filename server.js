@@ -342,6 +342,200 @@ async function handleDeleteContent(req, res, id) {
   return sendJSON(res, 200, { success: true });
 }
 
+// ─── BUNNY UPLOAD HANDLERS ──────────────────────────────────────────────────
+
+const BUNNY_LIBRARY_ID  = process.env.BUNNY_STREAM_LIBRARY_ID;
+const BUNNY_STREAM_KEY  = process.env.BUNNY_STREAM_API_KEY;
+const BUNNY_STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
+const BUNNY_STORAGE_KEY  = process.env.BUNNY_STORAGE_API_KEY;
+const BUNNY_STORAGE_HOST = process.env.BUNNY_STORAGE_REGION || 'storage.bunnycdn.com';
+const BUNNY_CDN_HOST     = process.env.BUNNY_CDN_HOSTNAME;
+
+const UPLOAD_MAX_BYTES = 200 * 1024 * 1024; // 200 MB for video; Vercel has 4.5 MB limit on serverless
+
+/**
+ * Buffer the entire request body (up to maxBytes).
+ * Returns a Buffer; throws if limit exceeded.
+ */
+function readRawBody(req, maxBytes) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let total = 0;
+    req.on('data', chunk => {
+      total += chunk.length;
+      if (total > maxBytes) { req.destroy(); return reject(new Error('Payload too large')); }
+      chunks.push(chunk);
+    });
+    req.on('end',   () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
+/**
+ * Parse a multipart/form-data buffer.
+ * Returns the file binary and its MIME type for the first file field found.
+ */
+function parseMultipartFile(body, boundary) {
+  const boundaryBuf = Buffer.from('--' + boundary);
+  const CRLF        = Buffer.from('\r\n');
+  const doubleCRLF  = Buffer.from('\r\n\r\n');
+
+  let pos = body.indexOf(boundaryBuf);
+  if (pos === -1) return null;
+  pos += boundaryBuf.length + 2; // skip past boundary + CRLF
+
+  // Find headers
+  const headersEnd = body.indexOf(doubleCRLF, pos);
+  if (headersEnd === -1) return null;
+
+  const headerBlock = body.slice(pos, headersEnd).toString('utf8');
+  const mimeMatch   = headerBlock.match(/Content-Type:\s*([^\r\n]+)/i);
+  const nameMatch   = headerBlock.match(/filename="([^"]+)"/i);
+  const mimeType    = mimeMatch ? mimeMatch[1].trim() : 'application/octet-stream';
+  const filename    = nameMatch ? nameMatch[1] : 'upload';
+
+  // File data starts after double CRLF
+  const dataStart = headersEnd + 4;
+
+  // File data ends before the next boundary (which starts with \r\n--)
+  const endMarker    = Buffer.from('\r\n--' + boundary);
+  const dataEnd      = body.indexOf(endMarker, dataStart);
+  if (dataEnd === -1) return null;
+
+  return { data: body.slice(dataStart, dataEnd), mimeType, filename };
+}
+
+/**
+ * Make an HTTPS request, returns { status, body }
+ */
+function httpsRequest(url, options, bodyBuffer) {
+  return new Promise((resolve, reject) => {
+    const https = require('https');
+    const req = https.request(url, options, res => {
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end', () => resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString() }));
+    });
+    req.on('error', reject);
+    if (bodyBuffer) req.write(bodyBuffer);
+    req.end();
+  });
+}
+
+async function handleUploadVideo(req, res) {
+  if (!BUNNY_LIBRARY_ID || !BUNNY_STREAM_KEY) {
+    return sendJSON(res, 503, { error: 'Bunny Stream not configured. Set BUNNY_STREAM_LIBRARY_ID and BUNNY_STREAM_API_KEY.' });
+  }
+
+  const ct = req.headers['content-type'] || '';
+  const boundaryMatch = ct.match(/boundary=([^\s;]+)/);
+  if (!boundaryMatch) return sendJSON(res, 400, { error: 'Missing multipart boundary.' });
+
+  let body;
+  try {
+    body = await readRawBody(req, UPLOAD_MAX_BYTES);
+  } catch (e) {
+    return sendJSON(res, 413, { error: e.message });
+  }
+
+  const parsed = parseMultipartFile(body, boundaryMatch[1]);
+  if (!parsed) return sendJSON(res, 400, { error: 'Could not parse file from multipart body.' });
+
+  // Step 1: Create a Bunny Stream video record → get guid
+  const createRes = await httpsRequest(
+    `https://video.bunnycdn.com/library/${BUNNY_LIBRARY_ID}/videos`,
+    {
+      method: 'POST',
+      headers: {
+        'AccessKey': BUNNY_STREAM_KEY,
+        'Content-Type': 'application/json',
+      },
+    },
+    Buffer.from(JSON.stringify({ title: parsed.filename }))
+  );
+
+  if (createRes.status < 200 || createRes.status >= 300) {
+    return sendJSON(res, 502, { error: `Bunny Stream create failed (${createRes.status}): ${createRes.body}` });
+  }
+
+  let guid;
+  try {
+    guid = JSON.parse(createRes.body).guid;
+  } catch {
+    return sendJSON(res, 502, { error: 'Unexpected Bunny response: ' + createRes.body });
+  }
+
+  // Step 2: Upload the video binary to Bunny Stream
+  const uploadRes = await httpsRequest(
+    `https://video.bunnycdn.com/library/${BUNNY_LIBRARY_ID}/videos/${guid}`,
+    {
+      method: 'PUT',
+      headers: {
+        'AccessKey': BUNNY_STREAM_KEY,
+        'Content-Type': 'application/octet-stream',
+        'Content-Length': parsed.data.length,
+      },
+    },
+    parsed.data
+  );
+
+  if (uploadRes.status < 200 || uploadRes.status >= 300) {
+    return sendJSON(res, 502, { error: `Bunny Stream upload failed (${uploadRes.status}): ${uploadRes.body}` });
+  }
+
+  return sendJSON(res, 200, {
+    bunny_video_id:    guid,
+    bunny_library_id:  BUNNY_LIBRARY_ID,
+    video_embed_url:   `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${guid}`,
+    video_playback_url:`https://iframe.mediadelivery.net/play/${BUNNY_LIBRARY_ID}/${guid}`,
+    duration:          null, // Bunny encodes asynchronously; poll /videos/{guid} if needed
+  });
+}
+
+async function handleUploadImage(req, res) {
+  if (!BUNNY_STORAGE_ZONE || !BUNNY_STORAGE_KEY || !BUNNY_CDN_HOST) {
+    return sendJSON(res, 503, { error: 'Bunny Storage not configured. Set BUNNY_STORAGE_ZONE, BUNNY_STORAGE_API_KEY, and BUNNY_CDN_HOSTNAME.' });
+  }
+
+  const ct = req.headers['content-type'] || '';
+  const boundaryMatch = ct.match(/boundary=([^\s;]+)/);
+  if (!boundaryMatch) return sendJSON(res, 400, { error: 'Missing multipart boundary.' });
+
+  let body;
+  try {
+    body = await readRawBody(req, 10 * 1024 * 1024); // 10 MB limit for images
+  } catch (e) {
+    return sendJSON(res, 413, { error: e.message });
+  }
+
+  const parsed = parseMultipartFile(body, boundaryMatch[1]);
+  if (!parsed) return sendJSON(res, 400, { error: 'Could not parse file from multipart body.' });
+
+  const ext      = (parsed.filename.match(/\.[^.]+$/) || ['.jpg'])[0];
+  const fileName = `thumbnails/${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
+
+  const uploadRes = await httpsRequest(
+    `https://${BUNNY_STORAGE_HOST}/${BUNNY_STORAGE_ZONE}/${fileName}`,
+    {
+      method: 'PUT',
+      headers: {
+        'AccessKey': BUNNY_STORAGE_KEY,
+        'Content-Type': parsed.mimeType,
+        'Content-Length': parsed.data.length,
+      },
+    },
+    parsed.data
+  );
+
+  if (uploadRes.status < 200 || uploadRes.status >= 300) {
+    return sendJSON(res, 502, { error: `Bunny Storage upload failed (${uploadRes.status}): ${uploadRes.body}` });
+  }
+
+  return sendJSON(res, 200, {
+    thumbnail_url: `https://${BUNNY_CDN_HOST}/${fileName}`,
+  });
+}
+
 function handleAsset(req, res, assetPath) {
   if (!fs.existsSync(assetPath)) {
     res.writeHead(404);
@@ -390,6 +584,8 @@ async function router(req, res) {
   if (method === 'POST'   && url === '/api/register') return handleRegister(req, res);
   if (method === 'POST'   && url === '/api/login')    return handleLogin(req, res);
   if (method === 'GET'    && url === '/api/me')        return handleMe(req, res);
+  if (method === 'POST'   && url === '/api/upload-video') return handleUploadVideo(req, res);
+  if (method === 'POST'   && url === '/api/upload-image')  return handleUploadImage(req, res);
   if (method === 'GET'    && url === '/api/content')   return handleGetContent(req, res);
   if (method === 'POST'   && url === '/api/content')   return handlePostContent(req, res);
 
