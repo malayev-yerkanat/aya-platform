@@ -7817,6 +7817,8 @@ body.light-theme #page-watch .rec-card:hover {
   function saveAyaContent(arr) {
     _ayaContentCache = (arr || []).map(normalizeContentRecord);
     updateAboutContentCount();
+    // Keep sessionStorage in sync so newly uploaded content survives navigation within the session
+    try { sessionStorage.setItem(AYA_CONTENT_SESSION_KEY, JSON.stringify(_ayaContentCache)); } catch(e) {}
   }
   function isValidVisibleContent(c) {
     if (!c || typeof c !== 'object') return false;
@@ -8595,13 +8597,20 @@ body.light-theme #page-watch .rec-card:hover {
 
     _uploadedVideoData = null;
     _videoUploaded = false;
-    const nameEl    = document.getElementById('up-file-name');
+    const nameEl     = document.getElementById('up-file-name');
     const progressEl = document.getElementById('up-progress');
-    const barEl     = document.getElementById('up-progress-bar');
-    const labelEl   = document.getElementById('up-progress-label');
-    const dropzone  = document.getElementById('up-dropzone');
+    const barEl      = document.getElementById('up-progress-bar');
+    const labelEl    = document.getElementById('up-progress-label');
+    const dropzone   = document.getElementById('up-dropzone');
 
-    nameEl.textContent = file.name + ' (' + (file.size / MB).toFixed(1) + ' МБ) — загрузка…';
+    function showError(msg) {
+      progressEl.style.display = 'none';
+      nameEl.textContent = msg;
+      nameEl.style.color = '#ff5555';
+      dropzone.style.borderColor = '#ff5555';
+    }
+
+    nameEl.textContent = file.name + ' (' + (file.size / MB).toFixed(1) + ' МБ) — подготовка…';
     nameEl.style.display = 'block';
     nameEl.style.color = 'var(--text2)';
     progressEl.style.display = 'block';
@@ -8609,43 +8618,75 @@ body.light-theme #page-watch .rec-card:hover {
     labelEl.textContent = '0%';
     dropzone.style.borderColor = 'var(--bg5)';
 
-    const formData = new FormData();
-    formData.append('file', file);
+    // ── Phase 1: Create Bunny video record + TUS session (server keeps API key) ──
+    fetch('/api/create-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: file.name, size: file.size }),
+    })
+    .then(r => r.json())
+    .then(session => {
+      if (session.error) throw new Error(session.error);
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/upload-video');
+      nameEl.textContent = file.name + ' (' + (file.size / MB).toFixed(1) + ' МБ) — загрузка…';
 
-    xhr.upload.onprogress = function(e) {
-      if (!e.lengthComputable) return;
-      const pct = Math.round((e.loaded / e.total) * 100);
-      barEl.style.width = pct + '%';
-      labelEl.textContent = pct + '%';
-    };
+      // ── Phase 2: Upload in 4 MB chunks through /api/upload-chunk proxy ──
+      const CHUNK = 4 * 1024 * 1024; // 4 MB — stays within Vercel's body limit
+      const tusUrl = encodeURIComponent(session.tus_location);
 
-    xhr.onload = function() {
-      progressEl.style.display = 'none';
-      if (xhr.status === 200) {
-        const data = JSON.parse(xhr.responseText);
-        _uploadedVideoData = data;
-        _videoUploaded = true;
-        nameEl.textContent = file.name + ' загружен';
-        nameEl.style.color = 'var(--teal)';
-        dropzone.style.borderColor = 'var(--teal)';
-      } else {
-        nameEl.textContent = currentLang === 'en' ? 'Upload failed. Try again.' : currentLang === 'kz' ? 'Жүктеу қатесі. Қайталап көріңіз.' : 'Ошибка загрузки. Попробуйте снова.';
-        nameEl.style.color = '#ff5555';
-        dropzone.style.borderColor = '#ff5555';
+      function sendChunk(offset) {
+        const slice = file.slice(offset, Math.min(offset + CHUNK, file.size));
+        const xhr   = new XMLHttpRequest();
+        xhr.open('POST', `/api/upload-chunk?tus_url=${tusUrl}&offset=${offset}&total=${file.size}`);
+
+        xhr.upload.onprogress = function(e) {
+          if (!e.lengthComputable) return;
+          const overall = Math.min(100, Math.round(((offset + e.loaded) / file.size) * 100));
+          barEl.style.width  = overall + '%';
+          labelEl.textContent = overall + '%';
+        };
+
+        xhr.onload = function() {
+          if (xhr.status !== 200) {
+            const msg = (() => { try { return JSON.parse(xhr.responseText).error; } catch { return ''; } })();
+            return showError(
+              currentLang === 'en' ? 'Upload failed. Try again.' :
+              currentLang === 'kz' ? 'Жүктеу қатесі. Қайталап көріңіз.' :
+              'Ошибка загрузки. Попробуйте снова.' + (msg ? ' (' + msg + ')' : '')
+            );
+          }
+          const resp = JSON.parse(xhr.responseText);
+          if (resp.complete || resp.uploaded >= file.size) {
+            // All chunks delivered — video is processing on Bunny
+            progressEl.style.display = 'none';
+            _uploadedVideoData = {
+              bunny_video_id:    session.guid,
+              bunny_library_id:  session.library_id,
+              video_embed_url:   session.embed_url,
+              video_playback_url: session.playback_url,
+              duration:          null,
+            };
+            _videoUploaded = true;
+            nameEl.textContent = file.name + ' загружен';
+            nameEl.style.color = 'var(--teal)';
+            dropzone.style.borderColor = 'var(--teal)';
+          } else {
+            sendChunk(resp.uploaded); // next chunk
+          }
+        };
+
+        xhr.onerror = function() {
+          showError('Ошибка сети. Проверьте подключение.');
+        };
+
+        xhr.send(slice);
       }
-    };
 
-    xhr.onerror = function() {
-      progressEl.style.display = 'none';
-      nameEl.textContent = 'Ошибка сети. Проверьте подключение.';
-      nameEl.style.color = '#ff5555';
-      dropzone.style.borderColor = '#ff5555';
-    };
-
-    xhr.send(formData);
+      sendChunk(0); // kick off first chunk
+    })
+    .catch(err => {
+      showError('Ошибка: ' + (err.message || 'Не удалось начать загрузку.'));
+    });
   }
 
   function handleThumbnailSelect(input) {

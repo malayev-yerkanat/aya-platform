@@ -414,7 +414,11 @@ function httpsRequest(url, options, bodyBuffer) {
     const req = https.request(url, options, res => {
       const chunks = [];
       res.on('data', c => chunks.push(c));
-      res.on('end', () => resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString() }));
+      res.on('end', () => resolve({
+        status: res.statusCode,
+        body: Buffer.concat(chunks).toString(),
+        headers: res.headers,
+      }));
     });
     req.on('error', reject);
     if (bodyBuffer) req.write(bodyBuffer);
@@ -536,6 +540,144 @@ async function handleUploadImage(req, res) {
   });
 }
 
+/**
+ * Phase 1 of the chunked video upload flow.
+ * Creates a Bunny Stream video record and a TUS resumable-upload session.
+ * Returns the session location URL so the client can proxy chunks through
+ * /api/upload-chunk without ever seeing the Bunny API key.
+ *
+ * Body: { title: string, size: number }
+ */
+async function handleCreateVideo(req, res) {
+  if (!BUNNY_LIBRARY_ID || !BUNNY_STREAM_KEY) {
+    return sendJSON(res, 503, { error: 'Bunny Stream not configured. Set BUNNY_STREAM_LIBRARY_ID and BUNNY_STREAM_API_KEY.' });
+  }
+
+  let title = 'upload';
+  let totalSize = 0;
+  try {
+    const body = await readRawBody(req, 8192);
+    const parsed = JSON.parse(body.toString());
+    title    = String(parsed.title || 'upload');
+    totalSize = parseInt(parsed.size) || 0;
+  } catch { /* use defaults */ }
+
+  // Step 1: Create Bunny video record → get guid
+  const createRes = await httpsRequest(
+    `https://video.bunnycdn.com/library/${BUNNY_LIBRARY_ID}/videos`,
+    {
+      method: 'POST',
+      headers: { 'AccessKey': BUNNY_STREAM_KEY, 'Content-Type': 'application/json' },
+    },
+    Buffer.from(JSON.stringify({ title }))
+  );
+
+  if (createRes.status < 200 || createRes.status >= 300) {
+    return sendJSON(res, 502, { error: `Bunny Stream create failed (${createRes.status}): ${createRes.body}` });
+  }
+
+  let guid;
+  try { guid = JSON.parse(createRes.body).guid; }
+  catch { return sendJSON(res, 502, { error: 'Unexpected Bunny response: ' + createRes.body }); }
+
+  // Step 2: Create TUS resumable-upload session
+  const expireTime   = Math.floor(Date.now() / 1000) + 7200; // 2-hour window
+  const sigStr       = String(BUNNY_LIBRARY_ID) + BUNNY_STREAM_KEY + String(expireTime) + guid;
+  const signature    = crypto.createHash('sha256').update(sigStr).digest('hex');
+  const b64          = s => Buffer.from(String(s)).toString('base64');
+  const uploadMeta   = `filetype ${b64('video/mp4')},title ${b64(title)}`;
+
+  const tusRes = await httpsRequest(
+    'https://video.bunnycdn.com/tusupload',
+    {
+      method: 'POST',
+      headers: {
+        'AuthorizationSignature': signature,
+        'AuthorizationExpire':    String(expireTime),
+        'LibraryId':              String(BUNNY_LIBRARY_ID),
+        'VideoId':                guid,
+        'Tus-Resumable':          '1.0.0',
+        'Upload-Length':          String(totalSize),
+        'Upload-Metadata':        uploadMeta,
+      },
+    }
+  );
+
+  if (tusRes.status !== 201) {
+    return sendJSON(res, 502, { error: `Bunny TUS session failed (${tusRes.status}): ${tusRes.body}` });
+  }
+
+  const tusLocation = tusRes.headers && tusRes.headers['location'];
+  if (!tusLocation) {
+    return sendJSON(res, 502, { error: 'Bunny TUS did not return a Location header.' });
+  }
+
+  return sendJSON(res, 200, {
+    guid,
+    library_id:   BUNNY_LIBRARY_ID,
+    tus_location: tusLocation,
+    embed_url:    `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${guid}`,
+    playback_url: `https://iframe.mediadelivery.net/play/${BUNNY_LIBRARY_ID}/${guid}`,
+  });
+}
+
+/**
+ * Phase 2 of the chunked video upload flow.
+ * Receives one chunk (≤ 4 MB) from the browser and PATCHes it to the
+ * Bunny TUS location.  Query params:
+ *   tus_url  – URL-encoded Bunny TUS location
+ *   offset   – byte offset of this chunk
+ *   total    – total file size in bytes
+ */
+async function handleUploadChunk(req, res) {
+  const rawUrl  = req.url || '';
+  const qs      = rawUrl.includes('?') ? rawUrl.slice(rawUrl.indexOf('?') + 1) : '';
+  const params  = new URLSearchParams(qs);
+  const tusUrl  = params.get('tus_url');
+  const offset  = parseInt(params.get('offset') || '0');
+  const total   = parseInt(params.get('total')  || '0');
+
+  if (!tusUrl) return sendJSON(res, 400, { error: 'Missing tus_url parameter.' });
+
+  // Safety: only allow proxying to Bunny's own domain
+  if (!tusUrl.startsWith('https://video.bunnycdn.com/')) {
+    return sendJSON(res, 400, { error: 'Invalid TUS location domain.' });
+  }
+
+  let chunk;
+  try {
+    chunk = await readRawBody(req, UPLOAD_MAX_BYTES);
+  } catch (e) {
+    return sendJSON(res, 413, { error: e.message });
+  }
+
+  const patchRes = await httpsRequest(
+    tusUrl,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type':   'application/offset+octet-stream',
+        'Content-Length': String(chunk.length),
+        'Upload-Offset':  String(offset),
+        'Tus-Resumable':  '1.0.0',
+      },
+    },
+    chunk
+  );
+
+  // TUS spec: 204 No Content on success; some servers return 200
+  if (patchRes.status !== 204 && patchRes.status !== 200) {
+    return sendJSON(res, 502, { error: `Bunny TUS patch failed (${patchRes.status}): ${patchRes.body}` });
+  }
+
+  const uploaded = offset + chunk.length;
+  return sendJSON(res, 200, {
+    uploaded,
+    total,
+    complete: uploaded >= total,
+  });
+}
+
 function handleAsset(req, res, assetPath) {
   if (!fs.existsSync(assetPath)) {
     res.writeHead(404);
@@ -584,8 +726,10 @@ async function router(req, res) {
   if (method === 'POST'   && url === '/api/register') return handleRegister(req, res);
   if (method === 'POST'   && url === '/api/login')    return handleLogin(req, res);
   if (method === 'GET'    && url === '/api/me')        return handleMe(req, res);
-  if (method === 'POST'   && url === '/api/upload-video') return handleUploadVideo(req, res);
+  if (method === 'POST'   && url === '/api/upload-video')  return handleUploadVideo(req, res);
   if (method === 'POST'   && url === '/api/upload-image')  return handleUploadImage(req, res);
+  if (method === 'POST'   && url === '/api/create-video')  return handleCreateVideo(req, res);
+  if (method === 'POST'   && url === '/api/upload-chunk')  return handleUploadChunk(req, res);
   if (method === 'GET'    && url === '/api/content')   return handleGetContent(req, res);
   if (method === 'POST'   && url === '/api/content')   return handlePostContent(req, res);
 
