@@ -7430,25 +7430,27 @@ body.light-theme #page-profile #prof-guest-cta {
   }
 
   async function demoRole(el, cls) {
-    const map = {
-      'role-admin':     'admin@korseteik.kz',
-      'role-moderator': 'moderator@korseteik.kz',
-      'role-user':      'user123@korseteik.kz',
-      'role-creator':   'user123@korseteik.kz',
-      'role-yerkanat':  'yerkanat_malayev@gmail.com',
+    // Map each button to the deterministic seed UID (seed_<handle>) written by seedTestAccounts().
+    // We load directly from Firebase so this works even if _ayaUsersCache is empty.
+    const uidMap = {
+      'role-admin':     'seed_adminkorseteik',
+      'role-moderator': 'seed_moderator',
+      'role-user':      'seed_usertest',
+      'role-creator':   'seed_aidar_nausha',   // actual creator account (role:'creator')
+      'role-yerkanat':  'seed_yerkanat_malayev',
     };
-    const email = map[cls];
-    if (!email) return;
+    const uid = uidMap[cls];
+    if (!uid) return;
 
-    const users = getUsers();
-    const user  = users.find(u => u.email === email);
-    if (!user) return;
+    // Try in-memory cache first, then fall back to Firebase
+    let user = (_ayaUsersCache || []).find(u => u.uid === uid);
+    if (!user) user = await loadUserByIdFromFirebase(uid);
+    if (!user) { console.warn('[demoRole] seed user not found in Firebase:', uid); return; }
 
     saveSession(user);
-    updateAuthUI(user);
     loadUserSettingsFromFirebase(user.uid || user.id); // apply this user's theme/language preferences
 
-    // Highlight active badge
+    // Highlight the clicked badge, clear all others
     document.querySelectorAll('.role-badge').forEach(b => b.style.outline = 'none');
     el.style.outline = '2px solid white';
 
@@ -7456,10 +7458,19 @@ body.light-theme #page-profile #prof-guest-cta {
   }
   function highlightActiveRoleBadge() {
     const user = getUser();
-    const roleMap = { admin: 'role-admin', moderator: 'role-moderator', viewer: 'role-user', creator: 'role-creator' };
-    const activeCls = user ? roleMap[user.role] : null;
-    document.querySelectorAll('.role-badge').forEach(b => {
-      b.style.outline = activeCls && b.classList.contains(activeCls) ? '2px solid white' : 'none';
+    // Map seed UID → the onclick attribute substring that identifies the button
+    const seedUidToCls = {
+      'seed_adminkorseteik':   'role-admin',
+      'seed_moderator':        'role-moderator',
+      'seed_usertest':         'role-user',
+      'seed_aidar_nausha':     'role-creator',
+      'seed_yerkanat_malayev': 'role-yerkanat',
+    };
+    const activeCls = user ? (seedUidToCls[user.uid] || null) : null;
+    document.querySelectorAll('.role-badge[onclick]').forEach(b => {
+      const match = (b.getAttribute('onclick') || '').match(/demoRole\(this,'([^']+)'\)/);
+      const btnCls = match ? match[1] : null;
+      b.style.outline = (activeCls && btnCls === activeCls) ? '2px solid white' : 'none';
     });
   }
   function setTheme(theme) {
