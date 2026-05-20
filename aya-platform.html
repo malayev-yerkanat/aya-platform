@@ -8637,7 +8637,7 @@ body.light-theme #page-watch .rec-card:hover {
       function sendChunk(offset) {
         const slice = file.slice(offset, Math.min(offset + CHUNK, file.size));
         const xhr   = new XMLHttpRequest();
-        xhr.open('POST', `/api/upload-chunk?tus_url=${tusUrl}&offset=${offset}&total=${file.size}`);
+        xhr.open('POST', `/api/upload-chunk?tus_url=${tusUrl}&video_id=${encodeURIComponent(session.guid)}&offset=${offset}&total=${file.size}`);
 
         xhr.upload.onprogress = function(e) {
           if (!e.lengthComputable) return;
