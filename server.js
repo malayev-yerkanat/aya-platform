@@ -353,6 +353,29 @@ const BUNNY_CDN_HOST     = process.env.BUNNY_CDN_HOSTNAME;
 
 const UPLOAD_MAX_BYTES = 200 * 1024 * 1024; // 200 MB for video; Vercel has 4.5 MB limit on serverless
 
+function bunnyTusUrl(location) {
+  const value = String(location || '').trim();
+  if (!value) return '';
+  if (value.startsWith('https://video.bunnycdn.com/')) return value;
+  if (value.startsWith('/')) return `https://video.bunnycdn.com${value}`;
+  if (value.startsWith('tusupload/')) return `https://video.bunnycdn.com/${value}`;
+  return value;
+}
+
+function bunnyTusAuthHeaders(videoId, expireTime) {
+  const signature = crypto
+    .createHash('sha256')
+    .update(String(BUNNY_LIBRARY_ID) + BUNNY_STREAM_KEY + String(expireTime) + String(videoId))
+    .digest('hex');
+
+  return {
+    'AuthorizationSignature': signature,
+    'AuthorizationExpire':    String(expireTime),
+    'LibraryId':              String(BUNNY_LIBRARY_ID),
+    'VideoId':                String(videoId),
+  };
+}
+
 /**
  * Buffer the entire request body (up to maxBytes).
  * Returns a Buffer; throws if limit exceeded.
@@ -582,20 +605,16 @@ async function handleCreateVideo(req, res) {
 
   // Step 2: Create TUS resumable-upload session
   const expireTime   = Math.floor(Date.now() / 1000) + 7200; // 2-hour window
-  const sigStr       = String(BUNNY_LIBRARY_ID) + BUNNY_STREAM_KEY + String(expireTime) + guid;
-  const signature    = crypto.createHash('sha256').update(sigStr).digest('hex');
   const b64          = s => Buffer.from(String(s)).toString('base64');
   const uploadMeta   = `filetype ${b64('video/mp4')},title ${b64(title)}`;
+  const authHeaders  = bunnyTusAuthHeaders(guid, expireTime);
 
   const tusRes = await httpsRequest(
     'https://video.bunnycdn.com/tusupload',
     {
       method: 'POST',
       headers: {
-        'AuthorizationSignature': signature,
-        'AuthorizationExpire':    String(expireTime),
-        'LibraryId':              String(BUNNY_LIBRARY_ID),
-        'VideoId':                guid,
+        ...authHeaders,
         'Tus-Resumable':          '1.0.0',
         'Upload-Length':          String(totalSize),
         'Upload-Metadata':        uploadMeta,
@@ -607,7 +626,7 @@ async function handleCreateVideo(req, res) {
     return sendJSON(res, 502, { error: `Bunny TUS session failed (${tusRes.status}): ${tusRes.body}` });
   }
 
-  const tusLocation = tusRes.headers && tusRes.headers['location'];
+  const tusLocation = bunnyTusUrl(tusRes.headers && tusRes.headers['location']);
   if (!tusLocation) {
     return sendJSON(res, 502, { error: 'Bunny TUS did not return a Location header.' });
   }
@@ -616,6 +635,7 @@ async function handleCreateVideo(req, res) {
     guid,
     library_id:   BUNNY_LIBRARY_ID,
     tus_location: tusLocation,
+    tus_expire:   expireTime,
     embed_url:    `https://iframe.mediadelivery.net/embed/${BUNNY_LIBRARY_ID}/${guid}`,
     playback_url: `https://iframe.mediadelivery.net/play/${BUNNY_LIBRARY_ID}/${guid}`,
   });
@@ -633,11 +653,13 @@ async function handleUploadChunk(req, res) {
   const rawUrl  = req.url || '';
   const qs      = rawUrl.includes('?') ? rawUrl.slice(rawUrl.indexOf('?') + 1) : '';
   const params  = new URLSearchParams(qs);
-  const tusUrl  = params.get('tus_url');
+  const tusUrl  = bunnyTusUrl(params.get('tus_url'));
+  const videoId = params.get('video_id') || params.get('videoId');
   const offset  = parseInt(params.get('offset') || '0');
   const total   = parseInt(params.get('total')  || '0');
 
   if (!tusUrl) return sendJSON(res, 400, { error: 'Missing tus_url parameter.' });
+  if (!videoId) return sendJSON(res, 400, { error: 'Missing video_id parameter.' });
 
   // Safety: only allow proxying to Bunny's own domain
   if (!tusUrl.startsWith('https://video.bunnycdn.com/')) {
@@ -651,11 +673,13 @@ async function handleUploadChunk(req, res) {
     return sendJSON(res, 413, { error: e.message });
   }
 
+  const expireTime = Math.floor(Date.now() / 1000) + 7200;
   const patchRes = await httpsRequest(
     tusUrl,
     {
       method: 'PATCH',
       headers: {
+        ...bunnyTusAuthHeaders(videoId, expireTime),
         'Content-Type':   'application/offset+octet-stream',
         'Content-Length': String(chunk.length),
         'Upload-Offset':  String(offset),

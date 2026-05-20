@@ -1,0 +1,6 @@
+content/
+output/
+.playwright-cli/
+.ui-design/
+*.docx
+*.pdf
