@@ -568,6 +568,48 @@ body.light-theme .about-aitu-light { display: block; }
 }
 .c-result.show { display: flex; }
 
+/* ── Upload metadata chips (Genre / Features) ── */
+.up-meta-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.up-meta-chip {
+  font-size: 11px; font-weight: 700; padding: 6px 13px;
+  border-radius: var(--r-pill); cursor: pointer;
+  background: var(--bg3); color: var(--text2);
+  border: 1px solid var(--bg5);
+  transition: background .14s, color .14s, border-color .14s;
+  user-select: none;
+}
+.up-meta-chip:hover { background: var(--bg4); color: var(--text); }
+.up-meta-chip.active {
+  background: var(--gold); color: var(--bg);
+  border-color: var(--gold); font-weight: 800;
+}
+/* ── Constructor search results section ── */
+.cs-results-section { display: none; padding: 16px 28px 8px; }
+.cs-results-section.show { display: block; }
+.cs-results-head {
+  font-size: 11px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .8px;
+  margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+}
+.cs-results-close {
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  cursor: pointer; text-transform: none; letter-spacing: 0;
+}
+.cs-results-close:hover { color: var(--text); }
+.cs-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+.cs-empty {
+  padding: 28px 0; text-align: center;
+  color: var(--text2); font-size: 13px; opacity: .6;
+}
+@media (max-width: 600px) {
+  .cs-results-section { padding: 12px 14px 4px; }
+  .cs-results-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+}
+
 /* Feed */
 .feed { padding: 20px 28px 60px; }
 .row { margin-bottom: 48px; }
@@ -5638,6 +5680,8 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
 .prof-section-row .row-title-edit { font-size: 12px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: var(--text2); }
 .prof-section-row .cards-h { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
 .prof-section-row .cards-h::-webkit-scrollbar { display: none; }
+/* Pitch grid inside profile sections — matches Pitching page card proportions */
+.prof-section-row .pitch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; overflow: visible; }
 .prof-empty-state { padding: 32px 0; text-align: center; color: var(--text2); opacity: .5; }
 .prof-empty-state .prof-empty-ico { font-size: 36px; margin-bottom: 8px; display: flex; justify-content: center; }
 .prof-empty-state .prof-empty-txt { font-size: 13px; }
@@ -8879,11 +8923,19 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     <div class="constructor-label" data-i18n="constructor_label"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 12 C12 6 9 3 5 3 C2 3 1 6 3 8 C5 10 8 9 8 6" fill="#7D9158" stroke="none"/><path d="M12 12 C12 6 15 3 19 3 C22 3 23 6 21 8 C19 10 16 9 16 6" fill="#7D9158" stroke="none"/><path d="M12 12 L17 16.5 L12 21 L7 16.5 Z" fill="#7D9158" stroke="none"/><path d="M12 12 C12 6 9 3 5 3 C2 3 1 6 3 8 C5 10 8 9 8 6"/><path d="M12 12 C12 6 15 3 19 3 C22 3 23 6 21 8 C19 10 16 9 16 6"/><path d="M12 12 L17 16.5 L12 21 L7 16.5 Z"/></g></svg> Конструктор поиска — найди контент под своё настроение</div>
     <div class="constructor-row">
       <select class="csel" id="cs-type" aria-label="Тип контента"></select>
-      <select class="csel" id="cs-loc" aria-label="Локация или атмосфера"></select>
+      <select class="csel" id="cs-genre" aria-label="Жанр"></select>
       <select class="csel" id="cs-feat" aria-label="Особенности контента"></select>
       <button class="c-find-btn" onclick="runConstructor()" data-i18n="cs_find"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Найти</button>
     </div>
-    <div class="c-result" id="c-res"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="10.5" cy="10.5" r="6" fill="#7D9158" stroke="none" opacity="0.55"/><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15 L20 20"/></g></svg> <span>Найдено <strong id="c-count"></strong> работ по запросу <em id="c-query"></em></span></div>
+  </div>
+
+  <!-- Constructor search results — shown after clicking "Find" -->
+  <div class="cs-results-section" id="cs-results-section">
+    <div class="cs-results-head">
+      <span id="cs-results-label" data-i18n="cs_results_label">Результаты поиска</span>
+      <span class="cs-results-close" onclick="closeConstructorResults()" data-i18n="cs_results_close">✕ Очистить</span>
+    </div>
+    <div class="cs-results-grid" id="cs-results-grid"></div>
   </div>
 
   <div class="feed">
@@ -9122,7 +9174,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
           <div class="row-head-edit">
             <span class="row-title-edit" data-i18n="tab_pitch">Питч-кампании</span>
           </div>
-          <div class="cards-h" id="prof-pitch-cards"></div>
+          <div class="pitch-grid" id="prof-pitch-cards"></div>
         </div>
 
         <!-- Reviews -->
@@ -9773,6 +9825,19 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   const MODAL_BTN_TEAL     = _BTN_BASE + 'background:var(--teal);color:#121212';
 
   const MB = 1024 * 1024; // bytes → megabytes divisor
+
+  /** Shared genre list — used by upload chips and Search Constructor selects. */
+  const AYA_GENRES = [
+    'drama','comedy','thriller','romance','action','documentary',
+    'experimental','music','history','social','education','culture','animation','other'
+  ];
+
+  /** Shared feature list — used by upload chips and Search Constructor selects. */
+  const AYA_FEATURES = [
+    'feat_new','feat_trending','feat_festival','feat_student','feat_independent',
+    'feat_short_format','feat_long_format','feat_family','feat_subtitles',
+    'feat_kazakh','feat_russian','feat_english','feat_verified','feat_exclusive','feat_funded'
+  ];
 
   /** Map content category → home-page row container id. Used by renderUserContent(). */
   const ROW_MAP = {
@@ -11012,12 +11077,23 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
         if (userPitches.length) {
           pitchCards.innerHTML = userPitches.map(p => {
             const pct = p.goal > 0 ? Math.min(100, Math.round((p.raised / p.goal) * 100)) : 0;
-            const raisedFmt = Number(p.raised || 0).toLocaleString('ru-RU') + ' ₸';
-            const goalFmt   = Number(p.goal   || 0).toLocaleString('ru-RU') + ' ₸';
-            return `<div class="pc" style="flex-shrink:0">
-              <div class="pc-thumb p1"></div>
+            const raisedFmt  = Number(p.raised   || 0).toLocaleString('ru-RU') + ' ₸';
+            const goalFmt    = Number(p.goal     || 0).toLocaleString('ru-RU') + ' ₸';
+            const backersFmt = Number(p.backers  || 0).toLocaleString('ru-RU');
+            const thumbCls   = p.thumbClass || 'p1';
+            const statusBadge = p.status === 'live'
+              ? `<div class="pc-badge pb-live">Live</div>`
+              : p.status === 'new'
+              ? `<div class="pc-badge pb-new">${t('badge_new') || 'Новый'}</div>`
+              : '';
+            const genreLabel = p.genreLabel || p.genre || '';
+            return `<div class="pc">
+              <div class="pc-thumb ${thumbCls}">
+                ${statusBadge}
+                ${p.daysLeft != null ? `<span class="pc-days"><span>${p.daysLeft}</span> <span data-i18n="days_left">дней</span></span>` : ''}
+              </div>
               <div class="pc-body">
-                <div class="pc-type ${p.genre || 'ct-film'}">${p.genre || 'ct-film'}</div>
+                <div class="pc-type ${p.genre || 'ct-film'}">${genreLabel}</div>
                 <div class="pc-title">${p.title || ''}</div>
                 <div class="pc-author">${p.creatorName || ''}</div>
                 <p class="pc-desc">${p.description || ''}</p>
@@ -11026,6 +11102,10 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
                   <span class="prog-goal"><span data-i18n="of_goal">из</span> ${goalFmt}</span>
                 </div>
                 <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+                <div class="pc-foot">
+                  <span class="pc-backers">${backersFmt} <span data-i18n="backers">бэкеров</span></span>
+                  <button class="qoldau" data-i18n="qoldau_btn">Qoldau</button>
+                </div>
               </div>
             </div>`;
           }).join('');
@@ -11611,11 +11691,16 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     document.getElementById('watch-title').textContent = content.title || '';
     document.getElementById('watch-eyebrow').textContent = [categoryLabel(content.cat), content.year].filter(Boolean).join(' · ');
 
-    // Tags
+    // Tags — show structured genres + features; fall back to legacy free-text tags
     const tagsEl = document.getElementById('watch-tags');
     tagsEl.innerHTML = '';
-    (content.tags || []).forEach(t => {
-      const s = document.createElement('span'); s.className = 'vtag'; s.textContent = '#' + t; tagsEl.appendChild(s);
+    const metaTags = [
+      ...(content.genres   || []).map(g => t('genre_' + g) || g),
+      ...(content.features || []).map(f => t(f) || f),
+      ...(content.genres || content.features ? [] : (content.tags || []))
+    ];
+    metaTags.forEach(label => {
+      const s = document.createElement('span'); s.className = 'vtag'; s.textContent = label; tagsEl.appendChild(s);
     });
 
     // Description
@@ -11783,8 +11868,20 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     document.getElementById('up-error').style.display = 'none';
     document.getElementById('up-crew-list').innerHTML = '';
     document.getElementById('up-cast-list').innerHTML = '';
-    document.getElementById('up-tags-chips').innerHTML = '';
-    document.getElementById('up-tag-input').value = '';
+    // Render genre chips
+    const gcont = document.getElementById('up-genre-chips');
+    if (gcont) {
+      gcont.innerHTML = AYA_GENRES.map(g =>
+        `<span class="up-meta-chip" data-group="genre" data-val="${g}" onclick="toggleUpChip(this)">${t('genre_'+g)||g}</span>`
+      ).join('');
+    }
+    // Render feature chips
+    const fcont = document.getElementById('up-feat-chips');
+    if (fcont) {
+      fcont.innerHTML = AYA_FEATURES.map(f =>
+        `<span class="up-meta-chip" data-group="feat" data-val="${f}" onclick="toggleUpChip(this)">${t(f)||f}</span>`
+      ).join('');
+    }
     document.getElementById('up-dropzone').style.borderColor = 'var(--bg5)';
     document.getElementById('up-progress').style.display = 'none';
     document.getElementById('up-progress-bar').style.width = '0%';
@@ -12123,6 +12220,15 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     el.classList.add('active');
   }
 
+  function toggleUpChip(el) {
+    // Genre = single-select; Features = multi-select
+    if (el.dataset.group === 'genre') {
+      const container = el.closest('.up-meta-chips');
+      if (container) container.querySelectorAll('.up-meta-chip').forEach(c => c.classList.remove('active'));
+    }
+    el.classList.toggle('active');
+  }
+
   /* ── Crew / Cast dynamic slots ── */
   const CREW_ROLE_KEYS = ['role_director','role_producer','role_writer','role_cinematographer','role_editor','role_sound','role_art_director','role_line_producer','role_exec_producer','role_other'];
   const CAST_ROLE_KEYS = ['role_lead','role_supporting','role_episode','role_voice','role_other'];
@@ -12315,8 +12421,10 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       role: slot.querySelector('.up-person-role').value
     })).filter(m => m.tag);
 
-    // Collect tags
-    const tags = Array.from(document.querySelectorAll('#up-tags-chips .up-tag-chip-label')).map(el => el.textContent.replace(/^#/,''));
+    // Collect structured genres + features (replaces free-text tags)
+    const genres   = Array.from(document.querySelectorAll('#up-genre-chips .up-meta-chip.active')).map(el => el.dataset.val);
+    const features = Array.from(document.querySelectorAll('#up-feat-chips .up-meta-chip.active')).map(el => el.dataset.val);
+    const tags = [...genres, ...features]; // keep tags field for watch-page compat
 
     const _uploadNow = Date.now();
     const content = {
@@ -12328,6 +12436,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       catLabel: categoryLabel(activeCat ? activeCat.dataset.cat : 'ct-film'),
       crew,
       cast,
+      genres,
+      features,
       tags,
       media_provider: 'bunny',
       bunny_video_id: _uploadedVideoData?.bunny_video_id || null,
@@ -12505,11 +12615,83 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   }
 
   function runConstructor() {
-    const parts = [document.getElementById('cs-type').value, document.getElementById('cs-loc').value, document.getElementById('cs-feat').value].filter(Boolean);
-    if (!parts.length) return;
-    document.getElementById('c-count').textContent = Math.floor(Math.random()*9)+2;
-    document.getElementById('c-query').textContent = '«' + parts.join(' + ') + '»';
-    document.getElementById('c-res').classList.add('show');
+    const selType  = document.getElementById('cs-type')?.value  || '';
+    const selGenre = document.getElementById('cs-genre')?.value || '';
+    const selFeat  = document.getElementById('cs-feat')?.value  || '';
+
+    if (!selType && !selGenre && !selFeat) {
+      closeConstructorResults();
+      return;
+    }
+
+    const all = getAyaContent();
+    const matched = all.filter(c => {
+      if (c.status === 'deleted' || c.status === 'rejected') return false;
+      // Type filter: content.cat must be 'ct-' + selType
+      if (selType && c.cat !== 'ct-' + selType) return false;
+      // Genre filter: content.genres array must include selGenre
+      if (selGenre && !(c.genres || []).includes(selGenre)) return false;
+      // Feature filter: content.features array must include selFeat
+      if (selFeat && !(c.features || []).includes(selFeat)) return false;
+      return true;
+    });
+
+    // Render results
+    const section = document.getElementById('cs-results-section');
+    const grid    = document.getElementById('cs-results-grid');
+    const label   = document.getElementById('cs-results-label');
+    if (!section || !grid) return;
+
+    const count = matched.length;
+    const countStr = currentLang === 'en'
+      ? `${count} result${count !== 1 ? 's' : ''}`
+      : currentLang === 'kz'
+      ? `${count} нәтиже`
+      : `Найдено: ${count}`;
+    if (label) label.textContent = countStr;
+
+    if (!count) {
+      const emptyMsg = currentLang === 'en'
+        ? 'No content matches your search yet.'
+        : currentLang === 'kz'
+        ? 'Сұранысыңызға сәйкес контент әзірге жоқ.'
+        : 'Пока нет контента по вашему поиску.';
+      grid.innerHTML = `<div class="cs-empty">${emptyMsg}</div>`;
+    } else {
+      grid.innerHTML = matched.map(c => {
+        const safeId = (c.id || '').replace(/"/g, '');
+        const safeTitle = (c.title || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        const safeAuthor = (c.author || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        const thumb = c.thumbnail
+          ? `<img src="${c.thumbnail}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:10px 10px 0 0" alt="${safeTitle}" loading="lazy">`
+          : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;opacity:.6">${I.feature||'▶'}</div>`;
+        return `<div class="card" style="cursor:pointer;border-radius:10px" data-cid="${safeId}" onclick="openWatchById(this.dataset.cid)">
+          <div class="thumb r-film" style="position:relative">${thumb}
+            <span class="ct-badge ${c.cat||''}">${categoryLabel(c.cat||'')}</span>
+          </div>
+          <div class="card-title" style="padding:10px 12px 2px;font-size:13px;font-weight:700">${safeTitle}</div>
+          <div class="card-sub" style="padding:0 12px 12px">${safeAuthor}</div>
+        </div>`;
+      }).join('');
+    }
+
+    section.classList.add('show');
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function openWatchById(id) {
+    const c = getAyaContent().find(x => x.id === id);
+    if (c) openWatch(c);
+  }
+
+  function closeConstructorResults() {
+    const section = document.getElementById('cs-results-section');
+    if (section) section.classList.remove('show');
+    // Reset selects
+    ['cs-type','cs-genre','cs-feat'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
   }
 
   /* ============================================================
@@ -14316,25 +14498,29 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       aria_delete_member: 'Удалить участника',
       aria_delete_tag: 'Удалить тег',
       select_type_label: 'Тип контента',
-      select_loc_label: 'Локация или атмосфера',
+      select_genre_label: 'Жанр',
       select_feat_label: 'Особенности контента',
       cs_type_placeholder: 'Тип контента...',
-      cs_film: 'Фильм',
-      cs_music: 'Музыкальный клип',
-      cs_doc: 'Документальный',
-      cs_podcast: 'Подкаст',
-      cs_social: 'Соц. ролик',
-      cs_short: 'Короткий метр',
-      cs_loc_placeholder: 'Локация / атмосфера...',
-      cs_steppe: 'Степь / Аул',
-      cs_city: 'Нур-Султан',
-      cs_90s: 'Ностальгия 90-х',
+      cs_genre_placeholder: 'Жанр...',
       cs_feat_placeholder: 'Особенности...',
-      cs_debut: 'Дебют',
-      cs_female: 'Женский взгляд',
-      cs_festival: 'Фест. победитель',
-      cs_social_theme: 'Социальная тема',
-      cs_young: 'Молодые авторы',
+      cs_film: 'Фильм', cs_short: 'Короткий метр', cs_music: 'Музыкальный клип',
+      cs_doc: 'Документальный', cs_podcast: 'Подкаст', cs_social: 'Соц. ролик',
+      cs_animation: 'Анимация',
+      genre_drama: 'Драма', genre_comedy: 'Комедия', genre_thriller: 'Триллер',
+      genre_romance: 'Мелодрама', genre_action: 'Экшн', genre_documentary: 'Документальный',
+      genre_experimental: 'Экспериментальный', genre_music: 'Музыкальный',
+      genre_history: 'Историческое', genre_social: 'Социальный',
+      genre_education: 'Образовательный', genre_culture: 'Культура',
+      genre_animation: 'Анимация', genre_other: 'Другое',
+      feat_new: 'Новинка', feat_trending: 'В тренде', feat_festival: 'Призёр фестиваля',
+      feat_student: 'Студенческий', feat_independent: 'Независимый',
+      feat_short_format: 'Короткий формат', feat_long_format: 'Длинный формат',
+      feat_family: 'Семейное', feat_subtitles: 'Субтитры',
+      feat_kazakh: 'Казахский язык', feat_russian: 'Русский язык', feat_english: 'Английский язык',
+      feat_verified: 'Верифицированный автор', feat_exclusive: 'Только для участников',
+      feat_funded: 'Почти собрано',
+      upload_genre: 'Жанр', upload_feat: 'Особенности',
+      cs_results_label: 'Результаты поиска', cs_results_close: '✕ Очистить',
       cs_result: 'Найдено {count} работ по запросу {query}',
       category_film: 'Фильм',
       category_short: 'Короткий',
@@ -14633,25 +14819,29 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       aria_delete_member: 'Қатысушыны жою',
       aria_delete_tag: 'Тегті жою',
       select_type_label: 'Контент түрі',
-      select_loc_label: 'Локация немесе атмосфера',
+      select_genre_label: 'Жанр',
       select_feat_label: 'Контент ерекшеліктері',
       cs_type_placeholder: 'Контент түрі...',
-      cs_film: 'Фильм',
-      cs_music: 'Музыкалық бейне',
-      cs_doc: 'Деректі фильм',
-      cs_podcast: 'Подкаст',
-      cs_social: 'Әлеуметтік ролик',
-      cs_short: 'Қысқа метр',
-      cs_loc_placeholder: 'Локация / атмосфера...',
-      cs_steppe: 'Дала / Ауыл',
-      cs_city: 'Астана',
-      cs_90s: '90-жылдар ностальгиясы',
+      cs_genre_placeholder: 'Жанр...',
       cs_feat_placeholder: 'Ерекшеліктер...',
-      cs_debut: 'Дебют',
-      cs_female: 'Әйел көзқарасы',
-      cs_festival: 'Фестиваль жеңімпазы',
-      cs_social_theme: 'Әлеуметтік тақырып',
-      cs_young: 'Жас авторлар',
+      cs_film: 'Фильм', cs_short: 'Қысқа метр', cs_music: 'Музыкалық бейне',
+      cs_doc: 'Деректі фильм', cs_podcast: 'Подкаст', cs_social: 'Әлеуметтік ролик',
+      cs_animation: 'Анимация',
+      genre_drama: 'Драма', genre_comedy: 'Комедия', genre_thriller: 'Триллер',
+      genre_romance: 'Мелодрама', genre_action: 'Экшн', genre_documentary: 'Деректі',
+      genre_experimental: 'Эксперименталды', genre_music: 'Музыкалық',
+      genre_history: 'Тарихи', genre_social: 'Әлеуметтік',
+      genre_education: 'Білім беру', genre_culture: 'Мәдениет',
+      genre_animation: 'Анимация', genre_other: 'Басқа',
+      feat_new: 'Жаңа', feat_trending: 'Тренд', feat_festival: 'Фестиваль жеңімпазы',
+      feat_student: 'Студенттік', feat_independent: 'Тәуелсіз',
+      feat_short_format: 'Қысқа формат', feat_long_format: 'Ұзын формат',
+      feat_family: 'Отбасылық', feat_subtitles: 'Субтитр',
+      feat_kazakh: 'Қазақ тілі', feat_russian: 'Орыс тілі', feat_english: 'Ағылшын тілі',
+      feat_verified: 'Расталған автор', feat_exclusive: 'Мүшелерге арналған',
+      feat_funded: 'Жиналуға жақын',
+      upload_genre: 'Жанр', upload_feat: 'Ерекшеліктер',
+      cs_results_label: 'Іздеу нәтижелері', cs_results_close: '✕ Тазалау',
       cs_result: '{query} сұранысы бойынша {count} жұмыс табылды',
       category_film: 'Фильм',
       category_short: 'Қысқа метр',
@@ -14950,25 +15140,29 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       aria_delete_member: 'Remove team member',
       aria_delete_tag: 'Delete tag',
       select_type_label: 'Content type',
-      select_loc_label: 'Location or mood',
-      select_feat_label: 'Content features',
+      select_genre_label: 'Genre',
+      select_feat_label: 'Features',
       cs_type_placeholder: 'Content type...',
-      cs_film: 'Film',
-      cs_music: 'Music video',
-      cs_doc: 'Documentary',
-      cs_podcast: 'Podcast',
-      cs_social: 'Social video',
-      cs_short: 'Short film',
-      cs_loc_placeholder: 'Location / mood...',
-      cs_steppe: 'Steppe / Aul',
-      cs_city: 'Astana',
-      cs_90s: '90s nostalgia',
+      cs_genre_placeholder: 'Genre...',
       cs_feat_placeholder: 'Features...',
-      cs_debut: 'Debut',
-      cs_female: 'Female perspective',
-      cs_festival: 'Festival winner',
-      cs_social_theme: 'Social theme',
-      cs_young: 'Young creators',
+      cs_film: 'Film', cs_short: 'Short film', cs_music: 'Music video',
+      cs_doc: 'Documentary', cs_podcast: 'Podcast', cs_social: 'Social video',
+      cs_animation: 'Animation',
+      genre_drama: 'Drama', genre_comedy: 'Comedy', genre_thriller: 'Thriller',
+      genre_romance: 'Romance', genre_action: 'Action', genre_documentary: 'Documentary',
+      genre_experimental: 'Experimental', genre_music: 'Music',
+      genre_history: 'History', genre_social: 'Social',
+      genre_education: 'Education', genre_culture: 'Culture',
+      genre_animation: 'Animation', genre_other: 'Other',
+      feat_new: 'New', feat_trending: 'Trending', feat_festival: 'Festival Winner',
+      feat_student: 'Student Project', feat_independent: 'Independent',
+      feat_short_format: 'Short Format', feat_long_format: 'Long Format',
+      feat_family: 'Family Friendly', feat_subtitles: 'Subtitles',
+      feat_kazakh: 'Kazakh Language', feat_russian: 'Russian Language', feat_english: 'English Language',
+      feat_verified: 'Creator Verified', feat_exclusive: 'Member Exclusive',
+      feat_funded: 'Almost Funded',
+      upload_genre: 'Genre', upload_feat: 'Features',
+      cs_results_label: 'Search results', cs_results_close: '✕ Clear',
       cs_result: 'Found {count} works for {query}',
       category_film: 'Film',
       category_short: 'Short',
@@ -15298,9 +15492,20 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   }
 
   const constructorOptions = [
-    ['cs-type', 'select_type_label', [['', 'cs_type_placeholder'], ['film', 'cs_film'], ['music', 'cs_music'], ['doc', 'cs_doc'], ['podcast', 'cs_podcast'], ['social', 'cs_social'], ['short', 'cs_short']]],
-    ['cs-loc', 'select_loc_label', [['', 'cs_loc_placeholder'], ['almaty', 'Алматы'], ['steppe', 'cs_steppe'], ['mountains', 'Горы'], ['astana', 'cs_city'], ['nostalgia', 'cs_90s']]],
-    ['cs-feat', 'select_feat_label', [['', 'cs_feat_placeholder'], ['debut', 'cs_debut'], ['female', 'cs_female'], ['festival', 'cs_festival'], ['social-theme', 'cs_social_theme'], ['young', 'cs_young']]]
+    ['cs-type', 'select_type_label', [
+      ['', 'cs_type_placeholder'],
+      ['film', 'cs_film'], ['short', 'cs_short'], ['music', 'cs_music'],
+      ['doc', 'cs_doc'], ['podcast', 'cs_podcast'], ['social', 'cs_social'],
+      ['animation', 'cs_animation']
+    ]],
+    ['cs-genre', 'select_genre_label', [
+      ['', 'cs_genre_placeholder'],
+      ...AYA_GENRES.map(g => [g, 'genre_' + g])
+    ]],
+    ['cs-feat', 'select_feat_label', [
+      ['', 'cs_feat_placeholder'],
+      ...AYA_FEATURES.map(f => [f, f])
+    ]]
   ];
 
   function optionLabel(labelOrKey) {
@@ -16972,12 +17177,16 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       <button onclick="addPersonSlot('cast')" class="up-add-person-btn" data-i18n="upload_add_cast"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="9" fill="#7D9158" stroke="none" opacity="0.85"/><path d="M12 7 V17 M7 12 H17"/></g></svg> Добавить актёра</button>
     </div>
 
-    <!-- Video tags -->
+    <!-- Genre chips -->
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px" data-i18n="upload_genre">Жанр</label>
+      <div id="up-genre-chips" class="up-meta-chips"></div>
+    </div>
+
+    <!-- Feature chips -->
     <div style="margin-bottom:20px">
-      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px" data-i18n="upload_tags">Теги видео</label>
-      <div id="up-tags-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
-      <input id="up-tag-input" type="text" data-i18n-placeholder="upload_tag_ph" placeholder="Введите тег и нажмите Enter…" onkeydown="handleTagInput(event)" style="width:100%;box-sizing:border-box;background:var(--bg3);border:1px solid var(--bg5);border-radius:10px;padding:9px 14px;color:var(--text);font-size:13px;outline:none">
-      <div style="font-size:11px;color:var(--text3);margin-top:5px" data-i18n="upload_tags_help">Теги помогают находить видео через поиск</div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px" data-i18n="upload_feat">Особенности</label>
+      <div id="up-feat-chips" class="up-meta-chips"></div>
     </div>
 
     <!-- Error -->
