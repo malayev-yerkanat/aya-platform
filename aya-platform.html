@@ -305,6 +305,75 @@ body.light-theme .about-aitu-light { display: block; }
   transition: opacity .2s, transform .2s;
 }
 .notif-badge.hidden { opacity: 0; transform: scale(.6); }
+
+/* ── Mobile search toggle (hidden on desktop, shown via mobile media query) ── */
+#tb-search-toggle {
+  display: none; /* shown only in mobile media query */
+}
+/* ── Mobile search bar — slides in under topbar ── */
+#mobile-search-bar {
+  display: none; /* hidden by default; shown via .open class */
+  position: fixed;
+  top: var(--topbar);
+  z-index: 99;
+  padding: 8px 10px 10px;
+  background: linear-gradient(180deg, rgba(12,15,8,.99) 0%, rgba(15,18,9,.97) 100%);
+  border-bottom: 1px solid rgba(125,145,88,.12);
+  box-shadow: 0 4px 16px rgba(0,0,0,.28);
+}
+#mobile-search-bar.open { display: block; }
+#mobile-search-bar .mobile-search-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid rgba(125,145,88,.14);
+  border-radius: var(--r-pill);
+  padding: 0 12px 0 10px;
+}
+#mobile-search-bar .mobile-search-inner .search-ico {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--text3);
+  line-height: 1;
+  position: static;
+  transform: none;
+}
+#mobile-search-bar .mobile-search-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 14px;
+  padding: 10px 4px;
+  outline: none;
+}
+#mobile-search-bar .mobile-search-input::placeholder { color: var(--text3); }
+#mobile-search-bar .mobile-search-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text3);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 150ms ease;
+}
+#mobile-search-bar .mobile-search-close:hover { color: var(--text); }
+/* Entrance animation */
+#mobile-search-bar.open .mobile-search-inner {
+  animation: msb-slidein 200ms cubic-bezier(0.23,1,0.32,1) both;
+}
+@keyframes msb-slidein {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #mobile-search-bar.open .mobile-search-inner { animation: none !important; }
+}
+
 /* ── Notification panel overlay ──────────────────── */
 .notif-overlay {
   position: fixed; inset: 0; z-index: 280;
@@ -315,73 +384,163 @@ body.light-theme .about-aitu-light { display: block; }
 }
 .notif-overlay.open { opacity: 1; pointer-events: all; }
 .notif-panel {
-  position: absolute; top: 56px; right: 12px;
-  width: min(360px, calc(100vw - 24px));
-  max-height: min(480px, calc(100vh - 80px));
-  background: var(--card); border-radius: 16px;
-  border: 1px solid var(--brd);
-  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  position: absolute; top: 60px; right: 12px;
+  width: min(380px, calc(100vw - 24px));
+  max-height: min(520px, calc(100vh - 80px));
+  background: linear-gradient(160deg, rgba(28,36,19,.99) 0%, rgba(17,24,11,.99) 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(125,145,88,.20);
+  box-shadow:
+    0 28px 70px rgba(3,8,3,.55),
+    0 6px 20px rgba(3,8,3,.38),
+    inset 0 1px 0 rgba(255,255,255,.06);
   display: flex; flex-direction: column;
   overflow: hidden;
-  transform: translateY(-8px) scale(.97);
-  transition: transform .22s cubic-bezier(.32,.72,0,1);
+  transform: translateY(-10px) scale(.96);
+  transition: transform .24s cubic-bezier(.32,.72,0,1);
 }
 .notif-overlay.open .notif-panel {
   transform: translateY(0) scale(1);
 }
 .notif-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid var(--brd);
+  padding: 15px 18px 12px;
+  border-bottom: 1px solid rgba(125,145,88,.13);
   flex-shrink: 0;
+  background: rgba(255,255,255,.02);
 }
 .notif-header h3 {
-  font-size: 14px; font-weight: 700; margin: 0;
-  color: var(--text);
+  font-size: 13px; font-weight: 700; margin: 0;
+  color: #EDE5CC;
+  letter-spacing: .25px;
 }
 .notif-mark-all-btn {
-  font-size: 11px; font-weight: 600; color: var(--accent);
-  background: none; border: none; cursor: pointer; padding: 4px 6px;
-  border-radius: 6px; transition: background .15s;
+  font-size: 11px; font-weight: 600; color: #9DB472;
+  background: none; border: none; cursor: pointer;
+  padding: 4px 8px; border-radius: 7px;
+  transition: background .15s, color .15s;
+  min-width: 0; overflow-wrap: anywhere;
 }
-.notif-mark-all-btn:hover { background: rgba(125,145,88,.12); }
+.notif-mark-all-btn:hover { background: rgba(125,145,88,.14); color: #B8D090; }
 .notif-list {
   overflow-y: auto; flex: 1;
-  padding: 6px 0;
+  padding: 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125,145,88,.22) transparent;
 }
 .notif-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 10px 16px; cursor: pointer;
+  display: flex; align-items: flex-start; gap: 11px;
+  padding: 11px 16px 11px 20px;
+  cursor: pointer;
   transition: background .15s;
   position: relative;
+  border-bottom: 1px solid rgba(125,145,88,.07);
 }
-.notif-item:hover { background: var(--hover); }
-.notif-item.unread { background: rgba(125,145,88,.07); }
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: rgba(125,145,88,.08); }
+.notif-item.unread { background: rgba(125,145,88,.10); }
 .notif-item.unread::before {
-  content: ''; position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
-  width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+  content: ''; position: absolute; left: 7px; top: 50%; transform: translateY(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #9DB472;
+  box-shadow: 0 0 6px rgba(125,145,88,.55);
 }
 .notif-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: var(--accent); color: #fff;
-  font-size: 13px; font-weight: 700;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(125,145,88,.50), rgba(92,120,64,.65));
+  border: 1.5px solid rgba(125,145,88,.25);
+  color: #EDE5CC;
+  font-size: 14px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; margin-top: 1px;
+  overflow: hidden;
+}
+.notif-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover; border-radius: 50%;
+  display: block;
 }
 .notif-body { flex: 1; min-width: 0; }
-.notif-text {
-  font-size: 12px; line-height: 1.45; color: var(--text);
+.notif-actor {
+  font-size: 12px; font-weight: 700;
+  color: #D4C9A0;
+  margin: 0 0 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.notif-action {
+  font-size: 12px; line-height: 1.4;
+  color: rgba(212,201,160,.65);
   margin: 0 0 3px;
-  display: -webkit-box; -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.notif-content-title {
+  font-size: 11px; color: #7A9060;
+  font-style: italic;
+  margin: 0 0 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .notif-time {
-  font-size: 10px; color: var(--muted);
+  font-size: 10px; color: rgba(150,168,120,.55);
+  letter-spacing: .15px;
 }
+.notif-right {
+  display: flex; align-items: flex-start; flex-shrink: 0;
+  padding-top: 4px;
+}
+.notif-type-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.notif-type-icon.like    { background: rgba(229,83,75,.13); color: #e5534b; }
+.notif-type-icon.comment { background: rgba(125,145,88,.17); color: #9DB472; }
+.notif-type-icon.reply   { background: rgba(125,145,88,.12); color: #96A878; }
 .notif-empty {
-  padding: 40px 16px; text-align: center;
-  font-size: 13px; color: var(--muted);
+  padding: 44px 20px; text-align: center;
 }
+.notif-empty-icon {
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px; width: 40px; height: 40px;
+  border-radius: 50%; background: rgba(125,145,88,.10);
+  color: rgba(125,145,88,.45);
+}
+.notif-empty-text {
+  font-size: 13px; color: rgba(150,168,120,.50);
+  line-height: 1.5;
+}
+/* ── Notification panel — light theme ─────────────── */
+body.light-theme .notif-panel {
+  background: linear-gradient(160deg, rgba(234,228,210,.99) 0%, rgba(222,215,196,.99) 100%);
+  border-color: rgba(62,84,40,.18);
+  box-shadow:
+    0 20px 56px rgba(40,52,24,.18),
+    0 4px 14px rgba(40,52,24,.10),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+body.light-theme .notif-header {
+  border-bottom-color: rgba(62,84,40,.12);
+  background: rgba(255,255,255,.18);
+}
+body.light-theme .notif-header h3 { color: #18200E; }
+body.light-theme .notif-mark-all-btn { color: #5C7840; }
+body.light-theme .notif-mark-all-btn:hover { background: rgba(62,84,40,.10); color: #3E5428; }
+body.light-theme .notif-item { border-bottom-color: rgba(62,84,40,.08); }
+body.light-theme .notif-item:hover { background: rgba(62,84,40,.07); }
+body.light-theme .notif-item.unread { background: rgba(62,84,40,.09); }
+body.light-theme .notif-item.unread::before { background: #5C7840; box-shadow: 0 0 5px rgba(62,84,40,.35); }
+body.light-theme .notif-avatar {
+  background: linear-gradient(135deg, rgba(92,120,64,.30), rgba(62,84,40,.45));
+  border-color: rgba(62,84,40,.22);
+  color: #3E5428;
+}
+body.light-theme .notif-actor { color: #18200E; }
+body.light-theme .notif-action { color: rgba(24,32,14,.60); }
+body.light-theme .notif-content-title { color: #5C7840; }
+body.light-theme .notif-time { color: rgba(62,84,40,.50); }
+body.light-theme .notif-type-icon.like    { background: rgba(229,83,75,.10); }
+body.light-theme .notif-type-icon.comment { background: rgba(62,84,40,.12); color: #5C7840; }
+body.light-theme .notif-type-icon.reply   { background: rgba(62,84,40,.09); color: #4C6839; }
+body.light-theme .notif-empty-icon { background: rgba(62,84,40,.09); color: rgba(62,84,40,.40); }
+body.light-theme .notif-empty-text { color: rgba(62,84,40,.45); }
 /* Spotify-style pill CTA button */
 .tb-upload {
   display: flex; align-items: center; gap: 6px;
@@ -610,22 +769,268 @@ body.light-theme .about-aitu-light { display: block; }
   .cs-results-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
 }
 
-/* Search results page */
-.search-page-inner { padding: 28px 32px 40px; max-width: 1200px; }
-.search-page-head { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
-.search-back-btn {
-  background: var(--bg3); border: 1px solid var(--bg5); color: var(--text2);
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  padding: 6px 14px; border-radius: 8px;
-  transition: background .14s, color .14s;
+/* ============================================================
+   SEARCH RESULTS PAGE — all rules scoped to #page-search
+============================================================ */
+#page-search .search-page-inner {
+  padding: clamp(24px, 3.5vw, 48px) clamp(20px, 4vw, 44px) 60px;
+  max-width: 1280px;
+  position: relative;
+  isolation: isolate;
 }
-.search-back-btn:hover { background: var(--bg4); color: var(--text); }
-.search-page-title { font-size: 17px; font-weight: 800; color: var(--text); margin: 0; }
-.search-page-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
-.search-page-empty { padding: 60px 0; text-align: center; color: var(--text2); font-size: 15px; opacity: .6; }
-@media (max-width: 600px) {
-  .search-page-inner { padding: 18px 14px 32px; }
-  .search-page-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+/* Atmospheric backdrop */
+#page-search .search-page-inner::before {
+  content: '';
+  position: absolute;
+  inset: -60px 0 auto 0;
+  height: 480px;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(125,145,88,.18), transparent 38%),
+    linear-gradient(180deg, rgba(13,24,10,.72), rgba(8,12,7,0));
+}
+/* Header row */
+#page-search .search-page-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+/* Back button — premium pill */
+#page-search .search-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, rgba(22,31,17,.90), rgba(13,20,10,.96));
+  border: 1px solid rgba(180,205,132,.14);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 100px;
+  box-shadow: 0 4px 14px rgba(3,8,3,.18), inset 0 1px 0 rgba(255,255,255,.055);
+  transition:
+    background 200ms cubic-bezier(0.23,1,0.32,1),
+    color 200ms cubic-bezier(0.23,1,0.32,1),
+    border-color 200ms cubic-bezier(0.23,1,0.32,1),
+    transform 160ms cubic-bezier(0.23,1,0.32,1);
+  letter-spacing: .3px;
+  white-space: nowrap;
+}
+#page-search .search-back-btn:hover {
+  background: linear-gradient(135deg, rgba(30,42,22,.96), rgba(18,27,13,.98));
+  color: var(--text);
+  border-color: rgba(180,205,132,.22);
+}
+#page-search .search-back-btn:active { transform: scale(0.97); }
+/* Title + result count */
+#page-search .search-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+#page-search .search-page-title {
+  font-size: clamp(17px, 2.2vw, 24px);
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -.3px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+#page-search .search-result-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  background: rgba(125,145,88,.13);
+  border: 1px solid rgba(125,145,88,.20);
+  border-radius: 100px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+}
+/* Results grid */
+#page-search .search-page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+/* Premium search result card */
+#page-search .search-card {
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.08);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(3,8,3,.16), inset 0 1px 0 rgba(255,255,255,.04);
+  transition:
+    transform 220ms cubic-bezier(0.23,1,0.32,1),
+    box-shadow 220ms cubic-bezier(0.23,1,0.32,1),
+    border-color 220ms cubic-bezier(0.23,1,0.32,1);
+}
+#page-search .search-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 48px rgba(3,8,3,.28), inset 0 1px 0 rgba(255,255,255,.065);
+  border-color: rgba(180,205,132,.16);
+}
+#page-search .search-card:active { transform: translateY(-1px) scale(0.99); }
+/* Card thumbnail */
+#page-search .search-card-thumb {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--bg3), var(--bg5));
+}
+#page-search .search-card-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 400ms cubic-bezier(0.23,1,0.32,1);
+}
+#page-search .search-card:hover .search-card-thumb img { transform: scale(1.04); }
+#page-search .search-card-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  opacity: .4;
+  font-size: 26px;
+}
+/* Card body */
+#page-search .search-card-body { padding: 12px 14px 14px; }
+#page-search .search-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+#page-search .search-card-sub {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* Empty state */
+#page-search .search-page-empty {
+  grid-column: 1 / -1;
+  padding: 72px 24px;
+  text-align: center;
+}
+#page-search .search-empty-icon {
+  width: 48px; height: 48px;
+  margin: 0 auto 14px;
+  opacity: .22;
+  display: block;
+}
+#page-search .search-empty-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text2);
+  opacity: .65;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+/* Loading skeleton */
+#page-search .search-skeleton {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+#page-search .search-skel-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.07);
+}
+#page-search .search-skel-thumb {
+  aspect-ratio: 16/9;
+  background: linear-gradient(90deg, rgba(255,255,255,.04) 25%, rgba(255,255,255,.08) 50%, rgba(255,255,255,.04) 75%);
+  background-size: 200% 100%;
+  animation: srch-shimmer 1.6s linear infinite;
+}
+#page-search .search-skel-body { padding: 12px 14px 14px; }
+#page-search .search-skel-line {
+  height: 11px; border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.09) 50%, rgba(255,255,255,.05) 75%);
+  background-size: 200% 100%;
+  animation: srch-shimmer 1.6s linear infinite;
+  margin-bottom: 8px;
+}
+#page-search .search-skel-line.short { width: 60%; margin-bottom: 0; }
+@keyframes srch-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+/* Responsive */
+@media (max-width: 768px) {
+  #page-search .search-page-inner { padding: 20px 16px 40px; }
+  #page-search .search-page-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  #page-search .search-skeleton  { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+}
+@media (max-width: 480px) {
+  #page-search .search-page-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  #page-search .search-skeleton  { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+/* Light theme */
+body.light-theme #page-search .search-page-inner::before {
+  background:
+    radial-gradient(circle at 18% 10%, rgba(92,120,64,.10), transparent 38%),
+    linear-gradient(180deg, rgba(220,210,184,.50), rgba(240,233,214,0));
+}
+body.light-theme #page-search .search-back-btn {
+  background: linear-gradient(135deg, rgba(234,226,204,.92), rgba(221,211,184,.98));
+  border-color: rgba(62,84,40,.14);
+  box-shadow: 0 4px 14px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.42);
+}
+body.light-theme #page-search .search-back-btn:hover {
+  background: linear-gradient(135deg, rgba(224,214,190,.98), rgba(210,200,172,.99));
+  border-color: rgba(62,84,40,.22);
+  color: var(--text);
+}
+body.light-theme #page-search .search-result-count {
+  background: rgba(92,120,64,.10);
+  border-color: rgba(92,120,64,.20);
+}
+body.light-theme #page-search .search-card {
+  background: linear-gradient(150deg, rgba(234,226,204,.96), rgba(221,211,184,.98));
+  border-color: rgba(62,84,40,.10);
+  box-shadow: 0 8px 28px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.42);
+}
+body.light-theme #page-search .search-card:hover {
+  box-shadow: 0 20px 48px rgba(70,82,44,.16), inset 0 1px 0 rgba(255,255,255,.52);
+  border-color: rgba(62,84,40,.18);
+}
+body.light-theme #page-search .search-skel-card {
+  background: linear-gradient(150deg, rgba(234,226,204,.96), rgba(221,211,184,.98));
+  border-color: rgba(62,84,40,.08);
+}
+body.light-theme #page-search .search-skel-thumb,
+body.light-theme #page-search .search-skel-line {
+  background: linear-gradient(90deg, rgba(0,0,0,.04) 25%, rgba(0,0,0,.08) 50%, rgba(0,0,0,.04) 75%);
+  background-size: 200% 100%;
+  animation: srch-shimmer 1.6s linear infinite;
+}
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #page-search .search-card,
+  #page-search .search-card-thumb img,
+  #page-search .search-skel-thumb,
+  #page-search .search-skel-line { animation: none !important; transition: none !important; }
 }
 
 /* Feed */
@@ -708,8 +1113,9 @@ body.light-theme .about-aitu-light { display: block; }
 .ct-music  { color: #e07ad4; }
 .ct-doc    { color: #7ad4e0; }
 .ct-podcast{ color: #a0d47a; }
-.ct-social { color: #d4907a; }
-.ct-short  { color: #7aaed4; }
+.ct-social     { color: #d4907a; }
+.ct-short      { color: #7aaed4; }
+.ct-animation  { color: #c4a8e8; }
 
 .card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .card-sub { font-size: 11px; color: var(--text2); }
@@ -5143,6 +5549,1703 @@ body.role-admin .prof-dots, body.role-moderator .prof-dots { display: flex; }
 .req-btn-decline:hover { background: rgba(255,107,107,.22); }
 .req-empty { text-align: center; padding: 48px 0; color: var(--text3); font-size: 13px; }
 
+/* ============================================================
+   MOD REQUESTS PAGE — scoped to #page-mod-requests only
+   Pattern: mirrors #page-creator-videos / #page-creator-pitches
+   Palette: AYA dark olive / sage / warm cream
+============================================================ */
+
+/* ── Center the page wrapper to match .creator-page behavior ── */
+#page-mod-requests .settings-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 28px 72px;
+}
+
+/* ── Editorial hero surface — .settings-title IS the hero ── */
+#page-mod-requests .settings-title {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(20px, 2.8vw, 32px) !important;
+  font-weight: 900;
+  letter-spacing: -.3px !important;
+  line-height: 1.1 !important;
+  margin-bottom: 20px !important;
+  padding: clamp(22px, 3vw, 34px) clamp(22px, 3.4vw, 40px) !important;
+  background:
+    linear-gradient(135deg, rgba(12,24,8,.96), rgba(18,30,11,.90) 48%, rgba(8,13,7,.98)),
+    radial-gradient(circle at 74% 22%, rgba(125,145,88,.22), transparent 40%);
+  border: 1px solid rgba(180,205,132,.13);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 72px rgba(3,8,3,.38), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Watermark ghost text */
+#page-mod-requests .settings-title::before {
+  content: 'MY REQUESTS';
+  position: absolute;
+  top: 50%;
+  right: clamp(-8px, 2vw, 14px);
+  transform: translateY(-50%);
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 76px);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: .01em;
+  color: rgba(211,225,167,.026);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Inner refraction ring (overrides global gold-bar ::after) */
+#page-mod-requests .settings-title::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 23px !important;
+  border: 1px solid rgba(255,255,255,.028) !important;
+  background: none !important;
+  pointer-events: none !important;
+}
+
+/* Icon inside the translated title */
+#page-mod-requests .settings-title .aya-ico {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  opacity: .82;
+}
+
+/* ── Entrance animations ── */
+@keyframes mrRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-mod-requests.active .settings-title {
+  animation: mrRise .85s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-mod-requests.active .req-card {
+  animation: mrRise .7s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-mod-requests.active .req-card:nth-child(1) { animation-delay: .06s; }
+#page-mod-requests.active .req-card:nth-child(2) { animation-delay: .12s; }
+#page-mod-requests.active .req-card:nth-child(3) { animation-delay: .18s; }
+#page-mod-requests.active .req-card:nth-child(4) { animation-delay: .24s; }
+#page-mod-requests.active .req-card:nth-child(5) { animation-delay: .30s; }
+#page-mod-requests.active .req-card:nth-child(n+6) { animation-delay: .36s; }
+
+#page-mod-requests.active .req-empty {
+  animation: mrRise .7s cubic-bezier(.16,1,.3,1) .06s both;
+}
+
+/* ── Premium req-cards ── */
+#page-mod-requests .req-card {
+  position: relative;
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.10);
+  border-radius: 20px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 14px 44px rgba(3,8,3,.24),
+    inset 0 1px 0 rgba(255,255,255,.042);
+  transition:
+    transform .55s cubic-bezier(.16,1,.3,1),
+    border-color .55s cubic-bezier(.16,1,.3,1),
+    background .55s cubic-bezier(.16,1,.3,1),
+    box-shadow .55s cubic-bezier(.16,1,.3,1);
+}
+
+/* Inner refraction ring on cards */
+#page-mod-requests .req-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 19px;
+  border: 1px solid rgba(255,255,255,.024);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #page-mod-requests .req-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(180,205,132,.22);
+    background: linear-gradient(150deg, rgba(26,37,20,.98), rgba(16,25,12,.99));
+    box-shadow:
+      0 20px 56px rgba(3,8,3,.34),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+}
+
+/* Card head */
+#page-mod-requests .req-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 0;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(180,205,132,.07);
+}
+
+/* Card title */
+#page-mod-requests .req-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.38;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+#page-mod-requests .req-card-title .aya-ico {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  opacity: .72;
+}
+
+/* Status badge */
+#page-mod-requests .req-status {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+#page-mod-requests .req-status.pending {
+  background: rgba(125,145,88,.13);
+  color: var(--gold2);
+  border: 1px solid rgba(125,145,88,.24);
+}
+
+#page-mod-requests .req-status.approved {
+  background: rgba(76,175,80,.09);
+  color: #78c87c;
+  border: 1px solid rgba(76,175,80,.2);
+}
+
+#page-mod-requests .req-status.declined {
+  background: rgba(210,85,85,.09);
+  color: #df7878;
+  border: 1px solid rgba(210,85,85,.18);
+}
+
+/* Meta row */
+#page-mod-requests .req-meta {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 10px;
+  margin-top: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* Reason block */
+#page-mod-requests .req-reason {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.62;
+  margin-bottom: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(125,145,88,.052);
+  border-left: 2px solid rgba(125,145,88,.26);
+}
+
+/* Empty state */
+#page-mod-requests .req-empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text3);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(150deg, rgba(22,31,17,.55), rgba(13,20,10,.65));
+  border: 1px solid rgba(180,205,132,.07);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+/* ── Light theme ── */
+body.light-theme #page-mod-requests .settings-title {
+  background:
+    linear-gradient(135deg, rgba(222,232,208,.98), rgba(208,220,188,.94) 48%, rgba(195,210,175,.99)),
+    radial-gradient(circle at 74% 22%, rgba(62,84,40,.10), transparent 40%);
+  border-color: rgba(62,84,40,.14);
+  box-shadow: 0 18px 52px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.52);
+  color: #1a2410;
+}
+
+body.light-theme #page-mod-requests .settings-title::before {
+  color: rgba(62,84,40,.038);
+}
+
+body.light-theme #page-mod-requests .settings-title::after {
+  border-color: rgba(255,255,255,.35) !important;
+  background: none !important;
+}
+
+body.light-theme #page-mod-requests .req-card {
+  background: linear-gradient(150deg, rgba(240,244,232,.98), rgba(232,238,220,.99));
+  border-color: rgba(62,84,40,.11);
+  box-shadow: 0 10px 36px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+body.light-theme #page-mod-requests .req-card::before {
+  border-color: rgba(255,255,255,.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.light-theme #page-mod-requests .req-card:hover {
+    background: linear-gradient(150deg, rgba(246,250,238,.99), rgba(238,244,226,.99));
+    border-color: rgba(62,84,40,.20);
+    box-shadow: 0 14px 44px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.72);
+  }
+}
+
+body.light-theme #page-mod-requests .req-card-head {
+  border-bottom-color: rgba(62,84,40,.09);
+}
+
+body.light-theme #page-mod-requests .req-status.pending {
+  background: rgba(62,84,40,.11);
+  color: #3e5428;
+  border-color: rgba(62,84,40,.2);
+}
+
+body.light-theme #page-mod-requests .req-status.approved {
+  background: rgba(50,140,55,.09);
+  color: #2d7932;
+  border-color: rgba(50,140,55,.2);
+}
+
+body.light-theme #page-mod-requests .req-status.declined {
+  background: rgba(180,60,60,.09);
+  color: #b03c3c;
+  border-color: rgba(180,60,60,.18);
+}
+
+body.light-theme #page-mod-requests .req-meta {
+  color: rgba(26,36,16,.52);
+}
+
+body.light-theme #page-mod-requests .req-reason {
+  background: rgba(62,84,40,.055);
+  border-left-color: rgba(62,84,40,.28);
+  color: rgba(26,36,16,.72);
+}
+
+body.light-theme #page-mod-requests .req-empty {
+  background: linear-gradient(150deg, rgba(234,226,204,.65), rgba(221,211,184,.65));
+  border-color: rgba(62,84,40,.09);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #page-mod-requests .settings-page {
+    padding: 20px 16px 48px;
+  }
+
+  #page-mod-requests .settings-title {
+    border-radius: 18px !important;
+  }
+
+  #page-mod-requests .req-card {
+    border-radius: 16px;
+    padding: 16px 16px;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #page-mod-requests .settings-title,
+  #page-mod-requests .req-card,
+  #page-mod-requests .req-empty {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  #page-mod-requests .req-card {
+    transition: none !important;
+  }
+
+  #page-mod-requests .req-card:hover {
+    transform: none !important;
+  }
+}
+/* ── end #page-mod-requests ── */
+
+/* ============================================================
+   MOD USER REPORTS PAGE — scoped to #page-mod-user-reports only
+   Pattern: mirrors #page-creator-videos / #page-creator-pitches
+   Palette: AYA dark olive / sage / warm cream
+============================================================ */
+
+/* ── Center the page wrapper ── */
+#page-mod-user-reports .settings-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 28px 72px;
+}
+
+/* ── Editorial hero surface — .settings-title IS the hero ── */
+#page-mod-user-reports .settings-title {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(20px, 2.8vw, 32px) !important;
+  font-weight: 900;
+  letter-spacing: -.3px !important;
+  line-height: 1.1 !important;
+  margin-bottom: 20px !important;
+  padding: clamp(22px, 3vw, 34px) clamp(22px, 3.4vw, 40px) !important;
+  background:
+    linear-gradient(135deg, rgba(12,24,8,.96), rgba(18,30,11,.90) 48%, rgba(8,13,7,.98)),
+    radial-gradient(circle at 74% 22%, rgba(125,145,88,.22), transparent 40%);
+  border: 1px solid rgba(180,205,132,.13);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 72px rgba(3,8,3,.38), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Watermark ghost text */
+#page-mod-user-reports .settings-title::before {
+  content: 'USER REPORTS';
+  position: absolute;
+  top: 50%;
+  right: clamp(-8px, 2vw, 14px);
+  transform: translateY(-50%);
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 76px);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: .01em;
+  color: rgba(211,225,167,.026);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Inner refraction ring (overrides global gold-bar ::after) */
+#page-mod-user-reports .settings-title::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 23px !important;
+  border: 1px solid rgba(255,255,255,.028) !important;
+  background: none !important;
+  pointer-events: none !important;
+}
+
+/* Icon inside the title */
+#page-mod-user-reports .settings-title .aya-ico {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  opacity: .82;
+}
+
+/* ── Entrance animations ── */
+@keyframes murRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-mod-user-reports.active .settings-title {
+  animation: murRise .85s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-mod-user-reports.active .req-card {
+  animation: murRise .7s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-mod-user-reports.active .req-card:nth-child(1) { animation-delay: .06s; }
+#page-mod-user-reports.active .req-card:nth-child(2) { animation-delay: .12s; }
+#page-mod-user-reports.active .req-card:nth-child(3) { animation-delay: .18s; }
+#page-mod-user-reports.active .req-card:nth-child(4) { animation-delay: .24s; }
+#page-mod-user-reports.active .req-card:nth-child(5) { animation-delay: .30s; }
+#page-mod-user-reports.active .req-card:nth-child(n+6) { animation-delay: .36s; }
+
+#page-mod-user-reports.active .req-empty {
+  animation: murRise .7s cubic-bezier(.16,1,.3,1) .06s both;
+}
+
+/* ── Premium req-cards ── */
+#page-mod-user-reports .req-card {
+  position: relative;
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.10);
+  border-radius: 20px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 14px 44px rgba(3,8,3,.24),
+    inset 0 1px 0 rgba(255,255,255,.042);
+  transition:
+    transform .55s cubic-bezier(.16,1,.3,1),
+    border-color .55s cubic-bezier(.16,1,.3,1),
+    background .55s cubic-bezier(.16,1,.3,1),
+    box-shadow .55s cubic-bezier(.16,1,.3,1);
+}
+
+/* Inner refraction ring on cards */
+#page-mod-user-reports .req-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 19px;
+  border: 1px solid rgba(255,255,255,.024);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #page-mod-user-reports .req-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(180,205,132,.22);
+    background: linear-gradient(150deg, rgba(26,37,20,.98), rgba(16,25,12,.99));
+    box-shadow:
+      0 20px 56px rgba(3,8,3,.34),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+}
+
+/* Card head */
+#page-mod-user-reports .req-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 0;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(180,205,132,.07);
+}
+
+/* Card title */
+#page-mod-user-reports .req-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.38;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Status badge */
+#page-mod-user-reports .req-status {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+#page-mod-user-reports .req-status.pending {
+  background: rgba(125,145,88,.13);
+  color: var(--gold2);
+  border: 1px solid rgba(125,145,88,.24);
+}
+
+/* Meta row */
+#page-mod-user-reports .req-meta {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 10px;
+  margin-top: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* Reason block */
+#page-mod-user-reports .req-reason {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.62;
+  margin-bottom: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(125,145,88,.052);
+  border-left: 2px solid rgba(125,145,88,.26);
+}
+
+/* Empty state */
+#page-mod-user-reports .req-empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text3);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(150deg, rgba(22,31,17,.55), rgba(13,20,10,.65));
+  border: 1px solid rgba(180,205,132,.07);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+/* ── Light theme ── */
+body.light-theme #page-mod-user-reports .settings-title {
+  background:
+    linear-gradient(135deg, rgba(222,232,208,.98), rgba(208,220,188,.94) 48%, rgba(195,210,175,.99)),
+    radial-gradient(circle at 74% 22%, rgba(62,84,40,.10), transparent 40%);
+  border-color: rgba(62,84,40,.14);
+  box-shadow: 0 18px 52px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.52);
+  color: #1a2410;
+}
+
+body.light-theme #page-mod-user-reports .settings-title::before {
+  color: rgba(62,84,40,.038);
+}
+
+body.light-theme #page-mod-user-reports .settings-title::after {
+  border-color: rgba(255,255,255,.35) !important;
+  background: none !important;
+}
+
+body.light-theme #page-mod-user-reports .req-card {
+  background: linear-gradient(150deg, rgba(240,244,232,.98), rgba(232,238,220,.99));
+  border-color: rgba(62,84,40,.11);
+  box-shadow: 0 10px 36px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+body.light-theme #page-mod-user-reports .req-card::before {
+  border-color: rgba(255,255,255,.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.light-theme #page-mod-user-reports .req-card:hover {
+    background: linear-gradient(150deg, rgba(246,250,238,.99), rgba(238,244,226,.99));
+    border-color: rgba(62,84,40,.20);
+    box-shadow: 0 14px 44px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.72);
+  }
+}
+
+body.light-theme #page-mod-user-reports .req-card-head {
+  border-bottom-color: rgba(62,84,40,.09);
+}
+
+body.light-theme #page-mod-user-reports .req-status.pending {
+  background: rgba(62,84,40,.11);
+  color: #3e5428;
+  border-color: rgba(62,84,40,.2);
+}
+
+body.light-theme #page-mod-user-reports .req-meta {
+  color: rgba(26,36,16,.52);
+}
+
+body.light-theme #page-mod-user-reports .req-reason {
+  background: rgba(62,84,40,.055);
+  border-left-color: rgba(62,84,40,.28);
+  color: rgba(26,36,16,.72);
+}
+
+body.light-theme #page-mod-user-reports .req-empty {
+  background: linear-gradient(150deg, rgba(234,226,204,.65), rgba(221,211,184,.65));
+  border-color: rgba(62,84,40,.09);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #page-mod-user-reports .settings-page {
+    padding: 20px 16px 48px;
+  }
+
+  #page-mod-user-reports .settings-title {
+    border-radius: 18px !important;
+  }
+
+  #page-mod-user-reports .req-card {
+    border-radius: 16px;
+    padding: 16px 16px;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #page-mod-user-reports .settings-title,
+  #page-mod-user-reports .req-card,
+  #page-mod-user-reports .req-empty {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  #page-mod-user-reports .req-card {
+    transition: none !important;
+  }
+
+  #page-mod-user-reports .req-card:hover {
+    transform: none !important;
+  }
+}
+/* ── end #page-mod-user-reports ── */
+
+/* ============================================================
+   ADMIN REPORTS PAGE — scoped to #page-admin-reports only
+   Pattern: mirrors #page-creator-videos / #page-creator-pitches
+   Palette: AYA dark olive / sage / warm cream
+============================================================ */
+
+/* ── Center the page wrapper ── */
+#page-admin-reports .settings-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 28px 72px;
+}
+
+/* ── Editorial hero surface — .settings-title IS the hero ── */
+#page-admin-reports .settings-title {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(20px, 2.8vw, 32px) !important;
+  font-weight: 900;
+  letter-spacing: -.3px !important;
+  line-height: 1.1 !important;
+  margin-bottom: 20px !important;
+  padding: clamp(22px, 3vw, 34px) clamp(22px, 3.4vw, 40px) !important;
+  background:
+    linear-gradient(135deg, rgba(12,24,8,.96), rgba(18,30,11,.90) 48%, rgba(8,13,7,.98)),
+    radial-gradient(circle at 74% 22%, rgba(125,145,88,.22), transparent 40%);
+  border: 1px solid rgba(180,205,132,.13);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 72px rgba(3,8,3,.38), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Watermark ghost text */
+#page-admin-reports .settings-title::before {
+  content: 'USER REPORTS';
+  position: absolute;
+  top: 50%;
+  right: clamp(-8px, 2vw, 14px);
+  transform: translateY(-50%);
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 76px);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: .01em;
+  color: rgba(211,225,167,.026);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Inner refraction ring (overrides global gold-bar ::after) */
+#page-admin-reports .settings-title::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 23px !important;
+  border: 1px solid rgba(255,255,255,.028) !important;
+  background: none !important;
+  pointer-events: none !important;
+}
+
+/* Icon inside the title */
+#page-admin-reports .settings-title .aya-ico {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  opacity: .82;
+}
+
+/* ── Entrance animations ── */
+@keyframes arRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-admin-reports.active .settings-title {
+  animation: arRise .85s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-admin-reports.active .req-card {
+  animation: arRise .7s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-admin-reports.active .req-card:nth-child(1) { animation-delay: .06s; }
+#page-admin-reports.active .req-card:nth-child(2) { animation-delay: .12s; }
+#page-admin-reports.active .req-card:nth-child(3) { animation-delay: .18s; }
+#page-admin-reports.active .req-card:nth-child(4) { animation-delay: .24s; }
+#page-admin-reports.active .req-card:nth-child(5) { animation-delay: .30s; }
+#page-admin-reports.active .req-card:nth-child(n+6) { animation-delay: .36s; }
+
+#page-admin-reports.active .req-empty {
+  animation: arRise .7s cubic-bezier(.16,1,.3,1) .06s both;
+}
+
+/* ── Premium req-cards ── */
+#page-admin-reports .req-card {
+  position: relative;
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.10);
+  border-radius: 20px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 14px 44px rgba(3,8,3,.24),
+    inset 0 1px 0 rgba(255,255,255,.042);
+  transition:
+    transform .55s cubic-bezier(.16,1,.3,1),
+    border-color .55s cubic-bezier(.16,1,.3,1),
+    background .55s cubic-bezier(.16,1,.3,1),
+    box-shadow .55s cubic-bezier(.16,1,.3,1);
+}
+
+/* Inner refraction ring on cards */
+#page-admin-reports .req-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 19px;
+  border: 1px solid rgba(255,255,255,.024);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #page-admin-reports .req-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(180,205,132,.22);
+    background: linear-gradient(150deg, rgba(26,37,20,.98), rgba(16,25,12,.99));
+    box-shadow:
+      0 20px 56px rgba(3,8,3,.34),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+}
+
+/* Card head */
+#page-admin-reports .req-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 0;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(180,205,132,.07);
+}
+
+/* Card title */
+#page-admin-reports .req-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.38;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Status badge */
+#page-admin-reports .req-status {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+#page-admin-reports .req-status.pending {
+  background: rgba(125,145,88,.13);
+  color: var(--gold2);
+  border: 1px solid rgba(125,145,88,.24);
+}
+
+#page-admin-reports .req-status.approved {
+  background: rgba(76,175,80,.09);
+  color: #78c87c;
+  border: 1px solid rgba(76,175,80,.2);
+}
+
+#page-admin-reports .req-status.declined {
+  background: rgba(210,85,85,.09);
+  color: #df7878;
+  border: 1px solid rgba(210,85,85,.18);
+}
+
+/* Meta row */
+#page-admin-reports .req-meta {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 10px;
+  margin-top: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* Reason block */
+#page-admin-reports .req-reason {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.62;
+  margin-bottom: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(125,145,88,.052);
+  border-left: 2px solid rgba(125,145,88,.26);
+}
+
+/* Empty state */
+#page-admin-reports .req-empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text3);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(150deg, rgba(22,31,17,.55), rgba(13,20,10,.65));
+  border: 1px solid rgba(180,205,132,.07);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+/* ── Light theme ── */
+body.light-theme #page-admin-reports .settings-title {
+  background:
+    linear-gradient(135deg, rgba(222,232,208,.98), rgba(208,220,188,.94) 48%, rgba(195,210,175,.99)),
+    radial-gradient(circle at 74% 22%, rgba(62,84,40,.10), transparent 40%);
+  border-color: rgba(62,84,40,.14);
+  box-shadow: 0 18px 52px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.52);
+  color: #1a2410;
+}
+
+body.light-theme #page-admin-reports .settings-title::before {
+  color: rgba(62,84,40,.038);
+}
+
+body.light-theme #page-admin-reports .settings-title::after {
+  border-color: rgba(255,255,255,.35) !important;
+  background: none !important;
+}
+
+body.light-theme #page-admin-reports .req-card {
+  background: linear-gradient(150deg, rgba(240,244,232,.98), rgba(232,238,220,.99));
+  border-color: rgba(62,84,40,.11);
+  box-shadow: 0 10px 36px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+body.light-theme #page-admin-reports .req-card::before {
+  border-color: rgba(255,255,255,.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.light-theme #page-admin-reports .req-card:hover {
+    background: linear-gradient(150deg, rgba(246,250,238,.99), rgba(238,244,226,.99));
+    border-color: rgba(62,84,40,.20);
+    box-shadow: 0 14px 44px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.72);
+  }
+}
+
+body.light-theme #page-admin-reports .req-card-head {
+  border-bottom-color: rgba(62,84,40,.09);
+}
+
+body.light-theme #page-admin-reports .req-status.pending {
+  background: rgba(62,84,40,.11);
+  color: #3e5428;
+  border-color: rgba(62,84,40,.2);
+}
+
+body.light-theme #page-admin-reports .req-status.approved {
+  background: rgba(50,140,55,.09);
+  color: #2d7932;
+  border-color: rgba(50,140,55,.2);
+}
+
+body.light-theme #page-admin-reports .req-status.declined {
+  background: rgba(180,60,60,.09);
+  color: #b03c3c;
+  border-color: rgba(180,60,60,.18);
+}
+
+body.light-theme #page-admin-reports .req-meta {
+  color: rgba(26,36,16,.52);
+}
+
+body.light-theme #page-admin-reports .req-reason {
+  background: rgba(62,84,40,.055);
+  border-left-color: rgba(62,84,40,.28);
+  color: rgba(26,36,16,.72);
+}
+
+body.light-theme #page-admin-reports .req-empty {
+  background: linear-gradient(150deg, rgba(234,226,204,.65), rgba(221,211,184,.65));
+  border-color: rgba(62,84,40,.09);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #page-admin-reports .settings-page {
+    padding: 20px 16px 48px;
+  }
+
+  #page-admin-reports .settings-title {
+    border-radius: 18px !important;
+  }
+
+  #page-admin-reports .req-card {
+    border-radius: 16px;
+    padding: 16px 16px;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #page-admin-reports .settings-title,
+  #page-admin-reports .req-card,
+  #page-admin-reports .req-empty {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  #page-admin-reports .req-card {
+    transition: none !important;
+  }
+
+  #page-admin-reports .req-card:hover {
+    transform: none !important;
+  }
+}
+/* ── end #page-admin-reports ── */
+
+/* ============================================================
+   ADMIN BAN REQUESTS PAGE — scoped to #page-admin-bans only
+   Pattern: mirrors #page-creator-videos / #page-creator-pitches
+   Palette: AYA dark olive / sage / warm cream
+============================================================ */
+
+/* ── Center the page wrapper ── */
+#page-admin-bans .settings-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 28px 72px;
+}
+
+/* ── Editorial hero surface — .settings-title IS the hero ── */
+#page-admin-bans .settings-title {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(20px, 2.8vw, 32px) !important;
+  font-weight: 900;
+  letter-spacing: -.3px !important;
+  line-height: 1.1 !important;
+  margin-bottom: 20px !important;
+  padding: clamp(22px, 3vw, 34px) clamp(22px, 3.4vw, 40px) !important;
+  background:
+    linear-gradient(135deg, rgba(12,24,8,.96), rgba(18,30,11,.90) 48%, rgba(8,13,7,.98)),
+    radial-gradient(circle at 74% 22%, rgba(125,145,88,.22), transparent 40%);
+  border: 1px solid rgba(180,205,132,.13);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 72px rgba(3,8,3,.38), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Watermark ghost text */
+#page-admin-bans .settings-title::before {
+  content: 'BAN REQUESTS';
+  position: absolute;
+  top: 50%;
+  right: clamp(-8px, 2vw, 14px);
+  transform: translateY(-50%);
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 76px);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: .01em;
+  color: rgba(211,225,167,.026);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Inner refraction ring (overrides global gold-bar ::after) */
+#page-admin-bans .settings-title::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 23px !important;
+  border: 1px solid rgba(255,255,255,.028) !important;
+  background: none !important;
+  pointer-events: none !important;
+}
+
+/* Icon inside the title */
+#page-admin-bans .settings-title .aya-ico {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  opacity: .82;
+}
+
+/* ── Entrance animations ── */
+@keyframes abRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-admin-bans.active .settings-title {
+  animation: abRise .85s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-admin-bans.active .req-card {
+  animation: abRise .7s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-admin-bans.active .req-card:nth-child(1) { animation-delay: .06s; }
+#page-admin-bans.active .req-card:nth-child(2) { animation-delay: .12s; }
+#page-admin-bans.active .req-card:nth-child(3) { animation-delay: .18s; }
+#page-admin-bans.active .req-card:nth-child(4) { animation-delay: .24s; }
+#page-admin-bans.active .req-card:nth-child(5) { animation-delay: .30s; }
+#page-admin-bans.active .req-card:nth-child(n+6) { animation-delay: .36s; }
+
+#page-admin-bans.active .req-empty {
+  animation: abRise .7s cubic-bezier(.16,1,.3,1) .06s both;
+}
+
+/* ── Premium req-cards ── */
+#page-admin-bans .req-card {
+  position: relative;
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.10);
+  border-radius: 20px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 14px 44px rgba(3,8,3,.24),
+    inset 0 1px 0 rgba(255,255,255,.042);
+  transition:
+    transform .55s cubic-bezier(.16,1,.3,1),
+    border-color .55s cubic-bezier(.16,1,.3,1),
+    background .55s cubic-bezier(.16,1,.3,1),
+    box-shadow .55s cubic-bezier(.16,1,.3,1);
+}
+
+/* Inner refraction ring on cards */
+#page-admin-bans .req-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 19px;
+  border: 1px solid rgba(255,255,255,.024);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #page-admin-bans .req-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(180,205,132,.22);
+    background: linear-gradient(150deg, rgba(26,37,20,.98), rgba(16,25,12,.99));
+    box-shadow:
+      0 20px 56px rgba(3,8,3,.34),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+}
+
+/* Card head */
+#page-admin-bans .req-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 0;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(180,205,132,.07);
+}
+
+/* Card title */
+#page-admin-bans .req-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.38;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+#page-admin-bans .req-card-title .aya-ico {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  opacity: .72;
+}
+
+/* Status badge */
+#page-admin-bans .req-status {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+#page-admin-bans .req-status.pending {
+  background: rgba(125,145,88,.13);
+  color: var(--gold2);
+  border: 1px solid rgba(125,145,88,.24);
+}
+
+#page-admin-bans .req-status.approved {
+  background: rgba(76,175,80,.09);
+  color: #78c87c;
+  border: 1px solid rgba(76,175,80,.2);
+}
+
+#page-admin-bans .req-status.declined {
+  background: rgba(210,85,85,.09);
+  color: #df7878;
+  border: 1px solid rgba(210,85,85,.18);
+}
+
+/* Meta row */
+#page-admin-bans .req-meta {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 10px;
+  margin-top: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* Reason block */
+#page-admin-bans .req-reason {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.62;
+  margin-bottom: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(125,145,88,.052);
+  border-left: 2px solid rgba(125,145,88,.26);
+}
+
+/* Action buttons row */
+#page-admin-bans .req-actions {
+  margin-top: 14px;
+}
+
+/* Empty state */
+#page-admin-bans .req-empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text3);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(150deg, rgba(22,31,17,.55), rgba(13,20,10,.65));
+  border: 1px solid rgba(180,205,132,.07);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+/* ── Light theme ── */
+body.light-theme #page-admin-bans .settings-title {
+  background:
+    linear-gradient(135deg, rgba(222,232,208,.98), rgba(208,220,188,.94) 48%, rgba(195,210,175,.99)),
+    radial-gradient(circle at 74% 22%, rgba(62,84,40,.10), transparent 40%);
+  border-color: rgba(62,84,40,.14);
+  box-shadow: 0 18px 52px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.52);
+  color: #1a2410;
+}
+
+body.light-theme #page-admin-bans .settings-title::before {
+  color: rgba(62,84,40,.038);
+}
+
+body.light-theme #page-admin-bans .settings-title::after {
+  border-color: rgba(255,255,255,.35) !important;
+  background: none !important;
+}
+
+body.light-theme #page-admin-bans .req-card {
+  background: linear-gradient(150deg, rgba(240,244,232,.98), rgba(232,238,220,.99));
+  border-color: rgba(62,84,40,.11);
+  box-shadow: 0 10px 36px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+body.light-theme #page-admin-bans .req-card::before {
+  border-color: rgba(255,255,255,.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.light-theme #page-admin-bans .req-card:hover {
+    background: linear-gradient(150deg, rgba(246,250,238,.99), rgba(238,244,226,.99));
+    border-color: rgba(62,84,40,.20);
+    box-shadow: 0 14px 44px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.72);
+  }
+}
+
+body.light-theme #page-admin-bans .req-card-head {
+  border-bottom-color: rgba(62,84,40,.09);
+}
+
+body.light-theme #page-admin-bans .req-status.pending {
+  background: rgba(62,84,40,.11);
+  color: #3e5428;
+  border-color: rgba(62,84,40,.2);
+}
+
+body.light-theme #page-admin-bans .req-status.approved {
+  background: rgba(50,140,55,.09);
+  color: #2d7932;
+  border-color: rgba(50,140,55,.2);
+}
+
+body.light-theme #page-admin-bans .req-status.declined {
+  background: rgba(180,60,60,.09);
+  color: #b03c3c;
+  border-color: rgba(180,60,60,.18);
+}
+
+body.light-theme #page-admin-bans .req-meta {
+  color: rgba(26,36,16,.52);
+}
+
+body.light-theme #page-admin-bans .req-reason {
+  background: rgba(62,84,40,.055);
+  border-left-color: rgba(62,84,40,.28);
+  color: rgba(26,36,16,.72);
+}
+
+body.light-theme #page-admin-bans .req-empty {
+  background: linear-gradient(150deg, rgba(234,226,204,.65), rgba(221,211,184,.65));
+  border-color: rgba(62,84,40,.09);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #page-admin-bans .settings-page {
+    padding: 20px 16px 48px;
+  }
+
+  #page-admin-bans .settings-title {
+    border-radius: 18px !important;
+  }
+
+  #page-admin-bans .req-card {
+    border-radius: 16px;
+    padding: 16px 16px;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #page-admin-bans .settings-title,
+  #page-admin-bans .req-card,
+  #page-admin-bans .req-empty {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  #page-admin-bans .req-card {
+    transition: none !important;
+  }
+
+  #page-admin-bans .req-card:hover {
+    transform: none !important;
+  }
+}
+/* ── end #page-admin-bans ── */
+
+/* ============================================================
+   ADMIN CONTENT REMOVAL PAGE — scoped to #page-admin-content only
+   Pattern: mirrors #page-creator-videos / #page-creator-pitches
+   Palette: AYA dark olive / sage / warm cream
+============================================================ */
+
+/* ── Center the page wrapper ── */
+#page-admin-content .settings-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 28px 72px;
+}
+
+/* ── Editorial hero surface — .settings-title IS the hero ── */
+#page-admin-content .settings-title {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(20px, 2.8vw, 32px) !important;
+  font-weight: 900;
+  letter-spacing: -.3px !important;
+  line-height: 1.1 !important;
+  margin-bottom: 20px !important;
+  padding: clamp(22px, 3vw, 34px) clamp(22px, 3.4vw, 40px) !important;
+  background:
+    linear-gradient(135deg, rgba(12,24,8,.96), rgba(18,30,11,.90) 48%, rgba(8,13,7,.98)),
+    radial-gradient(circle at 74% 22%, rgba(125,145,88,.22), transparent 40%);
+  border: 1px solid rgba(180,205,132,.13);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 72px rgba(3,8,3,.38), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Watermark ghost text */
+#page-admin-content .settings-title::before {
+  content: 'REMOVALS';
+  position: absolute;
+  top: 50%;
+  right: clamp(-8px, 2vw, 14px);
+  transform: translateY(-50%);
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(28px, 5vw, 76px);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: .01em;
+  color: rgba(211,225,167,.026);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Inner refraction ring (overrides global gold-bar ::after) */
+#page-admin-content .settings-title::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 1px !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 23px !important;
+  border: 1px solid rgba(255,255,255,.028) !important;
+  background: none !important;
+  pointer-events: none !important;
+}
+
+/* Icon inside the title */
+#page-admin-content .settings-title .aya-ico {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  opacity: .82;
+}
+
+/* ── Entrance animations ── */
+@keyframes acRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-admin-content.active .settings-title {
+  animation: acRise .85s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-admin-content.active .req-card {
+  animation: acRise .7s cubic-bezier(.16,1,.3,1) both;
+}
+
+#page-admin-content.active .req-card:nth-child(1) { animation-delay: .06s; }
+#page-admin-content.active .req-card:nth-child(2) { animation-delay: .12s; }
+#page-admin-content.active .req-card:nth-child(3) { animation-delay: .18s; }
+#page-admin-content.active .req-card:nth-child(4) { animation-delay: .24s; }
+#page-admin-content.active .req-card:nth-child(5) { animation-delay: .30s; }
+#page-admin-content.active .req-card:nth-child(n+6) { animation-delay: .36s; }
+
+#page-admin-content.active .req-empty {
+  animation: acRise .7s cubic-bezier(.16,1,.3,1) .06s both;
+}
+
+/* ── Premium req-cards ── */
+#page-admin-content .req-card {
+  position: relative;
+  background: linear-gradient(150deg, rgba(22,31,17,.96), rgba(13,20,10,.98));
+  border: 1px solid rgba(180,205,132,.10);
+  border-radius: 20px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 14px 44px rgba(3,8,3,.24),
+    inset 0 1px 0 rgba(255,255,255,.042);
+  transition:
+    transform .55s cubic-bezier(.16,1,.3,1),
+    border-color .55s cubic-bezier(.16,1,.3,1),
+    background .55s cubic-bezier(.16,1,.3,1),
+    box-shadow .55s cubic-bezier(.16,1,.3,1);
+}
+
+/* Inner refraction ring on cards */
+#page-admin-content .req-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 19px;
+  border: 1px solid rgba(255,255,255,.024);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #page-admin-content .req-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(180,205,132,.22);
+    background: linear-gradient(150deg, rgba(26,37,20,.98), rgba(16,25,12,.99));
+    box-shadow:
+      0 20px 56px rgba(3,8,3,.34),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+}
+
+/* Card head */
+#page-admin-content .req-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 0;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(180,205,132,.07);
+}
+
+/* Card title */
+#page-admin-content .req-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.38;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+#page-admin-content .req-card-title .aya-ico {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  opacity: .72;
+}
+
+/* Status badge */
+#page-admin-content .req-status {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+#page-admin-content .req-status.pending {
+  background: rgba(125,145,88,.13);
+  color: var(--gold2);
+  border: 1px solid rgba(125,145,88,.24);
+}
+
+#page-admin-content .req-status.approved {
+  background: rgba(76,175,80,.09);
+  color: #78c87c;
+  border: 1px solid rgba(76,175,80,.2);
+}
+
+#page-admin-content .req-status.declined {
+  background: rgba(210,85,85,.09);
+  color: #df7878;
+  border: 1px solid rgba(210,85,85,.18);
+}
+
+/* Meta row */
+#page-admin-content .req-meta {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 10px;
+  margin-top: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* Reason block */
+#page-admin-content .req-reason {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.62;
+  margin-bottom: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(125,145,88,.052);
+  border-left: 2px solid rgba(125,145,88,.26);
+}
+
+/* Action buttons row */
+#page-admin-content .req-actions {
+  margin-top: 14px;
+}
+
+/* Empty state */
+#page-admin-content .req-empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text3);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(150deg, rgba(22,31,17,.55), rgba(13,20,10,.65));
+  border: 1px solid rgba(180,205,132,.07);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+/* ── Light theme ── */
+body.light-theme #page-admin-content .settings-title {
+  background:
+    linear-gradient(135deg, rgba(222,232,208,.98), rgba(208,220,188,.94) 48%, rgba(195,210,175,.99)),
+    radial-gradient(circle at 74% 22%, rgba(62,84,40,.10), transparent 40%);
+  border-color: rgba(62,84,40,.14);
+  box-shadow: 0 18px 52px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.52);
+  color: #1a2410;
+}
+
+body.light-theme #page-admin-content .settings-title::before {
+  color: rgba(62,84,40,.038);
+}
+
+body.light-theme #page-admin-content .settings-title::after {
+  border-color: rgba(255,255,255,.35) !important;
+  background: none !important;
+}
+
+body.light-theme #page-admin-content .req-card {
+  background: linear-gradient(150deg, rgba(240,244,232,.98), rgba(232,238,220,.99));
+  border-color: rgba(62,84,40,.11);
+  box-shadow: 0 10px 36px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+body.light-theme #page-admin-content .req-card::before {
+  border-color: rgba(255,255,255,.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.light-theme #page-admin-content .req-card:hover {
+    background: linear-gradient(150deg, rgba(246,250,238,.99), rgba(238,244,226,.99));
+    border-color: rgba(62,84,40,.20);
+    box-shadow: 0 14px 44px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.72);
+  }
+}
+
+body.light-theme #page-admin-content .req-card-head {
+  border-bottom-color: rgba(62,84,40,.09);
+}
+
+body.light-theme #page-admin-content .req-status.pending {
+  background: rgba(62,84,40,.11);
+  color: #3e5428;
+  border-color: rgba(62,84,40,.2);
+}
+
+body.light-theme #page-admin-content .req-status.approved {
+  background: rgba(50,140,55,.09);
+  color: #2d7932;
+  border-color: rgba(50,140,55,.2);
+}
+
+body.light-theme #page-admin-content .req-status.declined {
+  background: rgba(180,60,60,.09);
+  color: #b03c3c;
+  border-color: rgba(180,60,60,.18);
+}
+
+body.light-theme #page-admin-content .req-meta {
+  color: rgba(26,36,16,.52);
+}
+
+body.light-theme #page-admin-content .req-reason {
+  background: rgba(62,84,40,.055);
+  border-left-color: rgba(62,84,40,.28);
+  color: rgba(26,36,16,.72);
+}
+
+body.light-theme #page-admin-content .req-empty {
+  background: linear-gradient(150deg, rgba(234,226,204,.65), rgba(221,211,184,.65));
+  border-color: rgba(62,84,40,.09);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #page-admin-content .settings-page {
+    padding: 20px 16px 48px;
+  }
+
+  #page-admin-content .settings-title {
+    border-radius: 18px !important;
+  }
+
+  #page-admin-content .req-card {
+    border-radius: 16px;
+    padding: 16px 16px;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #page-admin-content .settings-title,
+  #page-admin-content .req-card,
+  #page-admin-content .req-empty {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  #page-admin-content .req-card {
+    transition: none !important;
+  }
+
+  #page-admin-content .req-card:hover {
+    transform: none !important;
+  }
+}
+/* ── end #page-admin-content ── */
+
 /* ── Theme toggle button ── */
 .theme-toggle {
   display: flex; align-items: center; gap: 0;
@@ -5434,25 +7537,63 @@ body.light-theme .rec-card:hover { background: var(--bg3); }
     padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 16px);
   }
 
-  /* ── Topbar: full width, decluttered ── */
+  /* ── Topbar: full width, compact layout ── */
   .topbar {
     left: 0 !important;
-    padding: 0 12px;
-    gap: 6px;
+    padding: 0 10px;
+    gap: 4px;
   }
-  /* Hide AITU logo + search bar + avatar on mobile */
-  #tb-aitu-logo { display: none; }
+  /* Logo: show but compact */
+  #tb-aitu-logo {
+    display: block;
+    height: 24px;
+    width: auto;
+    max-width: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+    opacity: .85;
+    margin-right: 0;
+  }
+  /* Desktop search: hidden on mobile — search toggle shows instead */
   .search-wrap { display: none; }
-  #tb-avatar { display: none; }
-  /* Upload button: hide original text, show compact label via font trick */
+  /* Mobile search toggle button: visible on mobile only */
+  #tb-search-toggle { display: flex; }
+  /* Avatar: show on mobile */
+  #tb-avatar { display: flex; }
+  /* Topbar-right: tighter gap */
+  .topbar-right { gap: 4px; }
+  /* Upload button: icon-only — no text, no ::before hack */
   .tb-upload {
-    padding: 7px 12px; font-size: 0; gap: 6px;
-    white-space: nowrap; letter-spacing: 0;
+    width: 32px; height: 32px;
+    padding: 0;
+    font-size: 0 !important;
+    letter-spacing: 0;
+    gap: 0;
+    border-radius: 50%;
   }
-  .tb-upload .aya-ico { width: 14px; height: 14px; }
-  .tb-upload::before { content: 'ЗАГРУЗИТЬ'; font-size: 11px; font-weight: 800; letter-spacing: .5px; }
-  /* Language pills: smaller */
-  .lang-btn { font-size: 10px; padding: 4px 6px; }
+  .tb-upload .aya-ico { width: 15px; height: 15px; }
+  .tb-upload::before { content: none !important; }
+  /* tb-ico / notif / avatar: slightly smaller on mobile */
+  .tb-ico  { width: 32px; height: 32px; font-size: 15px; }
+  #tb-avatar { width: 28px; height: 28px; font-size: 11px; }
+  /* Language pills: compact */
+  .lang-btn { font-size: 9px; padding: 3px 5px; }
+
+  /* ── Mobile search bar (shown under topbar when toggle is tapped) ── */
+  #mobile-search-bar {
+    left: 0; right: 0;
+  }
+
+  /* Mobile search bar: light theme */
+  body.light-theme #mobile-search-bar {
+    background: linear-gradient(180deg, rgba(242,236,218,.99) 0%, rgba(238,231,212,.97) 100%);
+    border-bottom-color: rgba(62,84,40,.13);
+    box-shadow: 0 4px 16px rgba(70,82,44,.12);
+  }
+  body.light-theme #mobile-search-bar .mobile-search-inner {
+    background: rgba(234,226,204,.80);
+    border-color: rgba(62,84,40,.16);
+  }
 
   /* ── Bottom navigation bar ── */
   .bottom-nav {
@@ -6270,6 +8411,319 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   border-color: rgba(224,80,80,.24);
 }
 .coll-detail-item-remove:active { transform: scale(0.9); }
+
+/* ═══════════════════════════════════════════════════════
+   COLLECTIONS DETAIL MODAL — Premium Redesign
+   Scoped entirely to #coll-detail-overlay / .coll-detail-*
+   ═══════════════════════════════════════════════════════ */
+
+/* Backdrop — richer blur */
+#coll-detail-overlay {
+  background: rgba(2,5,2,.80);
+  backdrop-filter: blur(14px) saturate(1.35);
+}
+
+/* Panel — deeper layered surface */
+.coll-detail-panel {
+  background:
+    linear-gradient(165deg, rgba(18,28,13,.98), rgba(10,16,8,.99) 55%, rgba(7,12,6,1)),
+    radial-gradient(circle at 78% 8%, rgba(125,145,88,.11), transparent 52%);
+  border: 1px solid rgba(180,205,132,.14);
+  border-radius: 28px 28px 0 0;
+  box-shadow:
+    0 -36px 96px rgba(3,8,3,.64),
+    0 -10px 36px rgba(3,8,3,.34),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  position: relative;
+}
+
+/* Inner refraction ring on panel */
+.coll-detail-panel::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 27px 27px 0 0;
+  border: 1px solid rgba(255,255,255,.027);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Drag handle */
+.coll-detail-drag-handle {
+  width: 44px;
+  background: rgba(180,205,132,.24);
+  margin-top: 14px;
+}
+
+/* Header — premium surface with radial accent */
+.coll-detail-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgba(180,205,132,.09);
+  background:
+    linear-gradient(180deg, rgba(22,34,16,.55), transparent),
+    radial-gradient(circle at 92% 0%, rgba(125,145,88,.09), transparent 48%);
+  position: relative;
+}
+
+/* Cover art — elevated */
+.coll-detail-cover {
+  border-radius: 16px;
+  border: 1px solid rgba(180,205,132,.14);
+  box-shadow:
+    0 10px 28px rgba(3,8,3,.34),
+    inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Title — Barlow heavy */
+.coll-detail-title {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: -.25px;
+}
+
+/* Privacy badges */
+.coll-detail-privacy.pub {
+  background: rgba(125,145,88,.20);
+  color: var(--gold);
+  border: 1px solid rgba(125,145,88,.34);
+  border-radius: 8px;
+  padding: 3px 9px;
+}
+.coll-detail-privacy.priv {
+  background: rgba(255,255,255,.05);
+  color: var(--text3);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 8px;
+  padding: 3px 9px;
+}
+
+/* Action buttons — lifted */
+.coll-detail-act-btn {
+  background: rgba(180,205,132,.08);
+  border: 1px solid rgba(180,205,132,.16);
+  border-radius: 11px;
+  padding: 7px 15px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  box-shadow: 0 2px 8px rgba(3,8,3,.18);
+  transition:
+    background 200ms var(--ease-out),
+    color 200ms var(--ease-out),
+    border-color 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out),
+    transform 130ms var(--ease-out);
+}
+.coll-detail-act-btn:hover {
+  background: rgba(180,205,132,.17);
+  color: var(--gold);
+  border-color: rgba(180,205,132,.32);
+  box-shadow: 0 5px 16px rgba(125,145,88,.18);
+  transform: translateY(-1px);
+}
+.coll-detail-act-btn:active { transform: scale(0.96) translateY(0); }
+.coll-detail-act-btn.danger:hover {
+  background: rgba(224,80,80,.15);
+  color: #e05555;
+  border-color: rgba(224,80,80,.24);
+  box-shadow: 0 5px 16px rgba(224,80,80,.12);
+}
+
+/* Close button */
+.coll-detail-close-btn {
+  background: rgba(180,205,132,.07);
+  border: 1px solid rgba(180,205,132,.14);
+  box-shadow: 0 2px 6px rgba(3,8,3,.20);
+  transition:
+    background 160ms var(--ease-out),
+    color 160ms var(--ease-out),
+    box-shadow 160ms var(--ease-out),
+    transform 100ms var(--ease-out);
+}
+.coll-detail-close-btn:hover {
+  background: rgba(180,205,132,.16);
+  color: var(--text);
+  box-shadow: 0 4px 14px rgba(3,8,3,.28);
+}
+
+/* Body */
+.coll-detail-body {
+  padding: 8px 22px 30px;
+}
+
+/* Section head */
+.coll-detail-section-head {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: rgba(125,145,88,.52);
+  padding: 16px 0 10px;
+}
+
+/* Item rows — premium card treatment */
+.coll-detail-item {
+  position: relative;
+  background: linear-gradient(150deg, rgba(22,31,17,.88), rgba(13,20,10,.94));
+  border: 1px solid rgba(180,205,132,.09);
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 6px 20px rgba(3,8,3,.20),
+    inset 0 1px 0 rgba(255,255,255,.038);
+  transition:
+    transform .50s cubic-bezier(.16,1,.3,1),
+    border-color .50s cubic-bezier(.16,1,.3,1),
+    background .50s cubic-bezier(.16,1,.3,1),
+    box-shadow .50s cubic-bezier(.16,1,.3,1);
+}
+/* Inner refraction ring on items */
+.coll-detail-item::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 13px;
+  border: 1px solid rgba(255,255,255,.022);
+  pointer-events: none;
+}
+.coll-detail-item:hover {
+  background: linear-gradient(150deg, rgba(28,40,20,.94), rgba(17,26,13,.98));
+  border-color: rgba(180,205,132,.20);
+  box-shadow:
+    0 14px 40px rgba(3,8,3,.30),
+    inset 0 1px 0 rgba(255,255,255,.056);
+  transform: translateY(-2px);
+}
+
+/* Item thumbnail */
+.coll-detail-item-thumb {
+  border-radius: 9px;
+  border: 1px solid rgba(180,205,132,.11);
+  box-shadow: 0 4px 10px rgba(3,8,3,.24);
+}
+
+/* Remove button hover */
+.coll-detail-item-remove:hover {
+  background: rgba(224,80,80,.18);
+  color: #e05555;
+  border-color: rgba(224,80,80,.28);
+}
+
+/* Empty state */
+.coll-detail-empty {
+  padding: 44px 0;
+  font-size: 13px;
+  opacity: .65;
+}
+
+/* ── Entrance animations ── */
+@keyframes cdPanelUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cdFadeRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#coll-detail-overlay.open .coll-detail-panel {
+  animation: cdPanelUp .58s cubic-bezier(.16,1,.3,1) both;
+}
+#coll-detail-overlay.open .coll-detail-header {
+  animation: cdFadeRise .50s cubic-bezier(.16,1,.3,1) .10s both;
+}
+#coll-detail-overlay.open .coll-detail-section-head {
+  animation: cdFadeRise .45s cubic-bezier(.16,1,.3,1) .14s both;
+}
+#coll-detail-overlay.open .coll-detail-item {
+  animation: cdFadeRise .45s cubic-bezier(.16,1,.3,1) both;
+}
+#coll-detail-overlay.open .coll-detail-item:nth-child(1) { animation-delay: .13s; }
+#coll-detail-overlay.open .coll-detail-item:nth-child(2) { animation-delay: .19s; }
+#coll-detail-overlay.open .coll-detail-item:nth-child(3) { animation-delay: .25s; }
+#coll-detail-overlay.open .coll-detail-item:nth-child(4) { animation-delay: .31s; }
+#coll-detail-overlay.open .coll-detail-item:nth-child(5) { animation-delay: .37s; }
+#coll-detail-overlay.open .coll-detail-item:nth-child(n+6) { animation-delay: .42s; }
+#coll-detail-overlay.open .coll-detail-empty {
+  animation: cdFadeRise .45s cubic-bezier(.16,1,.3,1) .13s both;
+}
+
+/* ── Light theme overrides ── */
+.light-theme .coll-detail-panel {
+  background:
+    linear-gradient(165deg, rgba(248,251,244,.98), rgba(238,244,230,.99)),
+    radial-gradient(circle at 78% 8%, rgba(125,145,88,.07), transparent 52%);
+  border-color: rgba(125,145,88,.18);
+  box-shadow:
+    0 -36px 96px rgba(0,0,0,.12),
+    0 -10px 36px rgba(0,0,0,.07),
+    inset 0 1px 0 rgba(255,255,255,.85);
+}
+.light-theme .coll-detail-panel::before {
+  border-color: rgba(255,255,255,.58);
+}
+.light-theme .coll-detail-drag-handle {
+  background: rgba(125,145,88,.28);
+}
+.light-theme .coll-detail-header {
+  background:
+    linear-gradient(180deg, rgba(220,234,200,.45), transparent),
+    radial-gradient(circle at 92% 0%, rgba(125,145,88,.05), transparent 48%);
+  border-bottom-color: rgba(125,145,88,.14);
+}
+.light-theme .coll-detail-item {
+  background: linear-gradient(150deg, rgba(236,246,224,.90), rgba(228,238,214,.93));
+  border-color: rgba(125,145,88,.13);
+  box-shadow: 0 4px 14px rgba(0,0,0,.07), inset 0 1px 0 rgba(255,255,255,.65);
+}
+.light-theme .coll-detail-item:hover {
+  background: linear-gradient(150deg, rgba(224,239,206,.96), rgba(212,230,194,.98));
+  border-color: rgba(125,145,88,.26);
+  box-shadow: 0 10px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.75);
+}
+.light-theme .coll-detail-act-btn {
+  background: rgba(125,145,88,.10);
+  border-color: rgba(125,145,88,.22);
+}
+.light-theme .coll-detail-act-btn:hover {
+  background: rgba(125,145,88,.20);
+  border-color: rgba(125,145,88,.36);
+}
+.light-theme .coll-detail-cover {
+  border-color: rgba(125,145,88,.18);
+  box-shadow: 0 8px 22px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.60);
+}
+.light-theme .coll-detail-section-head {
+  color: rgba(80,100,55,.60);
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .coll-detail-panel {
+    border-radius: 22px 22px 0 0;
+    max-height: 92dvh;
+  }
+  .coll-detail-panel::before { border-radius: 21px 21px 0 0; }
+  .coll-detail-header { padding: 16px 16px 13px; gap: 12px; }
+  .coll-detail-body { padding: 6px 14px 26px; }
+  .coll-detail-cover { width: 68px; height: 68px; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #coll-detail-overlay.open .coll-detail-panel,
+  #coll-detail-overlay.open .coll-detail-header,
+  #coll-detail-overlay.open .coll-detail-section-head,
+  #coll-detail-overlay.open .coll-detail-item,
+  #coll-detail-overlay.open .coll-detail-empty { animation: none; }
+  .coll-detail-item {
+    transition: border-color 160ms, background 160ms, box-shadow 160ms;
+  }
+  .coll-detail-act-btn { transition: background 160ms, color 160ms, border-color 160ms; }
+}
 
 /* Collection Picker Modal */
 #coll-picker-overlay {
@@ -7605,7 +10059,9 @@ body.light-theme #page-profile .prof-cover-marquee::before {
 
 /* ── Section rows: elevated spacing + refined header ── */
 #page-profile .prof-section-row {
-  margin-bottom: 36px !important;
+  width: 100% !important;
+  max-width: 1320px !important;
+  margin: 0 auto 36px !important;
 }
 #page-profile .prof-section-row .row-head-edit {
   border-bottom: 1px solid rgba(180,205,132,.10) !important;
@@ -7623,6 +10079,66 @@ body.light-theme #page-profile .prof-cover-marquee::before {
   text-transform: uppercase !important;
   color: var(--text2) !important;
   flex: 1 !important;
+}
+#page-profile .prof-section-row .cards-h,
+#page-profile .prof-reviews-list,
+#page-profile .prof-section-row .pitch-grid,
+#page-profile .prof-section-row .coll-grid {
+  width: 100% !important;
+  min-height: 132px !important;
+}
+#page-profile .prof-section-row .cards-h {
+  align-items: stretch !important;
+}
+#page-profile .prof-section-row .cards-h > .prof-empty-state {
+  flex: 0 0 100% !important;
+}
+#page-profile .prof-section-row .pitch-grid,
+#page-profile .prof-section-row .coll-grid {
+  align-items: stretch !important;
+}
+#page-profile .prof-empty-state,
+#page-profile .prof-memberships-empty {
+  width: 100% !important;
+  min-height: 132px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 28px 20px !important;
+  margin: 0 !important;
+  color: var(--text2) !important;
+  opacity: .62 !important;
+  box-sizing: border-box !important;
+}
+#page-profile .prof-section-row .pitch-grid > .prof-empty-state,
+#page-profile .prof-section-row .coll-grid > .prof-empty-state,
+#page-profile .prof-reviews-list > .prof-empty-state {
+  grid-column: 1 / -1 !important;
+}
+#page-profile .prof-empty-state .prof-empty-ico {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  margin: 0 0 10px !important;
+  color: var(--gold2) !important;
+  opacity: .58 !important;
+}
+#page-profile .prof-empty-state .prof-empty-ico .aya-ico,
+#page-profile .prof-empty-state .prof-empty-ico svg {
+  width: 28px !important;
+  height: 28px !important;
+}
+#page-profile .prof-empty-state .prof-empty-txt,
+#page-profile .prof-memberships-empty {
+  max-width: 420px !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  color: var(--text2) !important;
+  overflow-wrap: anywhere !important;
 }
 
 /* ── Section new-btn: sage outline CTA ── */
@@ -8838,11 +11354,12 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   <div class="sidebar-block2">
     <div class="cat-item active" role="button" tabindex="0" onclick="filterType('all',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('all',this)}"><div class="cat-dot" aria-hidden="true" style="background:#fff"></div><span data-i18n="filter_all">Все</span></div>
     <div class="cat-item" role="button" tabindex="0" onclick="filterType('film',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('film',this)}"><div class="cat-dot" aria-hidden="true" style="background:#d4a843"></div><span data-i18n="cat_films">Фильмы</span></div>
-    <div class="cat-item" role="button" tabindex="0" onclick="filterType('music',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('music',this)}"><div class="cat-dot" aria-hidden="true" style="background:#e07ad4"></div><span data-i18n="cat_clips">Клипы</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('short',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('short',this)}"><div class="cat-dot" aria-hidden="true" style="background:#7aaed4"></div><span data-i18n="cat_short">Короткий метр</span></div>
     <div class="cat-item" role="button" tabindex="0" onclick="filterType('doc',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('doc',this)}"><div class="cat-dot" aria-hidden="true" style="background:#7ad4e0"></div><span data-i18n="cat_doc">Документальное</span></div>
     <div class="cat-item" role="button" tabindex="0" onclick="filterType('podcast',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('podcast',this)}"><div class="cat-dot" aria-hidden="true" style="background:#a0d47a"></div><span data-i18n="cat_podcasts">Подкасты</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('music',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('music',this)}"><div class="cat-dot" aria-hidden="true" style="background:#e07ad4"></div><span data-i18n="cat_clips">Клипы</span></div>
     <div class="cat-item" role="button" tabindex="0" onclick="filterType('social',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('social',this)}"><div class="cat-dot" aria-hidden="true" style="background:#d4907a"></div><span data-i18n="cat_social">Соц. ролики</span></div>
-    <div class="cat-item" role="button" tabindex="0" onclick="filterType('short',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('short',this)}"><div class="cat-dot" aria-hidden="true" style="background:#7aaed4"></div><span data-i18n="cat_short">Короткий метр</span></div>
+    <div class="cat-item" role="button" tabindex="0" onclick="filterType('animation',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('animation',this)}"><div class="cat-dot" aria-hidden="true" style="background:#c4a8e8"></div><span data-i18n="cat_animation">Анимация</span></div>
   </div>
 
   <!-- ADMIN SECTIONS (hidden by default, shown via JS) -->
@@ -8889,6 +11406,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     <input class="search-input" type="text" id="search-input" aria-label="Поиск" data-i18n-aria="aria_search" data-i18n-placeholder="search_ph" placeholder="Что ищешь? Фильм, клип, подкаст, автор…" onkeydown="if(event.key==='Enter'&&this.value.trim()){runSearch(this.value.trim())}"/>
   </div>
   <div class="topbar-right">
+    <!-- Mobile-only search toggle (hidden on desktop via CSS) -->
+    <button id="tb-search-toggle" class="tb-ico" type="button" onclick="toggleMobileSearch()" aria-label="Поиск" data-i18n-aria="aria_search"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="10.5" cy="10.5" r="6" fill="#7D9158" stroke="none" opacity="0.55"/><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15 L20 20"/></g></svg></button>
     <div class="lang-switcher">
       <button class="lang-btn active" onclick="setLang('ru',this)" data-lang="ru">RU</button>
       <button class="lang-btn" onclick="setLang('kz',this)" data-lang="kz">KZ</button>
@@ -8899,6 +11418,14 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     <button id="tb-avatar" class="tb-avatar" type="button" onclick="tbAvatarClick()" aria-label="Профиль" data-i18n-aria="aria_profile"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg></button>
   </div>
 </header>
+<!-- Mobile search bar — slides in under topbar when search toggle is tapped -->
+<div id="mobile-search-bar" role="search" aria-label="Поиск" data-i18n-aria="aria_search">
+  <div class="mobile-search-inner">
+    <span class="search-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15 L20 20"/></g></svg></span>
+    <input class="mobile-search-input" type="search" id="mobile-search-input" autocomplete="off" data-i18n-placeholder="search_ph" placeholder="Что ищешь? Фильм, клип, подкаст…" onkeydown="if(event.key==='Enter'&&this.value.trim()){runSearch(this.value.trim());toggleMobileSearch()}" aria-label="Поиск" data-i18n-aria="aria_search">
+    <button class="mobile-search-close" type="button" onclick="toggleMobileSearch()" aria-label="Закрыть поиск">✕</button>
+  </div>
+</div>
 
 <!-- ======================================================  MAIN  -->
 <main class="main" id="main-content">
@@ -8930,11 +11457,12 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   <div class="type-strip" role="group" aria-label="Фильтр по типу контента" data-i18n-aria="aria_content_filter">
     <div class="type-pill active" role="button" tabindex="0" aria-pressed="true"  onclick="filterType('all',this)"     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('all',this)}"     data-i18n="filter_all">Все</div>
     <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('film',this)"    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('film',this)}"    data-i18n="filter_films"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Фильмы</div>
-    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('music',this)"   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('music',this)}"   data-i18n="filter_music"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('short',this)"   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('short',this)}"   data-i18n="filter_short"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="12" r="5.5" fill="#7D9158" stroke="none"/><circle cx="9" cy="12" r="5.5"/><circle cx="16" cy="12" r="5.5"/><path d="M14.5 12 H17.5"/></g></svg> Короткий метр</div>
     <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('doc',this)"     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('doc',this)}"     data-i18n="filter_doc"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное</div>
     <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('podcast',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('podcast',this)}" data-i18n="filter_podcast"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('music',this)"   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('music',this)}"   data-i18n="filter_music"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы</div>
     <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('social',this)"  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('social',this)}"  data-i18n="filter_social"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. ролики</div>
-    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('short',this)"   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('short',this)}"   data-i18n="filter_short"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="12" r="5.5" fill="#7D9158" stroke="none"/><circle cx="9" cy="12" r="5.5"/><circle cx="16" cy="12" r="5.5"/><path d="M14.5 12 H17.5"/></g></svg> Короткий метр</div>
+    <div class="type-pill" role="button" tabindex="0" aria-pressed="false" onclick="filterType('animation',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();filterType('animation',this)}" data-i18n="filter_animation"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация</div>
   </div>
 
   <div class="constructor-bar">
@@ -8958,39 +11486,44 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
 
   <div class="feed">
 
-    <div class="row genre-row" id="genre-row-trending" style="display:none">
-      <div class="row-head-edit"><span class="row-num">01</span><span class="row-title-edit" data-i18n="row_trending">Трендовое сейчас</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
-      <div class="cards-h" id="row-trending-cards"></div>
-    </div>
-
     <div class="row genre-row" id="genre-row-films" style="display:none">
-      <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_films">Фильмы</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">01</span><span class="row-title-edit" data-i18n="row_films">Фильмы</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('film')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('film')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-films-cards"></div>
     </div>
 
-    <div class="row genre-row" id="genre-row-music" style="display:none">
-      <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
-      <div class="cards-h" id="row-music-cards"></div>
+    <div class="row genre-row" id="genre-row-short" style="display:none">
+      <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_short">Короткий метр</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('short')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('short')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-short-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-doc" style="display:none">
-      <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_doc">Документальное</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_doc">Документальное</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('doc')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('doc')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-doc-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-podcasts" style="display:none">
-      <div class="row-head-edit"><span class="row-num">05</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('podcast')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('podcast')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-podcasts-cards"></div>
     </div>
 
+    <div class="row genre-row" id="genre-row-music" style="display:none">
+      <div class="row-head-edit"><span class="row-num">05</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('music')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('music')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-music-cards"></div>
+    </div>
+
     <div class="row genre-row" id="genre-row-social" style="display:none">
-      <div class="row-head-edit"><span class="row-num">06</span><span class="row-title-edit" data-i18n="row_social">Соц. ролики</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">06</span><span class="row-title-edit" data-i18n="row_social">Соц. ролики</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('social')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('social')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-social-cards"></div>
     </div>
 
-    <div class="row genre-row" id="genre-row-short" style="display:none">
-      <div class="row-head-edit"><span class="row-num">07</span><span class="row-title-edit" data-i18n="row_short">Короткий метр</span><span class="row-more-edit" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
-      <div class="cards-h" id="row-short-cards"></div>
+    <div class="row genre-row" id="genre-row-animation" style="display:none">
+      <div class="row-head-edit"><span class="row-num">07</span><span class="row-title-edit" data-i18n="row_animation">Анимация</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('animation')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('animation')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-animation-cards"></div>
+    </div>
+
+    <div class="row genre-row" id="genre-row-trending" style="display:none">
+      <div class="row-head-edit"><span class="row-num">07</span><span class="row-title-edit" data-i18n="row_trending">Трендовое сейчас</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('trending')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('trending')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-trending-cards"></div>
     </div>
 
     <!-- Top Collections of the Month -->
@@ -9108,9 +11641,9 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     <div class="pitch-filters">
       <button class="pf active" data-i18n="filter_all" onclick="filterPitch('all',this)">Все</button>
       <button class="pf" data-i18n="pf_film" onclick="filterPitch('ct-film',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Кино</button>
-      <button class="pf" data-i18n="pf_music" onclick="filterPitch('ct-music',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыка</button>
       <button class="pf" data-i18n="pf_doc" onclick="filterPitch('ct-doc',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное</button>
       <button class="pf" data-i18n="pf_podcast" onclick="filterPitch('ct-podcast',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкаст</button>
+      <button class="pf" data-i18n="pf_music" onclick="filterPitch('ct-music',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыка</button>
       <button class="pf" data-i18n="pf_social" onclick="filterPitch('ct-social',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. проект</button>
       <button class="pf" data-i18n="pf_animation" onclick="filterPitch('ct-animation',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> Анимация</button>
       <button class="pf" data-i18n="pf_almost" onclick="filterPitch('almost',this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 21 C8 19.5 6 16.5 6 13 C6 9.5 8.5 7 10.5 5.5 C10.5 8.5 12.5 9.5 14 6 C16.5 8 18 10.5 18 13.5 C18 17 16 19.7 12 21 Z" fill="#7D9158" stroke="none"/><path d="M12 21 C8 19.5 6 16.5 6 13 C6 9.5 8.5 7 10.5 5.5 C10.5 8.5 12.5 9.5 14 6 C16.5 8 18 10.5 18 13.5 C18 17 16 19.7 12 21 Z"/><path d="M12 17 C10.7 16.3 10 15.3 10 14 C10 12.8 10.8 11.8 12 11 C12.2 12.4 13.2 12.8 14 11.5 C14.8 12.4 15.2 13.3 15.2 14.4 C15.2 15.7 14.2 16.7 12 17 Z" fill="currentColor"/></g></svg> Почти собрано</button>
@@ -9770,7 +12303,10 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   <div class="search-page-inner">
     <div class="search-page-head">
       <button class="search-back-btn" onclick="goPage('home',null)" data-i18n="search_back">← Назад</button>
-      <h2 id="search-page-title" class="search-page-title"></h2>
+      <div class="search-title-row">
+        <h2 id="search-page-title" class="search-page-title"></h2>
+        <span id="search-result-count" class="search-result-count" style="display:none"></span>
+      </div>
     </div>
     <div id="search-page-grid" class="search-page-grid"></div>
   </div>
@@ -9818,11 +12354,12 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       <label data-i18n="pitch_label_genre">Жанр / Тип</label>
       <select id="pitch-genre">
         <option value="ct-film" data-i18n="cat_film">Фильм</option>
-        <option value="ct-doc" data-i18n="cat_doc">Документальное</option>
-        <option value="ct-music" data-i18n="cat_music">Клип</option>
-        <option value="ct-podcast" data-i18n="cat_podcasts">Подкаст</option>
-        <option value="ct-social" data-i18n="cat_social">Соц. ролик</option>
         <option value="ct-short" data-i18n="cat_short">Короткий метр</option>
+        <option value="ct-doc" data-i18n="cat_doc">Документальное</option>
+        <option value="ct-podcast" data-i18n="cat_podcasts">Подкаст</option>
+        <option value="ct-music" data-i18n="cat_music">Клип</option>
+        <option value="ct-social" data-i18n="cat_social">Соц. ролик</option>
+        <option value="ct-animation" data-i18n="cat_animation">Анимация</option>
       </select>
     </div>
     <div class="modal-actions">
@@ -9871,12 +12408,12 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   /** Map content category → home-page row container id. Used by renderUserContent(). */
   const ROW_MAP = {
     'ct-film':      'row-films-cards',
-    'ct-music':     'row-music-cards',
+    'ct-short':     'row-short-cards',
     'ct-doc':       'row-doc-cards',
     'ct-podcast':   'row-podcasts-cards',
+    'ct-music':     'row-music-cards',
     'ct-social':    'row-social-cards',
-    'ct-short':     'row-short-cards',
-    'ct-animation': 'row-trending-cards',
+    'ct-animation': 'row-animation-cards',
   };
 
   /** Category → accent colour used on recommendation cards. Used by openWatch(). */
@@ -9886,7 +12423,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     'ct-doc':       '#7ad4e0',
     'ct-short':     '#7aaed4',
     'ct-podcast':   '#a0d47a',
-    'ct-animation': '#7ad4e0',
+    'ct-animation': '#c4a8e8',
     'ct-social':    '#d4a843',
   };
 
@@ -10220,7 +12757,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       if (!already) {
         const creatorId = c.uploaderId || c.creatorId;
         if (creatorId && creatorId !== user.id) {
-          createNotification(creatorId, 'like', user.name || user.handle || 'Кто-то', c.title || '', c.id || cid);
+          createNotification(creatorId, 'like', user.name || user.handle || '?', c.title || '', c.id || cid, user.id);
         }
       }
     } catch(e) {
@@ -10302,12 +12839,13 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   let _notifOpen = false;
 
   /** Create a notification for `creatorId` when someone interacts with their content. */
-  async function createNotification(creatorId, type, actorName, contentTitle, contentId) {
+  async function createNotification(creatorId, type, actorName, contentTitle, contentId, actorId) {
     if (!creatorId) return;
     try {
       const notif = {
-        type,                        // 'like' | 'comment'
+        type,                        // 'like' | 'comment' | 'reply'
         actorName,
+        actorId: actorId || null,
         contentTitle,
         contentId,
         createdAt: Date.now(),
@@ -10351,7 +12889,6 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   /** Render notification list into the panel. */
   function renderNotifPanel() {
     const list = document.getElementById('notif-list');
-    const emptyEl = document.getElementById('notif-empty-state');
     const markAllBtn = document.getElementById('notif-mark-all-btn');
     const titleEl = document.getElementById('notif-panel-title');
     if (!list) return;
@@ -10360,24 +12897,65 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     if (markAllBtn) markAllBtn.textContent = t('notif_mark_all');
 
     if (!_notifs.length) {
-      list.innerHTML = `<div class="notif-empty">${t('notif_empty')}</div>`;
+      list.innerHTML = `
+        <div class="notif-empty">
+          <div class="notif-empty-icon">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20" aria-hidden="true">
+              <path d="M4 8.5C4 5.46 6.69 3 10 3s6 2.46 6 5.5v5l1.5 1.5H2.5L4 13.5V8.5z"/>
+              <path d="M7.5 16.5a2.5 2.5 0 0 0 5 0"/>
+            </svg>
+          </div>
+          <p class="notif-empty-text">${escHtml(t('notif_empty'))}</p>
+        </div>`;
       return;
     }
 
+    // SVG icons for each notification type (inline, matches AYA stroke style)
+    const typeIcons = {
+      like: `<svg viewBox="0 0 14 14" fill="currentColor" width="12" height="12" aria-hidden="true"><path d="M7 11.9C6.6 11.6 1.5 8.6 1.5 5A3 3 0 0 1 7 2.8 3 3 0 0 1 12.5 5c0 3.6-5.1 6.6-5.5 6.9z"/></svg>`,
+      comment: `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12" aria-hidden="true"><path d="M11.5 1.5h-9a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h1.5l2 2 2-2h3.5a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1z"/></svg>`,
+      reply: `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12" aria-hidden="true"><path d="M5 3L1.5 6.5 5 10M1.5 6.5h7a4 4 0 0 1 4 4"/></svg>`
+    };
+
     list.innerHTML = _notifs.map(n => {
-      const initial = (n.actorName || '?').charAt(0).toUpperCase();
+      const actorName = n.actorName || '?';
+      const initial = actorName.charAt(0).toUpperCase();
       const unreadCls = n.read ? '' : ' unread';
       const timeStr = notifTimeAgo(n.createdAt);
-      const msgKey = n.type === 'like' ? 'notif_like' : 'notif_comment';
-      const title = n.contentTitle || '';
-      const actor = n.actorName || '';
-      const msg = tf(msgKey, { actor, title });
+      const type = n.type === 'like' ? 'like' : n.type === 'reply' ? 'reply' : 'comment';
+      const actionKey = type === 'like' ? 'notif_like_action' : type === 'reply' ? 'notif_reply_action' : 'notif_comment_action';
+      const icon = typeIcons[type] || typeIcons.comment;
+      const safeTitle = n.contentTitle ? escHtml(n.contentTitle) : '';
+      const safeActor = escHtml(actorName);
+      const safeAction = escHtml(t(actionKey));
+      const safeId = String(n.id).replace(/'/g, '');
+      const safeCid = String(n.contentId || '').replace(/'/g, '');
+
+      // Resolve avatar URL: prefer stored actorId lookup, fallback to initials
+      let avatarHtml = initial;
+      if (n.actorId) {
+        const actor = typeof getUserById === 'function' ? getUserById(n.actorId) : null;
+        const url = actor && (actor.avatar_url || actor.avatarUrl);
+        if (url) {
+          avatarHtml = `<img src="${escHtml(url)}" alt="${safeActor}" loading="lazy" onerror="this.style.display='none';this.parentNode.dataset.initial='${initial}'">`;
+        }
+      }
+
+      const titleHtml = safeTitle
+        ? `<p class="notif-content-title">«${safeTitle}»</p>`
+        : '';
+
       return `
-        <div class="notif-item${unreadCls}" onclick="onNotifClick('${n.id}','${n.contentId || ''}')">
-          <div class="notif-avatar">${initial}</div>
+        <div class="notif-item${unreadCls}" onclick="onNotifClick('${safeId}','${safeCid}')">
+          <div class="notif-avatar">${avatarHtml}</div>
           <div class="notif-body">
-            <p class="notif-text">${escHtml(msg)}</p>
-            <span class="notif-time">${timeStr}</span>
+            <p class="notif-actor">${safeActor}</p>
+            <p class="notif-action">${safeAction}</p>
+            ${titleHtml}
+            <span class="notif-time">${escHtml(timeStr)}</span>
+          </div>
+          <div class="notif-right">
+            <div class="notif-type-icon ${type}">${icon}</div>
           </div>
         </div>`;
     }).join('');
@@ -10458,9 +13036,9 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     if (!ts) return '';
     const diff = Math.floor((Date.now() - ts) / 1000);
     if (diff < 60) return t('comment_now') || 'just now';
-    if (diff < 3600) return `${Math.floor(diff / 60)} мин.`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)} ч.`;
-    return `${Math.floor(diff / 86400)} д.`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} ${t('notif_t_min')}`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} ${t('notif_t_hr')}`;
+    return `${Math.floor(diff / 86400)} ${t('notif_t_day')}`;
   }
 
   /** Minimal HTML escape for notification text. */
@@ -10821,7 +13399,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       const title = card.querySelector('.card-title')?.textContent?.trim();
       const author = card.querySelector('.card-sub')?.textContent?.trim();
       if (!title) return;
-      const catEl = card.querySelector('[class*="ct-film"],[class*="ct-music"],[class*="ct-doc"],[class*="ct-short"],[class*="ct-podcast"],[class*="ct-social"]');
+      const catEl = card.querySelector('[class*="ct-film"],[class*="ct-music"],[class*="ct-doc"],[class*="ct-short"],[class*="ct-podcast"],[class*="ct-social"],[class*="ct-animation"]');
       const cat = catEl ? [...catEl.classList].find(cl => cl.startsWith('ct-')) : 'ct-film';
       const catLabel = catEl?.textContent?.trim() || '';
       const thumbCls = card.querySelector('.thumb-inner')?.className?.match(/\bp\d+\b/)?.[0] || 'p1';
@@ -11200,8 +13778,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     const col = CAT_COLORS[c.cat] || 'var(--gold)';
     const sid = 'psc_' + String(c.id).replace(/[^a-zA-Z0-9_\-]/g,'_');
     _profSecContentMap[sid] = c;
-    const isPodcast = c.cat === 'ct-podcast';
-    const thumbClass = isPodcast ? 'r-sq' : 'r-film';
+    const thumbClass = 'r-film';
     const _pt = _profGetThumbnail(c);
     const thumbInner = _pt
       ? `<img src="${_pt}" alt="${(c.title||'').replace(/"/g,'&quot;')}" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">
@@ -12042,7 +14619,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       return;
     }
 
-    const typeLabels = { 'ct-film':t('cat_film'), 'ct-music':t('cat_music'), 'ct-doc':t('cat_doc'), 'ct-podcast':t('cat_podcasts'), 'ct-social':t('cat_social'), 'ct-short':t('cat_short') };
+    const typeLabels = { 'ct-film':t('cat_film'), 'ct-short':t('cat_short'), 'ct-doc':t('cat_doc'), 'ct-podcast':t('cat_podcasts'), 'ct-music':t('cat_music'), 'ct-social':t('cat_social'), 'ct-animation':t('cat_animation') };
     const statusClass = { draft:'status-draft', pending:'status-pending', approved:'status-approved', rejected:'status-rejected' };
 
     listEl.innerHTML = myVideos.map(c => {
@@ -12522,21 +15099,19 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       const container = document.getElementById(targetId);
       if (!container) return;
 
-      const isPodcast = c.cat === 'ct-podcast';
       const isMusic   = c.cat === 'ct-music';
-      const thumbClass = isPodcast ? 'r-sq' : 'r-film';
-      const cardWidth  = isPodcast ? 'w-170' : 'w-200 card-feat';
-      const thumbStyle = isPodcast ? 'border-radius:12px' : '';
+      const thumbClass = 'r-film';
+      const cardWidth  = 'w-200 card-feat';
       const thumb = c.thumbnail
-        ? `<img src="${c.thumbnail}" style="width:100%;height:100%;object-fit:cover;${thumbStyle ? 'border-radius:12px;' : ''}display:block" alt="${c.title}" loading="lazy">`
-        : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));${thumbStyle ? 'border-radius:12px;' : ''}display:flex;align-items:center;justify-content:center">${I.feature}</div>`;
+        ? `<img src="${c.thumbnail}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${c.title}" loading="lazy">`
+        : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));display:flex;align-items:center;justify-content:center">${I.feature}</div>`;
 
       const card = document.createElement('div');
       card.className = `card ${cardWidth} uploaded-user-card`;
       card.style.cssText = 'animation:pageFadeIn .3s ease';
       card.onclick = () => openWatch(c);
       card.innerHTML = `
-        <div class="thumb ${thumbClass}" style="position:relative${thumbStyle ? ';' + thumbStyle : ''}">
+        <div class="thumb ${thumbClass}" style="position:relative">
           ${thumb}
           <span class="ct-badge ${c.cat}">${categoryLabel(c.cat)}</span>
           <div class="thumb-play-wrap"><div class="thumb-play"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div>
@@ -12556,6 +15131,14 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       const cards = row.querySelector('.cards-h');
       row.style.display = (cards && cards.children.length > 0) ? '' : 'none';
     });
+
+    const catPage = document.getElementById('category-page');
+    if (catPage && getComputedStyle(catPage).display !== 'none') {
+      const [seg0, seg1] = location.hash.replace(/^#/, '').split('/');
+      if (seg0 === 'category' && seg1 && seg1 !== 'all') {
+        renderCategoryPage(categoryRouteToCode(seg1));
+      }
+    }
   }
   function goBack() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -12608,25 +15191,50 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       if (catPage) catPage.style.display = 'none';
     } else {
       if (feed) feed.style.display = 'none';
-      renderCategoryPage('ct-' + type);
+      renderCategoryPage(categoryRouteToCode(type));
       if (catPage) catPage.style.display = '';
     }
   }
+  function openCarouselSeeAll(type) {
+    filterType(type, null);
+  }
+  function categoryRouteToCode(type) {
+    if (type === 'trending') return 'trending';
+    if (String(type || '').startsWith('ct-')) return type;
+    return 'ct-' + type;
+  }
+  function isTrendingContent(c) {
+    const features = Array.isArray(c?.features) ? c.features : [];
+    return features.includes('feat_trending') ||
+      c?.trending === true ||
+      c?.featured === true ||
+      c?.isFeatured === true ||
+      c?.highlighted === true;
+  }
   function renderCategoryPage(catCode) {
     const ROW_TITLE_KEY = {
+      'trending':   'row_trending',
       'ct-film':    'row_films',
-      'ct-music':   'row_music',
+      'ct-short':   'row_short',
       'ct-doc':     'row_doc',
       'ct-podcast': 'row_podcasts',
-      'ct-social':  'row_social',
-      'ct-short':   'row_short'
+      'ct-music':   'row_music',
+      'ct-social':    'row_social',
+      'ct-animation': 'row_animation'
     };
     const titleEl = document.getElementById('cat-page-title');
     const grid    = document.getElementById('cat-page-grid');
     if (!grid) return;
     if (titleEl) titleEl.innerHTML = t(ROW_TITLE_KEY[catCode] || catCode);
     grid.innerHTML = '';
-    const items = getAyaContent().filter(c => c.cat === catCode);
+    const visibleItems = getAyaContent().filter(isValidVisibleContent);
+    let items = [];
+    if (catCode === 'trending') {
+      items = visibleItems.filter(isTrendingContent);
+      if (!items.length) items = visibleItems.filter(c => c.cat === 'ct-animation');
+    } else {
+      items = visibleItems.filter(c => c.cat === catCode);
+    }
     if (!items.length) {
       const emptyMsg = currentLang === 'en' ? 'No content in this category yet'
                      : currentLang === 'kz' ? 'Бұл санатта әлі контент жоқ'
@@ -12635,8 +15243,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       return;
     }
     items.forEach(c => {
-      const isPodcast = c.cat === 'ct-podcast';
-      const thumbClass = isPodcast ? 'r-sq' : 'r-film';
+      const thumbClass = 'r-film';
       const thumb = c.thumbnail
         ? `<img src="${c.thumbnail}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${c.title}" loading="lazy">`
         : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));display:flex;align-items:center;justify-content:center">${I.feature}</div>`;
@@ -12759,13 +15366,14 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       : `Результаты поиска по «${query}»`;
     titleEl.textContent = headerText;
 
-    // If Firebase hasn't responded yet, show a loading state and retry once it does
+    // Hide result count while loading
+    const countEl = document.getElementById('search-result-count');
+    if (countEl) countEl.style.display = 'none';
+
+    // If Firebase hasn't responded yet, show a shimmer skeleton and retry once it does
     if (!_ayaContentCacheLoaded) {
-      grid.innerHTML = `<div class="search-page-empty" id="search-loading-msg">${
-        currentLang === 'en' ? 'Loading…'
-        : currentLang === 'kz' ? 'Жүктелуде…'
-        : 'Загружаем…'
-      }</div>`;
+      const skelCard = `<div class="search-skel-card"><div class="search-skel-thumb"></div><div class="search-skel-body"><div class="search-skel-line"></div><div class="search-skel-line short"></div></div></div>`;
+      grid.innerHTML = `<div class="search-skeleton" id="search-loading-msg">${skelCard.repeat(8)}</div>`;
       // Retry when content loads — check every 300ms, give up after 10s
       let attempts = 0;
       const poll = setInterval(() => {
@@ -12835,11 +15443,29 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
         : currentLang === 'kz'
         ? 'Контент табылмады.'
         : 'Контент не найден.';
-      grid.innerHTML = `<div class="search-page-empty">${emptyText}</div>`;
+      grid.innerHTML = `<div class="search-page-empty">
+        <svg class="search-empty-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="21" cy="21" r="13" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="31" y1="31" x2="42" y2="42" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="search-empty-text">${emptyText}</div>
+      </div>`;
       return;
     }
 
     try {
+      // Show result count badge
+      if (countEl) {
+        const n = matched.length;
+        const label = currentLang === 'en'
+          ? `${n} result${n !== 1 ? 's' : ''}`
+          : currentLang === 'kz'
+          ? `${n} нәтиже`
+          : `${n} ${n === 1 ? 'результат' : n < 5 ? 'результата' : 'результатов'}`;
+        countEl.textContent = label;
+        countEl.style.display = '';
+      }
+
       grid.innerHTML = matched.map(c => {
         // Always stringify id — Firebase stores numeric IDs as JS numbers
         const safeId     = String(c.id || '').replace(/"/g, '&quot;');
@@ -12848,27 +15474,32 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
         const authorText = String(c.author || c.creatorName || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         // Use the richest available thumbnail (normalized fields first)
         const thumbSrc   = c.thumbnail_url || c.poster_url || c.thumbnail || '';
-        const isPodcast  = c.cat === 'ct-podcast';
-        const thumbClass = isPodcast ? 'r-sq' : 'r-film';
-        const thumb = thumbSrc
-          ? `<img src="${thumbSrc}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:10px 10px 0 0" alt="${safeTitle}" loading="lazy">`
-          : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;opacity:.6">${I.feature||'▶'}</div>`;
-        return `<div class="card" style="cursor:pointer;border-radius:10px" data-cid="${safeId}" onclick="openWatchById(this.dataset.cid)">
-          <div class="thumb ${thumbClass}" style="position:relative">${thumb}
+        const thumbContent = thumbSrc
+          ? `<img src="${thumbSrc}" alt="${safeTitle}" loading="lazy">`
+          : `<div class="search-card-placeholder">${I.feature||'▶'}</div>`;
+        return `<div class="search-card" data-cid="${safeId}" onclick="openWatchById(this.dataset.cid)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')openWatchById(this.dataset.cid)">
+          <div class="search-card-thumb">${thumbContent}
             <span class="ct-badge ${c.cat||''}">${categoryLabel(c.cat||'')}</span>
           </div>
-          <div class="card-title" style="padding:10px 12px 2px;font-size:13px;font-weight:700">${safeTitle}</div>
-          <div class="card-sub" style="padding:0 12px 12px">${authorText}</div>
+          <div class="search-card-body">
+            <div class="search-card-title">${safeTitle}</div>
+            <div class="search-card-sub">${authorText}</div>
+          </div>
         </div>`;
       }).join('');
     } catch(err) {
       // Rendering error (e.g. malformed record) — show empty state rather than crashing
       console.warn('AYA search render error:', err);
-      grid.innerHTML = `<div class="search-page-empty">${
-        currentLang === 'en' ? 'No content found.'
+      const emptyFallback = currentLang === 'en' ? 'No content found.'
         : currentLang === 'kz' ? 'Контент табылмады.'
-        : 'Контент не найден.'
-      }</div>`;
+        : 'Контент не найден.';
+      grid.innerHTML = `<div class="search-page-empty">
+        <svg class="search-empty-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="21" cy="21" r="13" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="31" y1="31" x2="42" y2="42" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="search-empty-text">${emptyFallback}</div>
+      </div>`;
     }
   }
 
@@ -13838,6 +16469,15 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   function tbAvatarClick() {
     getUser() ? goPage('profile', null) : goPage('auth', null);
   }
+  function toggleMobileSearch() {
+    const bar = document.getElementById('mobile-search-bar');
+    if (!bar) return;
+    const isOpen = bar.classList.toggle('open');
+    if (isOpen) {
+      const inp = document.getElementById('mobile-search-input');
+      if (inp) { inp.value = ''; inp.focus(); }
+    }
+  }
   function navAuthClick() {
     getUser() ? goPage('profile', null) : goPage('auth', null);
   }
@@ -14101,6 +16741,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       filter_all: 'Все', filter_films: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="6" width="17" height="12" fill="#7D9158" stroke="none"/><rect x="3.5" y="6" width="17" height="12"/><path d="M3.5 9 H20.5 M3.5 15 H20.5"/><circle cx="6.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="7.5" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/></g></svg> Фильмы', filter_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкальные клипы',
       filter_doc: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальное', filter_podcast: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасты',
       filter_social: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="3.5" width="12" height="17" rx="2" fill="#7D9158" stroke="none"/><rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M10.5 10 L14.5 12 L10.5 14 Z" fill="currentColor" stroke="none"/></g></svg> Соц. ролики', filter_short: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="12" r="5.5" fill="#7D9158" stroke="none"/><circle cx="9" cy="12" r="5.5"/><circle cx="16" cy="12" r="5.5"/><path d="M14.5 12 H17.5"/></g></svg> Короткий метр',
+      filter_animation: withIcon('animation', 'Анимация'),
       // CONSTRUCTOR
       constructor_label: withIcon('ornament', 'Конструктор поиска — найди контент под своё настроение'),
       cs_find: withIcon('arrowRight', 'Найти'),
@@ -14108,7 +16749,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       row_trending: withIcon('hot', 'Трендовое сейчас'), row_films: withIcon('feature', 'Фильмы'),
       row_music: withIcon('music', 'Музыкальные клипы'), row_doc: withIcon('doc', 'Документальное'),
       row_podcasts: withIcon('podcast', 'Подкасты'), row_social: withIcon('social', 'Соц. ролики'),
-      row_short: withIcon('short', 'Короткий метр'),
+      row_short: withIcon('short', 'Короткий метр'), row_animation: withIcon('animation', 'Анимация'),
       row_see_all: withIcon('arrowRight', 'Показать всё'),
       // WATCH PAGE
       back_btn: withIcon('back', 'Назад'), btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 5 H21 V17 H10 L6 21 V17 H3 Z"/></g></svg> Рецензия',
@@ -14230,7 +16871,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       review_compose_head: 'Написать рецензию', review_ph: 'Поделись мнением об этом видео…', review_submit: 'Опубликовать рецензию',
       sidebar_content: 'Контент',
       cat_films: 'Фильмы', cat_clips: 'Клипы', cat_doc: 'Документальное',
-      cat_podcasts: 'Подкасты', cat_social: 'Соц. ролики', cat_short: 'Короткий метр',
+      cat_podcasts: 'Подкасты', cat_social: 'Соц. ролики', cat_short: 'Короткий метр', cat_animation: 'Анимация',
       membership_title: 'Creator Membership',
       membership_desc: 'Поддержи авторов напрямую и получи эксклюзивный контент',
       membership_btn: 'Подробнее',
@@ -14294,6 +16935,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       filter_all: 'Барлығы', filter_films: withIcon('feature', 'Фильмдер'), filter_music: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="7" cy="17" r="2.5" fill="#7D9158" stroke="none"/><circle cx="17" cy="15" r="2.5" fill="#7D9158" stroke="none"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17 V5 L19.5 3 V15"/></g></svg> Музыкалық клиптер',
       filter_doc: withIcon('doc', 'Деректі фильм'), filter_podcast: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> Подкасттар',
       filter_social: withIcon('social', 'Әлеум. роликтер'), filter_short: withIcon('short', 'Қысқаметражды'),
+      filter_animation: withIcon('animation', 'Анимация'),
       // CONSTRUCTOR
       constructor_label: withIcon('ornament', 'Іздеу конструкторы — өз көңіл-күйіңізге контент тауып алыңыз'),
       cs_find: withIcon('arrowRight', 'Табу'),
@@ -14301,7 +16943,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       row_trending: withIcon('hot', 'Қазір трендте'), row_films: withIcon('feature', 'Фильмдер'),
       row_music: withIcon('music', 'Музыкалық клиптер'), row_doc: withIcon('doc', 'Деректі фильм'),
       row_podcasts: withIcon('podcast', 'Подкасттар'), row_social: withIcon('social', 'Соц. роликтер'),
-      row_short: withIcon('short', 'Қысқа метраж'),
+      row_short: withIcon('short', 'Қысқа метраж'), row_animation: withIcon('animation', 'Анимация'),
       row_see_all: withIcon('arrowRight', 'Барлығын көру'),
       // WATCH PAGE
       back_btn: withIcon('back', 'Артқа'), btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Қарау', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z" fill="#7D9158" stroke="none"/><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z"/></g></svg> Пікір',
@@ -14422,7 +17064,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       review_compose_head: 'Рецензия жазу', review_ph: 'Бейтуралы пікіріңмен бөліс…', review_submit: 'Рецензия жариялау',
       sidebar_content: 'Контент',
       cat_films: 'Фильмдер', cat_clips: 'Клиптер', cat_doc: 'Деректі фильм',
-      cat_podcasts: 'Подкасттар', cat_social: 'Әлеум. роликтер', cat_short: 'Қысқаметражды',
+      cat_podcasts: 'Подкасттар', cat_social: 'Әлеум. роликтер', cat_short: 'Қысқаметражды', cat_animation: 'Анимация',
       membership_title: 'Creator Membership',
       membership_desc: 'Авторларды тікелей қолда және эксклюзивті контент ал',
       membership_btn: 'Толығырақ',
@@ -14486,6 +17128,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       filter_all: 'All', filter_films: withIcon('feature', 'Films'), filter_music: withIcon('music', 'Music Videos'),
       filter_doc: withIcon('doc', 'Documentary'), filter_podcast: withIcon('podcast', 'Podcasts'),
       filter_social: withIcon('social', 'Social Videos'), filter_short: withIcon('short', 'Short Films'),
+      filter_animation: withIcon('animation', 'Animation'),
       // CONSTRUCTOR
       constructor_label: withIcon('ornament', 'Search Constructor — find content that matches your mood'),
       cs_find: withIcon('arrowRight', 'Find'),
@@ -14493,7 +17136,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       row_trending: withIcon('hot', 'Trending Now'), row_films: withIcon('feature', 'Films'),
       row_music: withIcon('music', 'Music Videos'), row_doc: withIcon('doc', 'Documentary'),
       row_podcasts: withIcon('podcast', 'Podcasts'), row_social: withIcon('social', 'Social Videos'),
-      row_short: withIcon('short', 'Short Films'),
+      row_short: withIcon('short', 'Short Films'), row_animation: withIcon('animation', 'Animation'),
       row_see_all: withIcon('arrowRight', 'See all'),
       // WATCH PAGE
       back_btn: withIcon('back', 'Back'), btn_watch: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Watch', btn_review: '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z" fill="#7D9158" stroke="none"/><path d="M4 4 H20 C20.5 4 21 4.5 21 5 V15 C21 15.5 20.5 16 20 16 H8 L4 20 V5 C4 4.5 4.5 4 4 4 Z"/></g></svg> Review',
@@ -14614,7 +17257,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       review_compose_head: 'Write a Review', review_ph: 'Share your thoughts on this video…', review_submit: 'Publish Review',
       sidebar_content: 'Content',
       cat_films: 'Films', cat_clips: 'Music Videos', cat_doc: 'Documentary',
-      cat_podcasts: 'Podcasts', cat_social: 'Social Videos', cat_short: 'Short Films',
+      cat_podcasts: 'Podcasts', cat_social: 'Social Videos', cat_short: 'Short Films', cat_animation: 'Animation',
       membership_title: 'Creator Membership',
       membership_desc: 'Support creators directly and get exclusive content',
       membership_btn: 'Learn More',
@@ -14988,6 +17631,11 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       notif_mark_all: 'Отметить все прочитанными',
       notif_like: '{actor} лайкнул ваш видео «{title}»',
       notif_comment: '{actor} оставил комментарий к вашему видео «{title}»',
+      notif_reply: '{actor} ответил на ваш комментарий',
+      notif_like_action: 'лайкнул ваш видео',
+      notif_comment_action: 'прокомментировал ваш видео',
+      notif_reply_action: 'ответил на ваш комментарий',
+      notif_t_min: 'мин', notif_t_hr: 'ч', notif_t_day: 'д',
       search_back: '← Назад',
       search_results_for: 'Результаты поиска по «{query}»',
       search_empty: 'Контент не найден.'
@@ -15312,6 +17960,11 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       notif_mark_all: 'Барлығын оқылды деп белгілеу',
       notif_like: '{actor} сіздің «{title}» бейнеңізге лайк басты',
       notif_comment: '{actor} сіздің «{title}» бейнеңізге пікір қалдырды',
+      notif_reply: '{actor} пікіріңізге жауап берді',
+      notif_like_action: 'бейнеңізге лайк басты',
+      notif_comment_action: 'бейнеңізге пікір қалдырды',
+      notif_reply_action: 'пікіріңізге жауап берді',
+      notif_t_min: 'мин', notif_t_hr: 'с', notif_t_day: 'к',
       search_back: '← Артқа',
       search_results_for: '"{query}" бойынша іздеу нәтижелері',
       search_empty: 'Контент табылмады.'
@@ -15636,6 +18289,11 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       notif_mark_all: 'Mark all as read',
       notif_like: '{actor} liked your video "{title}"',
       notif_comment: '{actor} commented on your video "{title}"',
+      notif_reply: '{actor} replied to your comment',
+      notif_like_action: 'liked your video',
+      notif_comment_action: 'commented on your video',
+      notif_reply_action: 'replied to your comment',
+      notif_t_min: 'min', notif_t_hr: 'hr', notif_t_day: 'd',
       search_back: '← Back',
       search_results_for: 'Search results for "{query}"',
       search_empty: 'No content found.'
@@ -15691,8 +18349,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   const constructorOptions = [
     ['cs-type', 'select_type_label', [
       ['', 'cs_type_placeholder'],
-      ['film', 'cs_film'], ['short', 'cs_short'], ['music', 'cs_music'],
-      ['doc', 'cs_doc'], ['podcast', 'cs_podcast'], ['social', 'cs_social'],
+      ['film', 'cs_film'], ['short', 'cs_short'], ['doc', 'cs_doc'],
+      ['podcast', 'cs_podcast'], ['music', 'cs_music'], ['social', 'cs_social'],
       ['animation', 'cs_animation']
     ]],
     ['cs-genre', 'select_genre_label', [
@@ -16927,7 +19585,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       // Notify the creator when someone (not themselves) comments on their video
       const creatorId = _currentContent && (_currentContent.uploaderId || _currentContent.creatorId);
       if (creatorId && creatorId !== user.id) {
-        createNotification(creatorId, 'comment', name, (_currentContent && _currentContent.title) || '', _currentContent.id || comment.contentId);
+        createNotification(creatorId, 'comment', name, (_currentContent && _currentContent.title) || '', _currentContent.id || comment.contentId, user.id);
       }
     } catch(e) {
       fbWarn('comment post failed', e);
@@ -17315,9 +19973,9 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
         <button class="up-cat-btn active" data-cat="ct-film" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22 M2 8.5 H7 M17 8.5 H22 M2 15.5 H7 M17 15.5 H22"/></g></svg> <span data-i18n="category_film">Фильм</span></button>
         <button class="up-cat-btn" data-cat="ct-short" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" fill="#7D9158" stroke="none"/><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5 V19 M17 5 V19 M2 12 H22 M2 8.5 H7 M17 8.5 H22 M2 15.5 H7 M17 15.5 H22"/></g></svg> <span data-i18n="category_short">Короткий</span></button>
         <button class="up-cat-btn" data-cat="ct-doc" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> <span data-i18n="category_doc">Документальный</span></button>
+        <button class="up-cat-btn" data-cat="ct-podcast" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> <span data-i18n="category_podcast">Подкаст</span></button>
         <button class="up-cat-btn" data-cat="ct-music" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="17" r="3" fill="#7D9158" stroke="none"/><circle cx="8" cy="17" r="3"/><circle cx="18" cy="15" r="3"/><path d="M11 17 V5 L21 3 V15"/></g></svg> <span data-i18n="category_music">Клип</span></button>
         <button class="up-cat-btn" data-cat="ct-animation" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z" fill="#7D9158" stroke="none"/><path d="M12 3 L14 9.5 L20.5 10 L15.5 14 L17 20.5 L12 17 L7 20.5 L8.5 14 L3.5 10 L10 9.5 Z"/></g></svg> <span data-i18n="category_animation">Анимация</span></button>
-        <button class="up-cat-btn" data-cat="ct-podcast" onclick="selectUploadCat(this)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" fill="#7D9158" stroke="none"/><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 12 C5.5 16 8.5 18.5 12 18.5 C15.5 18.5 18.5 16 18.5 12"/><path d="M12 18.5 V21.5 M9 21.5 H15"/></g></svg> <span data-i18n="category_podcast">Подкаст</span></button>
       </div>
     </div>
 
@@ -17399,15 +20057,13 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
 <div id="coll-toast"></div>
 
 <!-- Notification panel -->
-<div id="notif-overlay" class="notif-overlay" onclick="handleNotifOverlayClick(event)">
+<div id="notif-overlay" class="notif-overlay" onclick="handleNotifOverlayClick(event)" role="dialog" aria-modal="false" aria-labelledby="notif-panel-title">
   <div class="notif-panel" onclick="event.stopPropagation()">
     <div class="notif-header">
-      <h3 id="notif-panel-title">Уведомления</h3>
-      <button class="notif-mark-all-btn" id="notif-mark-all-btn" onclick="markAllNotifsRead()">Отметить все прочитанными</button>
+      <h3 id="notif-panel-title" data-i18n="notif_panel_title">Notifications</h3>
+      <button class="notif-mark-all-btn" id="notif-mark-all-btn" onclick="markAllNotifsRead()" data-i18n="notif_mark_all">Mark all as read</button>
     </div>
-    <div class="notif-list" id="notif-list">
-      <div class="notif-empty" id="notif-empty-state">Пока ничего нет</div>
-    </div>
+    <div class="notif-list" id="notif-list"></div>
   </div>
 </div>
 
@@ -17957,7 +20613,6 @@ body.light-theme #page-profile .prof-social-btn:hover {
 #page-profile .prof-memberships-empty {
   font-size: 13px !important;
   color: var(--text3) !important;
-  padding: 28px 0 8px !important;
   font-style: italic !important;
 }
 
