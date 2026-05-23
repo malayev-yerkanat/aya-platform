@@ -1725,6 +1725,31 @@ body.light-theme .watch-side-label { border-bottom-color: rgba(0,0,0,.08); }
   pointer-events: none;
 }
 
+/* ── Pitch card: "PITCH" watermark for empty banner ── */
+#page-pitch .pc-thumb::before,
+#prof-pitch-cards .pc-thumb::before {
+  content: 'PITCH';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 68px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: rgba(255,255,255,0.065);
+  pointer-events: none;
+  z-index: 0;
+  white-space: nowrap;
+  user-select: none;
+}
+/* Hide watermark when a real banner image is present */
+#page-pitch .pc-thumb[style*="background-image"]::before,
+#page-pitch .pc-thumb.has-banner::before,
+#prof-pitch-cards .pc-thumb[style*="background-image"]::before,
+#prof-pitch-cards .pc-thumb.has-banner::before {
+  display: none;
+}
+
 #page-pitch .pc-badge {
   position: relative;
   z-index: 2;
@@ -1910,6 +1935,12 @@ body.light-theme #page-pitch .pc-thumb::after {
   background: linear-gradient(180deg, transparent 40%, rgba(40,56,20,.22) 100%);
 }
 body.light-theme #page-pitch .pc-days { color: rgba(30,42,16,.72); }
+
+/* ── Light theme: pitch watermark ── */
+body.light-theme #page-pitch .pc-thumb::before,
+body.light-theme #prof-pitch-cards .pc-thumb::before {
+  color: rgba(30,42,16,0.06);
+}
 
 /* ── Light theme: card inner ring ── */
 body.light-theme #page-pitch .pc::before { border-color: rgba(62,84,40,.08); }
@@ -11540,7 +11571,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       <h1 class="hero-title-slab" data-i18n="hero_title">Кино, музыка, подкасты — <em>всё своё</em></h1>
       <p class="hero-desc" data-i18n="hero_desc">Единая платформа для независимого казахстанского контента. Смотри, слушай, поддерживай авторов и находи команду.</p>
       <div class="hero-actions">
-        <button class="btn-sharp-gold" onclick="openWatch()" data-i18n="btn_watch_now"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть сейчас</button>
+        <button class="btn-sharp-gold" onclick="openAyaTrailer()" data-i18n="btn_watch_now"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg> Смотреть сейчас</button>
         <button class="btn-sharp-ghost" onclick="goPage('pitch',null)" data-i18n="btn_support">Поддержать проект</button>
       </div>
       <div class="hero-stats" id="hero-stats"></div>
@@ -13789,6 +13820,9 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
             const goalFmt    = Number(p.goal     || 0).toLocaleString('ru-RU') + ' ₸';
             const backersFmt = Number(p.backers  || 0).toLocaleString('ru-RU');
             const thumbCls   = p.thumbClass || 'p1';
+            const bannerUrl  = p.bannerUrl || p.coverImage || p.banner_url || '';
+            const thumbClass = bannerUrl ? `pc-thumb ${thumbCls} has-banner` : `pc-thumb ${thumbCls}`;
+            const thumbStyle = bannerUrl ? ` style="background-image:url('${bannerUrl}');background-size:cover;background-position:center;"` : '';
             const statusBadge = p.status === 'live'
               ? `<div class="pc-badge pb-live">Live</div>`
               : p.status === 'new'
@@ -13796,7 +13830,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
               : '';
             const genreLabel = p.genreLabel || p.genre || '';
             return `<div class="pc">
-              <div class="pc-thumb ${thumbCls}">
+              <div class="${thumbClass}"${thumbStyle}>
                 ${statusBadge}
                 ${p.daysLeft != null ? `<span class="pc-days"><span>${p.daysLeft}</span> <span data-i18n="days_left">дней</span></span>` : ''}
               </div>
@@ -14355,6 +14389,41 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     video_embed_url: ''
   };
 
+  /* ── Hero "Watch Now" — opens the real AYA Platform Trailer if uploaded ── */
+  function openAyaTrailer() {
+    // Title keywords to match against (case-insensitive, order = priority)
+    const TRAILER_PATTERNS = [
+      /aya\s+platform\s+trailer/i,
+      /aya\s+trailer/i,
+      /platform\s+trailer/i,
+      /aya\s+платформа\s+трейлер/i,
+      /трейлер\s+aya/i,
+    ];
+
+    function _findTrailer() {
+      const content = getAyaContent();
+      for (const pat of TRAILER_PATTERNS) {
+        const match = content.find(c => isValidVisibleContent(c) && pat.test(c.title || ''));
+        if (match) return match;
+      }
+      return null;
+    }
+
+    const immediate = _findTrailer();
+    if (immediate) { openWatch(immediate); return; }
+
+    // Content not loaded yet — wait up to 8 s then open whatever we find (or fallback)
+    let waited = 0;
+    const interval = setInterval(() => {
+      waited += 200;
+      const found = _findTrailer();
+      if (found || waited >= 8000) {
+        clearInterval(interval);
+        openWatch(found || null); // null → AYA_FEATURED_VIDEO fallback inside openWatch
+      }
+    }, 200);
+  }
+
   let watchLoadToken = 0;
 
   function resetPlayerState() {
@@ -14463,7 +14532,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     const recContainer = document.getElementById('watch-recommendations');
     if (recContainer) {
       recContainer.innerHTML = '';
-      getAyaContent().filter(c => c.id !== content.id).slice(0,6).forEach(c => {
+      getAyaContent().filter(c => isValidVisibleContent(c) && c.id !== content.id).slice(0,6).forEach(c => {
         const col = CAT_COLORS[c.cat] || 'var(--gold)';
         const div = document.createElement('div');
         div.className = 'rec-card';
