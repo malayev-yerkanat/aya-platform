@@ -1878,6 +1878,54 @@ body.light-theme #page-pitch .prog-track {
   background: rgba(0,0,0,.08);
 }
 
+/* ── Light theme: pitch page backdrop ── */
+body.light-theme #page-pitch .pitch-page::before {
+  background:
+    radial-gradient(circle at 18% 10%, rgba(125,145,88,.14), transparent 32%),
+    radial-gradient(circle at 82% 6%,  rgba(62,84,40,.08),   transparent 28%),
+    linear-gradient(180deg, rgba(210,222,185,.40), rgba(240,233,214,0));
+  filter: none;
+}
+body.light-theme #page-pitch .pitch-page::after {
+  background-image:
+    linear-gradient(rgba(62,84,40,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(62,84,40,.018) 1px, transparent 1px);
+  opacity: .5;
+}
+
+/* ── Light theme: thumbnail placeholder palettes ── */
+body.light-theme .p1  { background: linear-gradient(145deg,#b8ceaa,#d0e0bc); }
+body.light-theme .p2  { background: linear-gradient(145deg,#c8b8d8,#dcccea); }
+body.light-theme .p3  { background: linear-gradient(145deg,#d4c49a,#e8d8b0); }
+body.light-theme .p4  { background: linear-gradient(145deg,#a8c4d4,#bcd8e8); }
+body.light-theme .p5  { background: linear-gradient(145deg,#d4a89c,#e8c0b4); }
+body.light-theme .p6  { background: linear-gradient(145deg,#b0b8d8,#c8ccec); }
+body.light-theme .p7  { background: linear-gradient(145deg,#d4c49a,#eadab4); }
+body.light-theme .p8  { background: linear-gradient(145deg,#a8ccbc,#bcddd0); }
+body.light-theme .p9  { background: linear-gradient(145deg,#d4a8b4,#eabec8); }
+body.light-theme .p10 { background: linear-gradient(145deg,#a8cccc,#bcdedc); }
+
+/* ── Light theme: thumbnail vignette + text ── */
+body.light-theme #page-pitch .pc-thumb::after {
+  background: linear-gradient(180deg, transparent 40%, rgba(40,56,20,.22) 100%);
+}
+body.light-theme #page-pitch .pc-days { color: rgba(30,42,16,.72); }
+
+/* ── Light theme: card inner ring ── */
+body.light-theme #page-pitch .pc::before { border-color: rgba(62,84,40,.08); }
+
+/* ── Light theme: content type label colors ── */
+body.light-theme .ct-film      { color: #7a6020; }
+body.light-theme .ct-music     { color: #7a3678; }
+body.light-theme .ct-doc       { color: #1e7080; }
+body.light-theme .ct-podcast   { color: #3e6420; }
+body.light-theme .ct-social    { color: #7a3c28; }
+body.light-theme .ct-short     { color: #1e5278; }
+body.light-theme .ct-animation { color: #5a3890; }
+
+/* ── Light theme: progress raised amount ── */
+body.light-theme #page-pitch .prog-raised { color: var(--teal); }
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   #page-pitch .pitch-banner,
@@ -2532,14 +2580,20 @@ body.light-theme .creator-modal select {
 }
 
 /* ── Light theme overrides ── */
+body.light-theme #page-creator-pitches .creator-page::before {
+  background:
+    radial-gradient(circle at 16% 10%, rgba(92,120,64,.08),  transparent 32%),
+    radial-gradient(circle at 84% 7%,  rgba(62,84,40,.06),   transparent 26%),
+    linear-gradient(180deg, rgba(186,206,156,.18), rgba(240,233,214,0));
+}
 body.light-theme #page-creator-pitches .settings-title {
   background:
-    linear-gradient(135deg, rgba(210,222,185,.96), rgba(195,210,165,.90) 48%, rgba(220,230,198,.98)),
-    radial-gradient(circle at 78% 22%, rgba(100,125,60,.14), transparent 40%);
+    linear-gradient(135deg, rgba(240,233,214,.98), rgba(228,218,194,.95) 48%, rgba(218,208,182,.98)),
+    radial-gradient(circle at 78% 22%, rgba(62,84,40,.10), transparent 40%);
   border-color: rgba(62,84,40,.14);
   box-shadow:
     0 28px 72px rgba(70,82,44,.16),
-    inset 0 1px 0 rgba(255,255,255,.50);
+    inset 0 1px 0 rgba(255,255,255,.55);
 }
 body.light-theme #page-creator-pitches .settings-title::before {
   color: rgba(50,70,30,.040);
@@ -3211,28 +3265,34 @@ body.light-theme #pitch-create-overlay .modal-actions .btn-secondary:hover {
 }
 
 /* ── Light theme ── */
+body.light-theme #page-creator-videos .creator-page::before {
+  background:
+    radial-gradient(circle at 20% 8%,  rgba(92,120,64,.08),  transparent 30%),
+    radial-gradient(circle at 78% 12%, rgba(62,84,40,.06),    transparent 28%),
+    linear-gradient(180deg, rgba(186,206,156,.18), rgba(240,233,214,0));
+}
 body.light-theme #page-creator-videos .settings-title {
   background:
-    linear-gradient(135deg, rgba(222,232,208,.98), rgba(208,220,188,.94) 48%, rgba(195,210,175,.99)),
+    linear-gradient(135deg, rgba(240,233,214,.98), rgba(228,218,194,.95) 48%, rgba(218,208,182,.98)),
     radial-gradient(circle at 74% 22%, rgba(62,84,40,.10), transparent 40%);
   border-color: rgba(62,84,40,.14);
-  box-shadow: 0 18px 52px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.52);
+  box-shadow: 0 18px 52px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.55);
 }
 body.light-theme #page-creator-videos .creator-video-item {
-  background: linear-gradient(150deg, rgba(240,244,232,.98), rgba(232,238,220,.99));
+  background: linear-gradient(150deg, rgba(234,226,204,.96), rgba(221,211,184,.98));
   border-color: rgba(62,84,40,.11);
-  box-shadow: 0 10px 36px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.62);
+  box-shadow: 0 10px 36px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.55);
 }
 body.light-theme #page-creator-videos .creator-video-item:hover {
-  background: linear-gradient(150deg, rgba(246,250,238,.99), rgba(238,244,226,.99));
+  background: linear-gradient(150deg, rgba(224,216,192,.97), rgba(210,200,172,.99));
   border-color: rgba(62,84,40,.20);
-  box-shadow: 0 14px 44px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.72);
+  box-shadow: 0 14px 44px rgba(70,82,44,.14), inset 0 1px 0 rgba(255,255,255,.65);
 }
 body.light-theme #page-creator-videos .cvi-thumb {
   border-color: rgba(62,84,40,.12);
 }
 body.light-theme #page-creator-videos .cvi-thumb-placeholder {
-  background: linear-gradient(135deg, rgba(220,230,205,.98), rgba(208,220,188,.99));
+  background: linear-gradient(135deg, rgba(222,213,190,.98), rgba(210,200,176,.99));
   border-color: rgba(62,84,40,.12);
   color: rgba(62,84,40,.42);
 }
@@ -3243,7 +3303,7 @@ body.light-theme #page-creator-videos .cvi-stat {
   color: rgba(62,84,40,.58);
 }
 body.light-theme #page-creator-videos .cvi-btn {
-  background: rgba(220,230,205,.88);
+  background: rgba(220,212,190,.88);
   border-color: rgba(62,84,40,.13);
   color: rgba(62,84,40,.60);
 }
@@ -3253,7 +3313,7 @@ body.light-theme #page-creator-videos .cvi-btn:hover {
   color: #0a1208;
 }
 body.light-theme #page-creator-videos .creator-empty {
-  background: linear-gradient(150deg, rgba(232,240,218,.80), rgba(220,232,202,.84));
+  background: linear-gradient(150deg, rgba(230,222,200,.82), rgba(218,210,185,.86));
   border-color: rgba(62,84,40,.10);
   box-shadow: 0 10px 36px rgba(70,82,44,.08), inset 0 1px 0 rgba(255,255,255,.52);
 }
@@ -4982,17 +5042,24 @@ body.light-theme #page-settings .theme-btn.active {
 
 /* Light-theme overrides — account info */
 body.light-theme #page-settings .acct-info-input {
-  background: rgba(255,255,255,.72);
-  border-color: rgba(62,84,40,.12);
-  color: var(--text);
+  background: rgba(248,244,230,.90);
+  border-color: rgba(62,84,40,.13);
+  color: #1a1f15;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.52);
+}
+body.light-theme #page-settings .acct-info-input:hover {
+  background: rgba(244,240,224,.94);
+  border-color: rgba(62,84,40,.22);
 }
 body.light-theme #page-settings .acct-info-input:focus {
-  border-color: rgba(62,84,40,.42);
-  background: rgba(255,255,255,.94);
-  box-shadow: 0 0 0 3px rgba(62,84,40,.10);
+  border-color: rgba(62,84,40,.36);
+  background: rgba(255,252,240,.96);
+  box-shadow:
+    0 0 0 3px rgba(62,84,40,.08),
+    inset 0 1px 0 rgba(255,255,255,.62);
 }
 body.light-theme #page-settings .acct-info-input::placeholder {
-  color: rgba(62,84,40,.40);
+  color: rgba(62,84,40,.38);
 }
 body.light-theme #page-settings .acct-verify-row {
   border-top-color: rgba(62,84,40,.09);
@@ -5148,14 +5215,17 @@ body.light-theme #page-settings .avatar-upload-card.drag-over {
   background: rgba(200,188,162,.60);
 }
 body.light-theme #page-settings .avatar-upload-zone {
-  background: rgba(255,255,255,.55);
-  border-color: rgba(62,84,40,.10);
+  background: rgba(248,244,230,.72);
+  border-color: rgba(62,84,40,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.42);
 }
 body.light-theme #page-settings .avatar-upload-zone:hover,
 body.light-theme #page-settings .avatar-upload-card.drag-over .avatar-upload-zone {
-  border-color: rgba(62,84,40,.38);
-  background: rgba(255,255,255,.82);
-  box-shadow: 0 0 0 3px rgba(62,84,40,.09);
+  border-color: rgba(62,84,40,.36);
+  background: rgba(248,244,230,.96);
+  box-shadow:
+    0 0 0 3px rgba(62,84,40,.08),
+    inset 0 1px 0 rgba(255,255,255,.52);
 }
 body.light-theme #page-settings .avatar-upload-progress {
   background: rgba(62,84,40,.10);
@@ -10278,6 +10348,11 @@ body.light-theme #page-profile .prof-cover-marquee::before {
 }
 
 /* ── Light theme overrides ── */
+body.light-theme #page-profile .profile-page::before {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(94,122,64,.10), transparent 40%),
+    linear-gradient(180deg, rgba(186,206,156,.22), rgba(240,233,214,0));
+}
 body.light-theme #page-profile .profile-cover {
   background:
     radial-gradient(ellipse 62% 130% at 12% 58%, rgba(94,122,64,.22) 0%, transparent 54%),
@@ -10346,6 +10421,12 @@ body.light-theme #page-profile .prof-review-card {
 }
 body.light-theme #page-profile .prof-review-card::before {
   background: linear-gradient(135deg, rgba(255,255,255,.30) 0%, transparent 55%);
+}
+body.light-theme #page-profile .prof-review-card:hover {
+  border-color: rgba(62,84,40,.22) !important;
+  box-shadow:
+    0 14px 38px rgba(70,82,44,.14),
+    inset 0 1px 0 rgba(255,255,255,.55) !important;
 }
 body.light-theme #page-profile .prof-review-title {
   color: rgba(62,84,40,.88) !important;
@@ -11259,9 +11340,9 @@ body.light-theme #page-watch .rec-card:hover {
 #page-home #category-page .cat-page-header h2 { font-family: 'Barlow'; font-size: 24px; font-weight: 900; letter-spacing: -.3px; }
 
 /* ── Light theme ── */
-body.light-theme #page-home .type-pill { background: rgba(224,232,210,.88); border-color: rgba(62,84,40,.10); color: rgba(50,70,36,.72); }
-body.light-theme #page-home .type-pill:hover { background: rgba(214,224,196,.96); border-color: rgba(62,84,40,.20); color: rgba(30,50,18,.90); }
-body.light-theme #page-home .type-pill.active { background: var(--gold); border-color: transparent; color: #0a1208; }
+body.light-theme #page-home .type-pill { background: linear-gradient(150deg, rgba(234,226,204,.90), rgba(221,211,184,.94)); border-color: rgba(62,84,40,.10); color: var(--text2); box-shadow: 0 4px 14px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.55); }
+body.light-theme #page-home .type-pill:hover { background: linear-gradient(150deg, rgba(224,216,192,.96), rgba(210,200,172,.98)); border-color: rgba(62,84,40,.20); color: var(--text); }
+body.light-theme #page-home .type-pill.active { background: linear-gradient(150deg, rgba(125,145,88,.18), rgba(100,118,68,.12)); border-color: rgba(62,84,40,.34); color: var(--teal); box-shadow: none; }
 body.light-theme #page-home .constructor-bar { background: linear-gradient(150deg, rgba(232,240,218,.96), rgba(222,232,206,.98)); border-color: rgba(62,84,40,.12); border-left-color: rgba(62,84,40,.40); box-shadow: 0 8px 28px rgba(70,82,44,.10), inset 0 1px 0 rgba(255,255,255,.52); }
 body.light-theme #page-home .constructor-label { color: rgba(62,84,40,.68); }
 body.light-theme #page-home .csel { background: rgba(248,244,230,.90); border-color: rgba(62,84,40,.12); color: #1a1f15; }
@@ -11503,50 +11584,44 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
 
   <div class="feed">
 
+    <div class="row genre-row" id="genre-row-trending" style="display:none">
+      <div class="row-head-edit"><span class="row-num">01</span><span class="row-title-edit" data-i18n="row_trending">Трендовое сейчас</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('trending')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('trending')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="cards-h" id="row-trending-cards"></div>
+    </div>
+
     <div class="row genre-row" id="genre-row-films" style="display:none">
-      <div class="row-head-edit"><span class="row-num">01</span><span class="row-title-edit" data-i18n="row_films">Фильмы</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('film')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('film')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_films">Фильмы</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('film')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('film')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-films-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-short" style="display:none">
-      <div class="row-head-edit"><span class="row-num">02</span><span class="row-title-edit" data-i18n="row_short">Короткий метр</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('short')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('short')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_short">Короткий метр</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('short')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('short')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-short-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-doc" style="display:none">
-      <div class="row-head-edit"><span class="row-num">03</span><span class="row-title-edit" data-i18n="row_doc">Документальное</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('doc')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('doc')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_doc">Документальное</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('doc')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('doc')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-doc-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-podcasts" style="display:none">
-      <div class="row-head-edit"><span class="row-num">04</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('podcast')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('podcast')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">05</span><span class="row-title-edit" data-i18n="row_podcasts">Подкасты</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('podcast')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('podcast')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-podcasts-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-music" style="display:none">
-      <div class="row-head-edit"><span class="row-num">05</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('music')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('music')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">06</span><span class="row-title-edit" data-i18n="row_music">Музыкальные клипы</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('music')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('music')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-music-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-social" style="display:none">
-      <div class="row-head-edit"><span class="row-num">06</span><span class="row-title-edit" data-i18n="row_social">Соц. ролики</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('social')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('social')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">07</span><span class="row-title-edit" data-i18n="row_social">Соц. ролики</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('social')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('social')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-social-cards"></div>
     </div>
 
     <div class="row genre-row" id="genre-row-animation" style="display:none">
-      <div class="row-head-edit"><span class="row-num">07</span><span class="row-title-edit" data-i18n="row_animation">Анимация</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('animation')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('animation')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
+      <div class="row-head-edit"><span class="row-num">08</span><span class="row-title-edit" data-i18n="row_animation">Анимация</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('animation')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('animation')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
       <div class="cards-h" id="row-animation-cards"></div>
-    </div>
-
-    <div class="row genre-row" id="genre-row-trending" style="display:none">
-      <div class="row-head-edit"><span class="row-num">07</span><span class="row-title-edit" data-i18n="row_trending">Трендовое сейчас</span><span class="row-more-edit" role="button" tabindex="0" onclick="openCarouselSeeAll('trending')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCarouselSeeAll('trending')}" data-i18n="row_see_all"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Показать всё</span></div>
-      <div class="cards-h" id="row-trending-cards"></div>
-    </div>
-
-    <!-- Top Collections of the Month -->
-    <div id="top-collections-row" class="row" style="display:none">
-      <div class="row-head"><span class="row-title"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7 H10 L12 9 H21 V19 H3 Z" fill="#7D9158" stroke="none"/><path d="M3 7 H10 L12 9 H21 V19 H3 Z"/></g></svg> Топ коллекции месяца</span><span class="row-more" onclick="switchProfTab && goPage('profile',null)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Смотреть все</span></div>
-      <div id="top-collections-cards" class="cards-h" style="gap:14px"></div>
     </div>
 
 
@@ -15104,8 +15179,9 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
 
   /* ---- Inject user-uploaded content into the matching section rows ---- */
   function renderUserContent() {
-    // Remove any previously injected uploaded cards (so we don't duplicate on refresh)
+    // Remove any previously injected uploaded/trending cards (so we don't duplicate on refresh)
     document.querySelectorAll('.uploaded-user-card').forEach(el => el.remove());
+    document.querySelectorAll('.trending-seeded-card').forEach(el => el.remove());
     updateAboutContentCount();
 
     const items = getAyaContent();
@@ -15139,6 +15215,61 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       // Prepend so newest uploads appear first in the row
       container.insertBefore(card, container.firstChild);
     });
+
+    // ── Populate Trending Now from real content data ──
+    (function populateTrendingRow() {
+      const trendingContainer = document.getElementById('row-trending-cards');
+      if (!trendingContainer) return;
+
+      const allValid = getAyaContent().filter(isValidVisibleContent);
+
+      // Find the real Equation record by title (case-insensitive, trimmed)
+      const eqItem = allValid.find(c =>
+        String(c.title || '').trim().toLowerCase() === 'equation'
+      );
+      if (!eqItem) {
+        console.info('[AYA] Trending Now: "Equation" not found in content data — row will show other trending items only.');
+      }
+
+      // All valid content except Equation (which goes first)
+      const rest = allValid.filter(c =>
+        !eqItem || String(c.id) !== String(eqItem.id)
+      );
+
+      // Final order: Equation first (if found), then every other valid item
+      const trendingItems = [];
+      if (eqItem) trendingItems.push(eqItem);
+      trendingItems.push(...rest);
+
+      if (!trendingItems.length) return;
+
+      // Card builder — mirrors renderUserContent() structure, uses real record fields
+      const makeCard = c => {
+        const src = c.thumbnail || c.poster_url || c.thumbnail_url || null;
+        const thumb = src
+          ? `<img src="${src}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${c.title}" loading="lazy">`
+          : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--bg3),var(--bg5));display:flex;align-items:center;justify-content:center">${I.feature}</div>`;
+        const card = document.createElement('div');
+        card.className = 'card w-200 card-feat trending-seeded-card';
+        card.style.cssText = 'animation:pageFadeIn .3s ease';
+        card.onclick = () => openWatch(c);
+        card.innerHTML = `
+          <div class="thumb r-film" style="position:relative">
+            ${thumb}
+            <span class="ct-badge ${c.cat}">${categoryLabel(c.cat)}</span>
+            <div class="thumb-play-wrap"><div class="thumb-play"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div>
+          </div>
+          <div class="card-title">${c.title}</div>
+          <div class="card-sub">${c.creatorName || c.author || ''}</div>`;
+        return card;
+      };
+
+      // Build cards then insert in reverse so trendingItems[0] (Equation) lands at position 0
+      const cards = trendingItems.map(makeCard);
+      for (let i = cards.length - 1; i >= 0; i--) {
+        trendingContainer.insertBefore(cards[i], trendingContainer.firstChild);
+      }
+    })();
 
     // Re-attach menu buttons to newly created uploaded cards
     initCardMenuButtons();
