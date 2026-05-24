@@ -770,6 +770,109 @@ body.light-theme .notif-empty-text { color: rgba(62,84,40,.45); }
 }
 
 /* ============================================================
+   FOLLOWING PAGE — all rules scoped to #page-following
+============================================================ */
+#page-following .following-page-inner {
+  padding: clamp(24px, 3.5vw, 48px) clamp(20px, 4vw, 44px) 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+#page-following .following-page-title {
+  font-family: 'Barlow', system-ui, sans-serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 900;
+  letter-spacing: -.5px;
+  margin-bottom: 28px;
+}
+.following-creator-block {
+  margin-bottom: 36px;
+}
+.following-creator-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+.following-creator-av {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #121212;
+  font-weight: 900;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+.following-creator-av img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.following-creator-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+.following-creator-handle {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.following-creator-cards {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+.following-creator-cards::-webkit-scrollbar { display: none; }
+.following-creator-empty {
+  font-size: 13px;
+  color: var(--text2);
+  padding: 8px 0;
+}
+.following-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 20px;
+  color: var(--text2);
+  text-align: center;
+  font-size: 14px;
+}
+/* Follow button on profile */
+.follow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--r-pill, 20px);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid var(--gold);
+  background: var(--gold);
+  color: #121212;
+  transition: background .18s, color .18s, opacity .18s;
+  white-space: nowrap;
+}
+.follow-btn.following {
+  background: transparent;
+  color: var(--text2);
+  border-color: var(--border, rgba(255,255,255,.12));
+}
+.follow-btn:hover { opacity: .82; }
+
+/* ============================================================
    SEARCH RESULTS PAGE — all rules scoped to #page-search
 ============================================================ */
 #page-search .search-page-inner {
@@ -2564,6 +2667,21 @@ body.light-theme .creator-modal select {
 }
 #page-creator-pitches .cvi-btn:active {
   transform: scale(.95);
+}
+#page-creator-pitches .cvi-btn-publish {
+  background: rgba(125,145,88,.18);
+  color: var(--gold);
+  border-color: rgba(125,145,88,.35);
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+#page-creator-pitches .cvi-btn-publish:hover {
+  background: var(--gold);
+  color: #0a1208;
+  border-color: var(--gold);
 }
 
 /* ── Empty state — editorial ── */
@@ -11472,6 +11590,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     <div class="nav-item active" role="button" tabindex="0" onclick="goPage('home',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('home',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3.5 11 L12 4 L20.5 11 V19.5 H3.5 Z"/><path d="M9.5 19.5 V13 H14.5 V19.5 Z" fill="#7D9158" stroke="none"/><path d="M9.5 19.5 V13 H14.5 V19.5"/></g></svg></span><span data-i18n="nav_home">Главная</span></div>
     <div class="nav-item" role="button" tabindex="0" onclick="goPage('pitch',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('pitch',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5.5 9.5 C5.5 7.6 8.4 6 12 6 C15.6 6 18.5 7.6 18.5 9.5 V14.5 C18.5 16.4 15.6 18 12 18 C8.4 18 5.5 16.4 5.5 14.5 Z" fill="#7D9158" stroke="none" opacity=".55"/><ellipse cx="12" cy="9.5" rx="6.5" ry="3.5"/><path d="M5.5 9.5 V14.5 C5.5 16.4 8.4 18 12 18 C15.6 18 18.5 16.4 18.5 14.5 V9.5"/><path d="M8 13 C9 13.8 10.4 14.2 12 14.2 C13.6 14.2 15 13.8 16 13"/><path d="M12 8 V11 M10.5 9.5 H13.5"/></g></svg></span><span data-i18n="nav_pitch">Pitching</span><span class="badge">18</span></div>
     <div id="nav-profile-btn" class="nav-item" role="button" tabindex="0" style="display:none" onclick="goPage('profile',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg></span><span id="nav-profile-name">Профиль</span></div>
+    <div id="nav-following-btn" class="nav-item" role="button" tabindex="0" style="display:none" onclick="goPage('following',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('following',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="9" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="9" cy="8" r="3"/><path d="M3 20 C3.5 16 6 14 9 14 C12 14 14.5 16 15 20"/><path d="M16 11 L18 13 L22 9"/></g></svg></span><span data-i18n="nav_following">Подписки</span></div>
     <div class="nav-item" role="button" tabindex="0" onclick="goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('profile',this);setTimeout(()=>switchProfTab('collections',null),50)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z" fill="#7D9158" stroke="none"/><path d="M6 3.5 H18 V20.5 L12 16 L6 20.5 Z"/></g></svg></span><span data-i18n="saved">Сохранённое</span></div>
     <div id="nav-auth-btn" class="nav-item" role="button" tabindex="0" onclick="navAuthClick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navAuthClick()}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8.5" r="3.5" fill="#7D9158" stroke="none"/><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20 C5 16 8 14 12 14 C16 14 19 16 19.5 20"/></g></svg></span><span id="nav-auth-label" data-i18n="login">Войти</span></div>
     <div class="nav-item" role="button" tabindex="0" onclick="goPage('settings',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goPage('settings',this)}"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="2.5" fill="#7D9158" stroke="none"/><path d="M12 3 L13.5 5 L16 4 L16.2 6.7 L19 7.5 L18 10 L20 12 L18 14 L19 16.5 L16.2 17.3 L16 20 L13.5 19 L12 21 L10.5 19 L8 20 L7.8 17.3 L5 16.5 L6 14 L4 12 L6 10 L5 7.5 L7.8 6.7 L8 4 L10.5 5 Z"/><circle cx="12" cy="12" r="2.5"/></g></svg></span><span data-i18n="settings">Настройки</span></div>
@@ -11785,6 +11904,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
 
       <div class="pc"><div class="pc-thumb p3"><div class="pc-badge pb-new" data-i18n="badge_new"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 2 L14 8 L20 8 L21 14 L18 18 L20 22 L14 21 L12 22 L10 21 L4 22 L6 18 L3 14 L4 8 L10 8 Z" fill="#7D9158" stroke="none"/><path d="M12 2 L14 8 L20 8 L21 14 L18 18 L20 22 L14 21 L12 22 L10 21 L4 22 L6 18 L3 14 L4 8 L10 8 Z"/></g></svg> Новый</div><span class="pc-days"><span>30</span> <span data-i18n="days_left">дней</span></span></div><div class="pc-body"><div class="pc-type ct-doc" data-i18n="pc_type_doc"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="7" width="18" height="11" rx="1" fill="#7D9158" stroke="none"/><rect x="3" y="7" width="18" height="11" rx="1"/><path d="M9 4 L12 7 L15 4"/><path d="M3 11 H21"/></g></svg> Документальный</div><div class="pc-title">Шекара / La Frontera</div><div class="pc-author">Айгерим Бекова</div><p class="pc-desc" data-i18n="pc6_desc">О казахско-китайской границе: жизни семей, разлучённых по обе стороны.</p><div class="prog-labels"><span class="prog-raised">880 000 ₸</span><span class="prog-goal"><span data-i18n="of_goal">из</span> 12 000 000 ₸</span></div><div class="prog-track"><div class="prog-fill" style="width:7%"></div></div><div class="pc-foot"><span class="pc-backers"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="3" fill="#7D9158" stroke="none"/><circle cx="16" cy="9" r="2.5" fill="#7D9158" stroke="none"/><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19 C3 15.5 5 13.5 8 13.5 C11 13.5 13 15.5 13.5 19"/><path d="M14 14 C16.5 14 19 15.5 21 18"/></g></svg> 29 <span data-i18n="backers">бэкеров</span></span><button class="qoldau"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 11 H16 V7 L21 12 L16 17 V13 H4 Z" fill="#7D9158" stroke="none"/><path d="M4 12 H20"/><path d="M15 7 L20 12 L15 17"/></g></svg> Qoldau</button></div></div></div>
 
+      <!-- ── Dynamic pitch cards from Firebase (active/live pitches) ── -->
+      <div id="pitch-firebase-grid"></div>
     </div>
   </div>
 </div><!-- /pitch -->
@@ -12054,39 +12175,6 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
           </div>
         </div>
 
-        <!-- Notifications -->
-        <div class="settings-block">
-          <div class="settings-block-title" data-i18n="notif_block">Уведомления</div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="notif_new">Новые работы подписок</div>
-              <div class="settings-row-desc" data-i18n="notif_new_desc">Когда автор загружает новый контент</div>
-            </div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="notif_pitch">Обновления питч-кампаний</div>
-              <div class="settings-row-desc" data-i18n="notif_pitch_desc">Новые бэкеры, достижение цели</div>
-            </div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="notif_comments">Ответы на рецензии</div>
-              <div class="settings-row-desc" data-i18n="notif_comments_desc">Когда кто-то отвечает на ваш комментарий</div>
-            </div>
-            <div class="toggle" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="notif_email">Email-рассылка</div>
-              <div class="settings-row-desc" data-i18n="notif_email_desc">Еженедельный дайджест платформы</div>
-            </div>
-            <div class="toggle" onclick="this.classList.toggle('on')"></div>
-          </div>
-        </div>
-
         <!-- Account Info / Verification -->
         <div class="settings-block" id="account-info-block">
           <div class="settings-block-title" data-i18n="acct_info_block">Данные аккаунта</div>
@@ -12241,35 +12329,6 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
           </div>
         </div>
 
-        <!-- Playback -->
-        <div class="settings-block">
-          <div class="settings-block-title" data-i18n="playback_block">Воспроизведение</div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="autoplay_label">Автовоспроизведение</div>
-              <div class="settings-row-desc" data-i18n="autoplay_desc">Следующий контент запускается автоматически</div>
-            </div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="subtitles_label">Субтитры по умолчанию</div>
-              <div class="settings-row-desc" data-i18n="subtitles_desc">Автоматически включать субтитры</div>
-            </div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="quality_label">Качество видео</div>
-              <div class="settings-row-desc" data-i18n="quality_desc">По умолчанию при загрузке</div>
-            </div>
-            <div class="lang-group">
-              <div class="lang-opt" style="font-size:11px">Auto</div>
-              <div class="lang-opt active" style="font-size:11px">720p</div>
-              <div class="lang-opt" style="font-size:11px">1080p</div>
-            </div>
-          </div>
-        </div>
       </aside>
     </div>
 
@@ -12493,6 +12552,18 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   </div>
 </div>
 
+<!-- ============ FOLLOWING PAGE ============ -->
+<div id="page-following" class="page">
+  <div class="following-page-inner">
+    <h2 class="following-page-title" data-i18n="following_page_title">Подписки</h2>
+    <div id="following-list"></div>
+    <div id="following-empty" class="following-empty" style="display:none">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="48" height="48" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".35"><circle cx="18" cy="16" r="6"/><path d="M6 40 C7 32 12 28 18 28 C24 28 29 32 30 40"/><path d="M32 22 L34 24 L40 18"/></g></svg>
+      <p data-i18n="following_empty">Вы ни на кого не подписаны</p>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <!-- AYA main scripts -->
@@ -12630,6 +12701,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
         });
       }
     }
+    if (id === 'pitch')            renderPublicPitches();
     if (id === 'settings')         highlightActiveRoleBadge();
     if (id === 'about')            updateAboutContentCount();
     if (id === 'admin-content')    renderAdminContentReqs();
@@ -12639,6 +12711,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     if (id === 'mod-user-reports')    renderModUserReports();
     if (id === 'creator-videos')      renderCreatorVideos();
     if (id === 'creator-pitches')  renderCreatorPitches();
+    if (id === 'following')        renderFollowingPage();
   }
   // ── applyRoute: parse a hash string and navigate to the matching page ──
   function applyRoute(hash) {
@@ -12680,7 +12753,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       return;
     }
     // all other simple page IDs
-    const known = ['home','pitch','profile','settings','about','search'];
+    const known = ['home','pitch','profile','settings','about','search','following'];
     if (known.includes(h)) {
       goPage(h, null);
     } else {
@@ -13037,7 +13110,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     const typeIcons = {
       like: `<svg viewBox="0 0 14 14" fill="currentColor" width="12" height="12" aria-hidden="true"><path d="M7 11.9C6.6 11.6 1.5 8.6 1.5 5A3 3 0 0 1 7 2.8 3 3 0 0 1 12.5 5c0 3.6-5.1 6.6-5.5 6.9z"/></svg>`,
       comment: `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12" aria-hidden="true"><path d="M11.5 1.5h-9a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h1.5l2 2 2-2h3.5a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1z"/></svg>`,
-      reply: `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12" aria-hidden="true"><path d="M5 3L1.5 6.5 5 10M1.5 6.5h7a4 4 0 0 1 4 4"/></svg>`
+      reply: `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12" aria-hidden="true"><path d="M5 3L1.5 6.5 5 10M1.5 6.5h7a4 4 0 0 1 4 4"/></svg>`,
+      follow: `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12" aria-hidden="true"><circle cx="6" cy="5" r="2.5"/><path d="M1.5 12.5C2 10 4 9 6 9c2 0 4 1 4.5 3.5"/><path d="M9.5 7l1 1 2-2"/></svg>`
     };
 
     list.innerHTML = _notifs.map(n => {
@@ -13045,12 +13119,13 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       const initial = actorName.charAt(0).toUpperCase();
       const unreadCls = n.read ? '' : ' unread';
       const timeStr = notifTimeAgo(n.createdAt);
-      const type = n.type === 'like' ? 'like' : n.type === 'reply' ? 'reply' : 'comment';
-      const actionKey = type === 'like' ? 'notif_like_action' : type === 'reply' ? 'notif_reply_action' : 'notif_comment_action';
+      const isFollow = n.type === 'follow';
+      const type = n.type === 'like' ? 'like' : n.type === 'reply' ? 'reply' : n.type === 'follow' ? 'follow' : 'comment';
+      const actionKey = type === 'like' ? 'notif_like_action' : type === 'reply' ? 'notif_reply_action' : type === 'follow' ? 'notif_follow' : 'notif_comment_action';
       const icon = typeIcons[type] || typeIcons.comment;
       const safeTitle = n.contentTitle ? escHtml(n.contentTitle) : '';
       const safeActor = escHtml(actorName);
-      const safeAction = escHtml(t(actionKey));
+      const safeAction = isFollow ? escHtml(tf('notif_follow', { actor: actorName })) : escHtml(t(actionKey));
       const safeId = String(n.id).replace(/'/g, '');
       const safeCid = String(n.contentId || '').replace(/'/g, '');
 
@@ -13174,6 +13249,194 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
   }
 
   // ── End Notification System ────────────────────────────────────
+
+  // ══════════════════════════════════════════════════════════════
+  //  FOLLOWING SYSTEM
+  // ══════════════════════════════════════════════════════════════
+
+  /** Write follow relationship to Firebase. */
+  async function followCreator(creatorId) {
+    const user = getUser();
+    if (!user || !creatorId || user.id === creatorId) return;
+    const ts = Date.now();
+    try {
+      await Promise.all([
+        fbSet(`follows/${user.id}/${creatorId}`, { followedAt: ts }),
+        fbSet(`followers/${creatorId}/${user.id}`, { followedAt: ts })
+      ]);
+      // Send notification to creator
+      try {
+        const actorName = `${user.first_name || ''}${user.last_name ? ' ' + user.last_name : ''}`.trim() || user.handle || 'Someone';
+        await fbPush(`notifications/${creatorId}`, {
+          type: 'follow',
+          actorName,
+          actorId: user.id,
+          contentTitle: null,
+          contentId: null,
+          createdAt: ts,
+          read: false
+        });
+      } catch (e) { /* notification failure is non-fatal */ }
+    } catch (e) {
+      console.warn('[Follow] followCreator failed', e);
+    }
+  }
+
+  /** Remove follow relationship from Firebase. */
+  async function unfollowCreator(creatorId) {
+    const user = getUser();
+    if (!user || !creatorId) return;
+    try {
+      await Promise.all([
+        fbDelete(`follows/${user.id}/${creatorId}`),
+        fbDelete(`followers/${creatorId}/${user.id}`)
+      ]);
+    } catch (e) {
+      console.warn('[Follow] unfollowCreator failed', e);
+    }
+  }
+
+  /** Returns true if the current user follows creatorId. */
+  async function isFollowing(creatorId) {
+    const user = getUser();
+    if (!user || !creatorId) return false;
+    try {
+      const data = await fbGet(`follows/${user.id}/${creatorId}`);
+      return data !== null;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /** Returns the integer follower count for a creator. */
+  async function getFollowerCount(creatorId) {
+    if (!creatorId) return 0;
+    try {
+      const data = await fbGet(`followers/${creatorId}`);
+      if (!data || typeof data !== 'object') return 0;
+      return Object.keys(data).length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  /** Toggle follow/unfollow and update the button in-place. */
+  async function toggleFollowCreator(creatorId) {
+    const user = getUser();
+    if (!user) { goPage('auth', null); return; }
+    const btn = document.getElementById('prof-follow-btn');
+    if (btn) btn.disabled = true;
+    const currently = await isFollowing(creatorId);
+    if (currently) {
+      await unfollowCreator(creatorId);
+    } else {
+      await followCreator(creatorId);
+    }
+    const nowFollowing = !currently;
+    if (btn) {
+      btn.textContent = nowFollowing ? t('unfollow_btn') : t('follow_btn');
+      btn.classList.toggle('following', nowFollowing);
+      btn.disabled = false;
+    }
+    // Refresh follower count on profile stats
+    const subsEl = document.getElementById('prof-stat-subs');
+    if (subsEl) {
+      getFollowerCount(creatorId).then(c => { if (subsEl) subsEl.textContent = c; }).catch(() => {});
+    }
+  }
+
+  /** Render the Following page — shows a content carousel per followed creator. */
+  async function renderFollowingPage() {
+    const listEl  = document.getElementById('following-list');
+    const emptyEl = document.getElementById('following-empty');
+    if (!listEl) return;
+
+    const user = getUser();
+    if (!user) {
+      listEl.innerHTML = '';
+      if (emptyEl) emptyEl.style.display = 'flex';
+      return;
+    }
+
+    listEl.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:24px 0">…</div>';
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    // Fetch the list of followed creator IDs
+    let followsData = null;
+    try { followsData = await fbGet(`follows/${user.id}`); } catch (e) { /* ignore */ }
+
+    if (!followsData || typeof followsData !== 'object' || Object.keys(followsData).length === 0) {
+      listEl.innerHTML = '';
+      if (emptyEl) emptyEl.style.display = 'flex';
+      return;
+    }
+
+    const creatorIds = Object.keys(followsData);
+    const allContent = getAyaContent ? (getAyaContent() || []) : [];
+
+    // Build blocks
+    const blocks = creatorIds.map(cid => {
+      const creator = typeof getUserById === 'function' ? getUserById(cid) : null;
+      if (!creator) return null;
+
+      const displayName = `${creator.first_name || ''} ${creator.last_name || ''}`.trim() || creator.handle || cid;
+      const handle = creator.handle ? `@${creator.handle}` : '';
+      const initials = ((creator.first_name || '?')[0] + (creator.last_name || '')[0]).toUpperCase();
+      const avHtml = creator.avatar_url
+        ? `<div class="following-creator-av"><img src="${escHtml(creator.avatar_url)}" alt="${escHtml(displayName)}"></div>`
+        : `<div class="following-creator-av">${escHtml(initials)}</div>`;
+
+      // Filter content for this creator
+      const creatorContent = allContent.filter(c =>
+        isValidVisibleContent && isValidVisibleContent(c) &&
+        (c.userId === cid || c.creatorId === cid || c.uid === cid)
+      ).slice(0, 12);
+
+      let cardsHtml;
+      if (creatorContent.length === 0) {
+        cardsHtml = `<div class="following-creator-empty">${escHtml(t('following_no_content'))}</div>`;
+      } else {
+        cardsHtml = `<div class="following-creator-cards">${
+          creatorContent.map(c => {
+            const thumb = c.thumbnail_url || c.thumbnailUrl || c.thumb || '';
+            const title = escHtml(c.title || '');
+            const safeIdStr = 'fwc_' + String(c.id || c.uid || Math.random()).replace(/[^a-zA-Z0-9_\-]/g,'_');
+            const thumbHtml = thumb
+              ? `<img src="${escHtml(thumb)}" alt="${title}" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">`
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg3),var(--bg5));font-size:22px">🎬</div>`;
+            return `<div class="card w-160 card-feat" style="cursor:pointer;flex-shrink:0" onclick="openWatchById('${escHtml(String(c.id || ''))}')">
+              <div class="thumb r-film" style="position:relative;margin-bottom:8px">${thumbHtml}
+                <div class="thumb-play-wrap"><div class="thumb-play"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="aya-ico" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4.5 L19 12 L7 19.5 Z" fill="#7D9158" stroke="none"/><path d="M7 4.5 L19 12 L7 19.5 Z"/></g></svg></div></div>
+              </div>
+              <div class="card-title" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${title}</div>
+            </div>`;
+          }).join('')
+        }</div>`;
+      }
+
+      const safeCreatorId = escHtml(cid);
+      return `<div class="following-creator-block">
+        <div class="following-creator-header" onclick="goPage('profile',null,'${safeCreatorId}')">
+          ${avHtml}
+          <div>
+            <div class="following-creator-name">${escHtml(displayName)}</div>
+            ${handle ? `<div class="following-creator-handle">${escHtml(handle)}</div>` : ''}
+          </div>
+        </div>
+        ${cardsHtml}
+      </div>`;
+    }).filter(Boolean);
+
+    if (blocks.length === 0) {
+      listEl.innerHTML = '';
+      if (emptyEl) emptyEl.style.display = 'flex';
+    } else {
+      listEl.innerHTML = blocks.join('');
+      if (emptyEl) emptyEl.style.display = 'none';
+    }
+  }
+
+  // ── End Following System ───────────────────────────────────────
 
   function renderCollPickerList(user) {
     const colls = getUserCollections(user.id);
@@ -14212,6 +14475,95 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     await fbSet('pitches/' + pitchId, null);
   }
 
+  /* ── Publish a pitch (draft → active) ── */
+  async function publishPitch(pitchId) {
+    const p = getPitches().find(x => x.id === pitchId);
+    if (!p) return;
+    try {
+      await savePitch({ ...p, status: 'active' });
+      renderCreatorPitches();
+      // Refresh public grid if user is currently on the pitching page
+      if (document.getElementById('page-pitch').classList.contains('active')) {
+        renderPublicPitches();
+      }
+    } catch(e) {
+      showModal({ title: t('modal_error_title'), body: String(e), actions:[{label:'OK', style:MODAL_BTN_PRIMARY}] });
+    }
+  }
+
+  /* ── Public Pitching page: render Firebase-backed pitch cards ── */
+  const _PITCH_PUBLIC_STATUSES = new Set(['active', 'live', 'published']);
+  const _PITCH_GRADIENT_CLS    = ['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10'];
+
+  async function renderPublicPitches() {
+    const grid = document.getElementById('pitch-firebase-grid');
+    if (!grid) return;
+
+    // Ensure pitches are loaded
+    try {
+      if (!_ayaPitchCacheLoaded) await loadPitchesFromFirebase();
+    } catch(e) { /* non-fatal — show whatever we have */ }
+
+    const publicPitches = getPitches().filter(p =>
+      _PITCH_PUBLIC_STATUSES.has((p.status || '').toLowerCase())
+    );
+
+    if (!publicPitches.length) {
+      grid.innerHTML = '';
+      return;
+    }
+
+    const GENRE_LABELS = {
+      'ct-film': t('cat_film') || 'Фильм',
+      'ct-short': t('cat_short') || 'Короткий метр',
+      'ct-doc': t('cat_doc') || 'Документальное',
+      'ct-podcast': t('cat_podcasts') || 'Подкаст',
+      'ct-music': t('cat_clips') || 'Музыка',
+      'ct-social': t('cat_social') || 'Соц. проект',
+      'ct-animation': t('cat_animation') || 'Анимация',
+    };
+
+    grid.innerHTML = publicPitches.map((p, i) => {
+      const pct        = p.goal > 0 ? Math.min(100, Math.round((p.raised / p.goal) * 100)) : 0;
+      const raisedFmt  = Number(p.raised  || 0).toLocaleString('ru-RU') + ' ₸';
+      const goalFmt    = Number(p.goal    || 0).toLocaleString('ru-RU') + ' ₸';
+      const backersFmt = Number(p.backers || 0).toLocaleString('ru-RU');
+      const thumbCls   = _PITCH_GRADIENT_CLS[i % _PITCH_GRADIENT_CLS.length];
+      const status     = (p.status || '').toLowerCase();
+      const badgeHtml  = status === 'live'
+        ? `<div class="pc-badge pb-live">Live</div>`
+        : `<div class="pc-badge pb-new">${t('badge_new') || 'Новый'}</div>`;
+      const daysHtml   = p.daysLeft != null
+        ? `<span class="pc-days"><span>${p.daysLeft}</span> <span>${t('days_left') || 'дней'}</span></span>`
+        : '';
+      const bannerUrl  = p.bannerUrl || p.coverImage || p.banner_url || '';
+      const thumbClass = bannerUrl ? `pc-thumb ${thumbCls} has-banner` : `pc-thumb ${thumbCls}`;
+      const thumbStyle = bannerUrl ? ` style="background-image:url('${bannerUrl}');background-size:cover;background-position:center;"` : '';
+      const genreLabel = GENRE_LABELS[p.genre] || p.genre || '';
+
+      return `<div class="pc" data-pitch-id="${_esc(p.id)}">
+        <div class="${thumbClass}"${thumbStyle}>
+          ${badgeHtml}${daysHtml}
+        </div>
+        <div class="pc-body">
+          <div class="pc-type ${_esc(p.genre || 'ct-film')}">${_esc(genreLabel)}</div>
+          <div class="pc-title">${_esc(p.title || '')}</div>
+          <div class="pc-author">${_esc(p.creatorName || '')}</div>
+          <p class="pc-desc">${_esc(p.description || '')}</p>
+          <div class="prog-labels">
+            <span class="prog-raised">${raisedFmt}</span>
+            <span class="prog-goal"><span>${t('of_goal') || 'из'}</span> ${goalFmt}</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+          <div class="pc-foot">
+            <span class="pc-backers">${backersFmt} <span>${t('backers') || 'бэкеров'}</span></span>
+            <button class="qoldau">${t('qoldau_btn') || 'Qoldau'}</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
   /* Deleted IDs blacklist — prevents Firebase from re-merging deleted content on reload */
   function getDeletedIds() { try { return JSON.parse(localStorage.getItem('aya_deleted_ids'))||[]; } catch{return[];} }
   function addDeletedId(id) { if (!id) return; const ids=getDeletedIds(); if(!ids.includes(id)){ids.push(id);localStorage.setItem('aya_deleted_ids',JSON.stringify(ids));} }
@@ -14389,34 +14741,44 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
     video_embed_url: ''
   };
 
-  /* ── Hero "Watch Now" — opens the real AYA Platform Trailer if uploaded ── */
-  function openAyaTrailer() {
-    // Title keywords to match against (case-insensitive, order = priority)
-    const TRAILER_PATTERNS = [
-      /aya\s+platform\s+trailer/i,
-      /aya\s+trailer/i,
-      /platform\s+trailer/i,
-      /aya\s+платформа\s+трейлер/i,
-      /трейлер\s+aya/i,
-    ];
+  /* ── Hero "Watch Now" — opens the AYA Teaser / Trailer ── */
+  // Stable Firebase ID for the uploaded AYA Teaser — primary lookup, fastest path
+  const AYA_TEASER_ID = 'content_aada18d6-d084-4afd-8465-f6e7cba75d3c';
 
-    function _findTrailer() {
+  // Title patterns used as fallback if the record is ever re-uploaded under a different ID
+  const AYA_TEASER_PATTERNS = [
+    /aya\s+teaser/i,
+    /aya\s+platform\s+trailer/i,
+    /aya\s+trailer/i,
+    /platform\s+trailer/i,
+    /aya\s+платформа\s+трейлер/i,
+    /трейлер\s+aya/i,
+    /тизер\s+aya/i,
+    /aya\s+тизер/i,
+  ];
+
+  function openAyaTrailer() {
+    function _findTeaser() {
       const content = getAyaContent();
-      for (const pat of TRAILER_PATTERNS) {
+      // 1. Prefer stable ID match
+      const byId = content.find(c => c.id === AYA_TEASER_ID && isValidVisibleContent(c));
+      if (byId) return byId;
+      // 2. Fall back to title pattern matching
+      for (const pat of AYA_TEASER_PATTERNS) {
         const match = content.find(c => isValidVisibleContent(c) && pat.test(c.title || ''));
         if (match) return match;
       }
       return null;
     }
 
-    const immediate = _findTrailer();
+    const immediate = _findTeaser();
     if (immediate) { openWatch(immediate); return; }
 
     // Content not loaded yet — wait up to 8 s then open whatever we find (or fallback)
     let waited = 0;
     const interval = setInterval(() => {
       waited += 200;
-      const found = _findTrailer();
+      const found = _findTeaser();
       if (found || waited >= 8000) {
         clearInterval(interval);
         openWatch(found || null); // null → AYA_FEATURED_VIDEO fallback inside openWatch
@@ -14911,6 +15273,7 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
           </div>
           <div class="cvi-actions">
             <button class="cvi-btn" title="${t('btn_edit')}" onclick="event.stopPropagation();openPitchEditModal('${p.id}')">✎</button>
+            ${status === 'draft' ? `<button class="cvi-btn cvi-btn-publish" title="${t('pitch_publish_btn') || 'Опубликовать'}" onclick="event.stopPropagation();publishPitch('${p.id}')">▶ ${t('pitch_publish_btn') || 'Опубликовать'}</button>` : ''}
           </div>
         </div>`;
     }).join('');
@@ -16106,6 +16469,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       if (_navProfileBtn)  _navProfileBtn.style.display  = '';
       if (_navAuthBtn)     _navAuthBtn.style.display     = 'none';
       if (_navProfileName) _navProfileName.textContent   = user.first_name || 'Профиль';
+      const _navFollowingBtn = document.getElementById('nav-following-btn');
+      if (_navFollowingBtn) _navFollowingBtn.style.display = '';
       updateSettingsUser(user);
       updateProfilePage(user);
       initModerationUI(user);
@@ -16132,6 +16497,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       const _navAuthBtnOut    = document.getElementById('nav-auth-btn');
       if (_navProfileBtnOut) _navProfileBtnOut.style.display = 'none';
       if (_navAuthBtnOut)    _navAuthBtnOut.style.display    = '';
+      const _navFollowingBtnOut = document.getElementById('nav-following-btn');
+      if (_navFollowingBtnOut) _navFollowingBtnOut.style.display = 'none';
       updateProfilePage(null);
       applyRoleToBody(null);
       updateSidebarForRole(null);
@@ -16253,9 +16620,34 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
           links.innerHTML = ''; // clean — settings accessible from sidebar
         }
       } else {
+        // Viewing someone else's profile — show back button + follow button
+        const currentUser = getUser();
+        const followBtnId = 'prof-follow-btn';
         links.innerHTML = `
           <span class="prof-link" onclick="goPage('profile',null)" style="color:var(--text3);">${withIcon('back', t('profile_back'))}</span>
+          ${currentUser ? `<button id="${followBtnId}" class="follow-btn" onclick="toggleFollowCreator('${user.id}')" style="margin-left:6px">${t('follow_btn')}</button>` : ''}
         `;
+        // Async: check if already following and update button
+        if (currentUser && user.id) {
+          isFollowing(user.id).then(following => {
+            const btn = document.getElementById(followBtnId);
+            if (btn) {
+              btn.textContent = following ? t('unfollow_btn') : t('follow_btn');
+              btn.classList.toggle('following', following);
+            }
+          }).catch(() => {});
+        }
+      }
+
+      // Load real follower count for the profile being viewed
+      const profileUserId = _viewedUserId || (user && user.id);
+      if (profileUserId) {
+        const subsEl = document.getElementById('prof-stat-subs');
+        if (subsEl) {
+          getFollowerCount(profileUserId).then(count => {
+            if (subsEl) subsEl.textContent = count;
+          }).catch(() => { if (subsEl && subsEl.textContent === '') subsEl.textContent = '0'; });
+        }
       }
 
       stats.style.display     = 'flex';
@@ -17028,15 +17420,6 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       change_btn: 'Изменить', lang_block: 'Язык интерфейса',
       appearance_block: 'Оформление', theme_label: 'Тема', theme_desc: 'Выберите тёмную или светлую тему', theme_dark: 'Тёмная', theme_light: 'Светлая',
       lang_label: 'Язык / Тіл / Language', lang_desc: 'Изменит весь текст платформы',
-      notif_block: 'Уведомления', notif_new: 'Новые работы подписок',
-      notif_new_desc: 'Когда автор загружает новый контент',
-      notif_pitch: 'Обновления питч-кампаний', notif_pitch_desc: 'Новые бэкеры, достижение цели',
-      notif_comments: 'Ответы на рецензии', notif_comments_desc: 'Когда кто-то отвечает на ваш комментарий',
-      notif_email: 'Email-рассылка', notif_email_desc: 'Еженедельный дайджест платформы',
-      playback_block: 'Воспроизведение', autoplay_label: 'Автовоспроизведение',
-      autoplay_desc: 'Следующий контент запускается автоматически',
-      subtitles_label: 'Субтитры по умолчанию', subtitles_desc: 'Автоматически включать субтитры',
-      quality_label: 'Качество видео', quality_desc: 'По умолчанию при загрузке',
       access_block: 'Уровни доступа',
       access_user: 'Просмотр контента, комментарии, поддержка питчей',
       access_creator: '+ Загрузка контента, создание питч-кампаний, Creator Membership',
@@ -17221,15 +17604,6 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       change_btn: 'Өзгерту', lang_block: 'Интерфейс тілі',
       appearance_block: 'Безендіру', theme_label: 'Тақырып', theme_desc: 'Қараңғы немесе жарық тақырыпты таңдаңыз', theme_dark: 'Қараңғы', theme_light: 'Жарық',
       lang_label: 'Язык / Тіл / Language', lang_desc: 'Платформадағы барлық мәтінді өзгертеді',
-      notif_block: 'Хабарландырулар', notif_new: 'Жазылымдардың жаңа жұмыстары',
-      notif_new_desc: 'Автор жаңа контент жүктегенде',
-      notif_pitch: 'Питч-науқандарының жаңалықтары', notif_pitch_desc: 'Жаңа бэкерлер, мақсатқа жету',
-      notif_comments: 'Пікірлерге жауаптар', notif_comments_desc: 'Біреу пікіріңізге жауап бергенде',
-      notif_email: 'Email-тарату', notif_email_desc: 'Апталық платформа дайджесті',
-      playback_block: 'Ойнату', autoplay_label: 'Автоойнату',
-      autoplay_desc: 'Келесі контент автоматты түрде басталады',
-      subtitles_label: 'Әдепкі субтитрлер', subtitles_desc: 'Субтитрлерді автоматты қосу',
-      quality_label: 'Бейне сапасы', quality_desc: 'Жүктеу кезіндегі әдепкі',
       access_block: 'Қол жеткізу деңгейлері',
       access_user: 'Контентті көру, пікірлер, питчтерді қолдау',
       access_creator: '+ Контент жүктеу, питч-науқандар, Creator Membership',
@@ -17414,15 +17788,6 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       change_btn: 'Change', lang_block: 'Interface Language',
       appearance_block: 'Appearance', theme_label: 'Theme', theme_desc: 'Choose dark or light theme', theme_dark: 'Dark', theme_light: 'Light',
       lang_label: 'Язык / Тіл / Language', lang_desc: 'Changes all text on the platform',
-      notif_block: 'Notifications', notif_new: 'New content from subscriptions',
-      notif_new_desc: 'When a creator uploads new content',
-      notif_pitch: 'Pitch campaign updates', notif_pitch_desc: 'New backers, goal reached',
-      notif_comments: 'Replies to reviews', notif_comments_desc: 'When someone replies to your comment',
-      notif_email: 'Email newsletter', notif_email_desc: 'Weekly platform digest',
-      playback_block: 'Playback', autoplay_label: 'Autoplay',
-      autoplay_desc: 'Next content starts automatically',
-      subtitles_label: 'Default subtitles', subtitles_desc: 'Automatically enable subtitles',
-      quality_label: 'Video quality', quality_desc: 'Default on load',
       access_block: 'Access Levels',
       access_user: 'View content, comments, support pitches',
       access_creator: '+ Upload content, create pitch campaigns, Creator Membership',
@@ -17673,6 +18038,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       modal_delete_pitch_body: 'Питч-кампания будет безвозвратно удалена.',
       modal_error_title: 'Ошибка',
       untitled: 'Без названия',
+      pitch_publish_btn: 'Опубликовать',
+      status_active: 'Активный',
       status_draft: 'Черновик',
       status_pending: 'На проверке',
       status_approved: 'Одобрено',
@@ -17854,6 +18221,13 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       notif_comment_action: 'прокомментировал ваш видео',
       notif_reply_action: 'ответил на ваш комментарий',
       notif_t_min: 'мин', notif_t_hr: 'ч', notif_t_day: 'д',
+      notif_follow: '{actor} подписался на вас',
+      nav_following: 'Подписки',
+      follow_btn: 'Подписаться',
+      unfollow_btn: 'Отписаться',
+      following_page_title: 'Подписки',
+      following_empty: 'Вы ни на кого не подписаны',
+      following_no_content: 'У этого автора пока нет контента',
       search_back: '← Назад',
       search_results_for: 'Результаты поиска по «{query}»',
       search_empty: 'Контент не найден.'
@@ -18003,6 +18377,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       modal_delete_pitch_body: 'Питч-науқан қайтарымсыз жойылады.',
       modal_error_title: 'Қате',
       untitled: 'Атаусыз',
+      pitch_publish_btn: 'Жариялау',
+      status_active: 'Белсенді',
       status_draft: 'Жоба',
       status_pending: 'Тексерілуде',
       status_approved: 'Мақұлданды',
@@ -18184,6 +18560,13 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       notif_comment_action: 'бейнеңізге пікір қалдырды',
       notif_reply_action: 'пікіріңізге жауап берді',
       notif_t_min: 'мин', notif_t_hr: 'с', notif_t_day: 'к',
+      notif_follow: '{actor} сізге жазылды',
+      nav_following: 'Жазылымдар',
+      follow_btn: 'Жазылу',
+      unfollow_btn: 'Жазылымнан шығу',
+      following_page_title: 'Жазылымдар',
+      following_empty: 'Сіз ешкімге жазылмадыңыз',
+      following_no_content: 'Бұл авторда әзірге контент жоқ',
       search_back: '← Артқа',
       search_results_for: '"{query}" бойынша іздеу нәтижелері',
       search_empty: 'Контент табылмады.'
@@ -18333,6 +18716,8 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       modal_delete_pitch_body: 'This pitch campaign will be permanently deleted.',
       modal_error_title: 'Error',
       untitled: 'Untitled',
+      pitch_publish_btn: 'Publish',
+      status_active: 'Active',
       status_draft: 'Draft',
       status_pending: 'Pending Review',
       status_approved: 'Approved',
@@ -18514,6 +18899,13 @@ body.light-theme #page-home #category-page .cat-page-header { border-bottom-colo
       notif_comment_action: 'commented on your video',
       notif_reply_action: 'replied to your comment',
       notif_t_min: 'min', notif_t_hr: 'hr', notif_t_day: 'd',
+      notif_follow: '{actor} started following you',
+      nav_following: 'Following',
+      follow_btn: 'Follow',
+      unfollow_btn: 'Unfollow',
+      following_page_title: 'Following',
+      following_empty: "You haven't followed anyone yet",
+      following_no_content: 'This creator has no content yet',
       search_back: '← Back',
       search_results_for: 'Search results for "{query}"',
       search_empty: 'No content found.'
