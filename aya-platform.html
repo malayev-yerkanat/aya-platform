@@ -1153,9 +1153,17 @@ body.light-theme #page-search .search-skel-line {
 .cards-h {
   display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px;
   scrollbar-width: thin;
+  scrollbar-color: rgba(142,166,95,.40) transparent;
   mask-image: linear-gradient(to right, black 85%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
+.cards-h::-webkit-scrollbar { height: 4px; }
+.cards-h::-webkit-scrollbar-track { background: transparent; }
+.cards-h::-webkit-scrollbar-thumb { background: rgba(142,166,95,.40); border-radius: 999px; }
+.cards-h::-webkit-scrollbar-thumb:hover { background: rgba(142,166,95,.70); }
+body.light-theme .cards-h { scrollbar-color: rgba(92,120,64,.35) transparent; }
+body.light-theme .cards-h::-webkit-scrollbar-thumb { background: rgba(92,120,64,.35); }
+body.light-theme .cards-h::-webkit-scrollbar-thumb:hover { background: rgba(92,120,64,.65); }
 
 /* ============================================================
    CARDS — Spotify's dark card with heavy shadow on hover
